@@ -1,6 +1,7 @@
 {
   "name": "Harvinder Chat",
   "short_name": "Chat",
+  "description": "Private real-time chat app for Harvinder",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0d12",
