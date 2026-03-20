@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Harvinder's World</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:-apple-system;
+}
+
+body{
+  background:#0b0d12;
+  color:white;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* LOGIN */
+#loginScreen{
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.card{
+  width:90%;
+  max-width:320px;
+  padding:25px;
+  border-radius:25px;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(20px);
+  text-align:center;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:25px;
+  border:none;
+  background:rgba(255,255,255,0.08);
+  color:white;
+  font-size:16px !important;
+}
+
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:25px;
+  background:#4f8cff;
+  color:white;
+}
+
+/* CONTACTS */
+#contacts{
+  display:none;
+  padding:15px;
+}
+
+.contact{
+  padding:15px;
+  margin:10px 0;
+  border-radius:20px;
+  background:rgba(255,255,255,0.05);
+}
+
+/* CHAT */
+#chatScreen{
+  display:none;
+}
+
+/* HEADER */
+#header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:70px;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 15px;
+
+  background:rgba(20,20,25,0.95);
+  backdrop-filter:blur(20px);
+
+  z-index:9999;
+}
+
+/* CHAT AREA */
+#chatBox{
+  position:fixed;
+  top:70px;
+  bottom:70px;
+  left:0;
+  right:0;
+
+  overflow-y:auto;
+  padding:15px;
+}
+
+/* MESSAGES */
+.msg{display:flex;margin:8px 0;}
+.left{justify-content:flex-start;}
+.right{justify-content:flex-end;}
+
+.bubble{
+  padding:12px 16px;
+  border-radius:20px;
+  max-width:70%;
+}
+
+.left .bubble{background:rgba(255,255,255,0.08);}
+.right .bubble{background:#4f8cff;}
+
+/* INPUT */
+#bottom{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+
+  display:flex;
+  gap:10px;
+  padding:10px;
+
+  background:rgba(20,20,25,0.95);
+  backdrop-filter:blur(20px);
+
+  z-index:9998;
+  transition:transform 0.2s ease;
+}
+
+#msgInput{
+  flex:1;
+  padding:14px;
+  border-radius:25px;
+  border:none;
+  background:#14171c;
+  color:white;
+}
+
+#sendBtn{
+  border-radius:25px;
+  padding:10px 18px;
+  background:#4f8cff;
+  border:none;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div id="loginScreen">
+  <div class="card">
+    <h3>Private Chat</h3>
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+</div>
+
+<div id="contacts"></div>
+
+<div id="chatScreen">
+
+  <div id="header">
+    <button onclick="goBack()">←</button>
+    <div id="headerName"></div>
+  </div>
+
+  <div id="chatBox"></div>
+
+  <div id="bottom">
+    <input id="msgInput" placeholder="Message...">
+    <button id="sendBtn" onclick="send()">Send</button>
+  </div>
+
+</div>
+
+<script>
+
+/* FIX ZOOM */
+document.addEventListener("DOMContentLoaded",()=>{
+  document.body.style.zoom="1";
+});
+
+/* SUPABASE */
+const supabaseUrl="https://xtdmegkgzhyjqomhwfsk.supabase.co";
+const supabaseKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0ZG1lZ2tnemh5anFvbWh3ZnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTk0ODcsImV4cCI6MjA4OTU3NTQ4N30.ItvZpVxoYz4r_KZibnLmcxHLQ48UaGmfxiGOYZfOLbE";
+
+const client=supabase.createClient(supabaseUrl,supabaseKey);
+
+/* USERS */
+const users={
+  "Harvinder":"1234",
+  "Pooja":"5678",
+  "Monika":"9999"
+};
+
+let me="",other="";
+
+/* LOGIN */
+function login(){
+  const u=username.value;
+  const p=password.value;
+
+  if(!users[u]||users[u]!==p){
+    alert("Wrong login");
+    return;
+  }
+
+  me=u;
+  loginScreen.style.display="none";
+  contacts.style.display="block";
+
+  let visible=[];
+  if(me==="Harvinder") visible=["Pooja","Monika"];
+  else visible=["Harvinder"];
+
+  contacts.innerHTML="";
+
+  visible.forEach(user=>{
+    const div=document.createElement("div");
+    div.className="contact";
+    div.innerText=user;
+    div.onclick=()=>openChat(user);
+    contacts.appendChild(div);
+  });
+}
+
+/* OPEN CHAT */
+function openChat(user){
+  other=user;
+
+  contacts.style.display="none";
+  chatScreen.style.display="block";
+
+  headerName.innerText=other;
+
+  loadMessages();
+  realtime();
+}
+
+/* BACK */
+function goBack(){
+  chatScreen.style.display="none";
+  contacts.style.display="block";
+}
+
+/* SEND */
+async function send(){
+  const text=msgInput.value.trim();
+  if(!text) return;
+
+  await client.from("messages").insert([
+    {content:text,sender:me,receiver:other}
+  ]);
+
+  msgInput.value="";
+}
+
+/* LOAD */
+async function loadMessages(){
+  const {data}=await client.from("messages").select("*");
+
+  chatBox.innerHTML="";
+
+  data.forEach(m=>{
+    if(
+      (m.sender===me && m.receiver===other) ||
+      (m.sender===other && m.receiver===me)
+    ){
+      addMsg(m);
+    }
+  });
+
+  chatBox.scrollTop=chatBox.scrollHeight;
+}
+
+/* ADD MESSAGE */
+function addMsg(m){
+  const div=document.createElement("div");
+  const isMe=m.sender===me;
+
+  div.className="msg "+(isMe?"right":"left");
+  div.innerHTML=`<div class="bubble">${m.content}</div>`;
+
+  chatBox.appendChild(div);
+  chatBox.scrollTop=chatBox.scrollHeight;
+}
+
+/* REALTIME */
+function realtime(){
+  client.channel("chat")
+  .on("postgres_changes",{
+    event:"INSERT",
+    schema:"public",
+    table:"messages"
+  },payload=>{
+    const m=payload.new;
+
+    if(
+      (m.sender===me && m.receiver===other) ||
+      (m.sender===other && m.receiver===me)
+    ){
+      addMsg(m);
+    }
+  }).subscribe();
+}
+
+/* 🔥 PERFECT KEYBOARD FIX */
+const bottomBar=document.getElementById("bottom");
+
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",()=>{
+
+    const vh=window.visualViewport.height;
+    const wh=window.innerHeight;
+
+    let keyboard=wh-vh;
+
+    // clamp to avoid over movement
+    if(keyboard<0) keyboard=0;
+    if(keyboard>280) keyboard=280;
+
+    bottomBar.style.transform=`translateY(-${keyboard}px)`;
+  });
+}
+</script>
+
+</body>
+</html>
