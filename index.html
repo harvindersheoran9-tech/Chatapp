@@ -1,166 +1,313 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>Chat</title>
+  <title>Harvinder's World</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:-apple-system;
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-body{
-  background:#0b0d12;
-  color:white;
-  height:100dvh;
-  display:flex;
-  flex-direction:column;
-}
+  <style>
+    body {
+      margin:0;
+      font-family:-apple-system;
+      background: linear-gradient(145deg,#1c1f26,#0f1115);
+      color:white;
+    }
 
-/* HEADER */
+    /* LOGIN */
+    #loginScreen {
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
 
-#header{
-  height:60px;
-  display:flex;
-  align-items:center;
-  padding:0 15px;
-  background:#111;
-}
+    .card {
+      width:90%;
+      max-width:320px;
+      padding:25px;
+      border-radius:30px;
+      background:#1a1d23;
+      box-shadow:10px 10px 30px #0a0c10,
+                 -10px -10px 30px #2a2e36;
+      text-align:center;
+    }
 
-/* CHAT AREA */
+    input {
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border-radius:20px;
+      border:none;
+      background:#14171c;
+      color:white;
+      box-shadow: inset 3px 3px 6px #0a0c10,
+                  inset -3px -3px 6px #2a2e36;
+    }
 
-#chatBox{
-  flex:1;
-  overflow-y:auto;
-  padding:10px;
-}
+    button {
+      padding:10px 15px;
+      border-radius:20px;
+      border:none;
+      background:linear-gradient(145deg,#4f8cff,#3a6edc);
+      color:white;
+      font-weight:bold;
+    }
 
-/* MESSAGES */
+    /* CONTACTS */
+    #contacts {
+      display:none;
+      padding:15px;
+    }
 
-.msg{display:flex;margin:8px 0;}
-.left{justify-content:flex-start;}
-.right{justify-content:flex-end;}
+    .contact {
+      padding:15px;
+      border-radius:20px;
+      margin:10px 0;
+      background:#1a1d23;
+      box-shadow:5px 5px 15px #0a0c10,
+                 -5px -5px 15px #2a2e36;
+      font-size:16px;
+    }
 
-.bubble{
-  padding:10px 14px;
-  border-radius:18px;
-  max-width:70%;
-}
+    /* CHAT */
+    #chatScreen {
+      display:none;
+      height:100vh;
+      flex-direction:column;
+    }
 
-.left .bubble{background:#222;}
-.right .bubble{background:#4f8cff;}
+    #header {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:15px;
+      background:#1a1d23;
+    }
 
-/* INPUT BAR */
+    #chatBox {
+      flex:1;
+      overflow-y:auto;
+      padding:15px;
+    }
 
-#bottom{
-  display:flex;
-  padding:10px;
-  gap:10px;
-  background:#111;
-}
+    .msg {
+      display:flex;
+      margin:10px 0;
+    }
 
-#msgInput{
-  flex:1;
-  padding:12px;
-  border-radius:20px;
-  border:none;
-  background:#222;
-  color:white;
-}
+    .left { justify-content:flex-start; }
+    .right { justify-content:flex-end; }
 
-#sendBtn{
-  padding:10px 16px;
-  border-radius:20px;
-  border:none;
-  background:#4f8cff;
-  color:white;
-}
-</style>
+    .bubble {
+      padding:12px;
+      border-radius:18px;
+      max-width:70%;
+      font-size:14px;
+    }
+
+    .left .bubble {
+      background:#1a1d23;
+      box-shadow:5px 5px 15px #0a0c10,
+                 -5px -5px 15px #2a2e36;
+    }
+
+    .right .bubble {
+      background:linear-gradient(145deg,#4f8cff,#3a6edc);
+    }
+
+    /* INPUT */
+    #bottom {
+      display:flex;
+      padding:10px;
+      gap:10px;
+      background:#1a1d23;
+    }
+
+    #bottom input {
+      flex:1;
+      padding:12px;
+      border-radius:20px;
+      border:none;
+      background:#14171c;
+      color:white;
+    }
+
+    #sendBtn {
+      width:45px;
+      height:45px;
+      border-radius:50%;
+      background:linear-gradient(145deg,#4f8cff,#3a6edc);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+  </style>
 </head>
 
 <body>
 
-<div id="header">Harvinder Chat</div>
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="card">
+    <h3>Harvinder's World</h3>
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+</div>
 
-<div id="chatBox"></div>
+<!-- CONTACT LIST -->
+<div id="contacts"></div>
 
-<div id="bottom">
-  <input id="msgInput" placeholder="Message...">
-  <button onclick="send()">Send</button>
+<!-- CHAT -->
+<div id="chatScreen">
+  <div id="header">
+    <button onclick="goBack()">←</button>
+    <div id="headerName"></div>
+  </div>
+
+  <div id="chatBox"></div>
+
+  <div id="bottom">
+    <input id="msgInput" placeholder="Message...">
+    <div id="sendBtn" onclick="send()">➤</div>
+  </div>
 </div>
 
 <script>
+const supabaseUrl = "https://xtdmegkgzhyjqomhwfsk.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0ZG1lZ2tnemh5anFvbWh3ZnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTk0ODcsImV4cCI6MjA4OTU3NTQ4N30.ItvZpVxoYz4r_KZibnLmcxHLQ48UaGmfxiGOYZfOLbE";
 
-const supabaseUrl="https://xtdmegkgzhyjqomhwfsk.supabase.co";
-const supabaseKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0ZG1lZ2tnemh5anFvbWh3ZnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTk0ODcsImV4cCI6MjA4OTU3NTQ4N30.ItvZpVxoYz4r_KZibnLmcxHLQ48UaGmfxiGOYZfOLbE";
+const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-const client=supabase.createClient(supabaseUrl,supabaseKey);
+// USERS
+const users = {
+  "Harvinder": "1234",
+  "Pooja": "5678",
+  "Monika": "9999"
+};
 
-let me="Harvinder";
-let other="Pooja";
+let me = "";
+let other = "";
 
-/* SEND */
+// LOGIN
+function login(){
+  const u = username.value;
+  const p = password.value;
+
+  if(!users[u] || users[u] !== p){
+    alert("Wrong login");
+    return;
+  }
+
+  me = u;
+
+  loginScreen.style.display = "none";
+  contacts.style.display = "block";
+
+  contacts.innerHTML = "";
+
+  let visibleUsers = [];
+
+  if(me === "Harvinder"){
+    visibleUsers = ["Pooja","Monika"];
+  } else if(me === "Pooja"){
+    visibleUsers = ["Harvinder"];
+  } else if(me === "Monika"){
+    visibleUsers = ["Harvinder"];
+  }
+
+  visibleUsers.forEach(user=>{
+    const div = document.createElement("div");
+    div.className = "contact";
+    div.innerText = user;
+
+    div.onclick = () => openChat(user);
+
+    contacts.appendChild(div);
+  });
+}
+
+// OPEN CHAT
+function openChat(user){
+  other = user;
+
+  contacts.style.display = "none";
+  chatScreen.style.display = "flex";
+
+  headerName.innerText = other;
+
+  loadMessages();
+  realtime();
+}
+
+// BACK
+function goBack(){
+  chatScreen.style.display = "none";
+  contacts.style.display = "block";
+}
+
+// SEND
 async function send(){
-  const text=msgInput.value.trim();
+  const text = msgInput.value;
   if(!text) return;
 
   await client.from("messages").insert([
-    {content:text,sender:me,receiver:other}
+    { content:text, sender:me, receiver:other }
   ]);
 
-  msgInput.value="";
+  msgInput.value = "";
 }
 
-/* LOAD */
-async function load(){
-  const {data}=await client.from("messages").select("*");
+// LOAD
+async function loadMessages(){
+  const { data } = await client.from("messages").select("*");
 
-  chatBox.innerHTML="";
+  chatBox.innerHTML = "";
 
   data.forEach(m=>{
     if(
       (m.sender===me && m.receiver===other) ||
       (m.sender===other && m.receiver===me)
     ){
-      add(m);
+      addMsg(m);
     }
   });
-
-  chatBox.scrollTop=chatBox.scrollHeight;
 }
 
-/* ADD */
-function add(m){
-  const div=document.createElement("div");
-  div.className="msg "+(m.sender===me?"right":"left");
-  div.innerHTML=`<div class="bubble">${m.content}</div>`;
+// ADD MSG
+function addMsg(m){
+  const div = document.createElement("div");
+  const isMe = m.sender === me;
+
+  div.className = "msg " + (isMe ? "right" : "left");
+  div.innerHTML = `<div class="bubble">${m.content}</div>`;
+
   chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* REALTIME */
-client.channel("chat")
-.on("postgres_changes",{
-  event:"INSERT",
-  schema:"public",
-  table:"messages"
-},payload=>{
-  const m=payload.new;
+// REALTIME
+function realtime(){
+  client.channel("chat")
+    .on("postgres_changes", {
+      event:"INSERT",
+      schema:"public",
+      table:"messages"
+    }, payload=>{
+      const m = payload.new;
 
-  if(
-    (m.sender===me && m.receiver===other) ||
-    (m.sender===other && m.receiver===me)
-  ){
-    add(m);
-  }
-}).subscribe();
-
-load();
-
+      if(
+        (m.sender===me && m.receiver===other) ||
+        (m.sender===other && m.receiver===me)
+      ){
+        addMsg(m);
+      }
+    })
+    .subscribe();
+}
 </script>
 
 </body>
