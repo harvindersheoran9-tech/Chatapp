@@ -60,12 +60,31 @@ button{
 #contacts{
   display:none;
   padding:15px;
+  position:relative;
+  height:100vh;
+  overflow-y:auto;
 }
 .contact{
   padding:15px;
   border-radius:20px;
   margin:10px 0;
   background:#1a1d23;
+}
+#logoutBtn{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:85%;
+  max-width:320px;
+  padding:14px;
+  border-radius:25px;
+  text-align:center;
+  font-weight:600;
+  background:rgba(80,180,255,0.25);
+  backdrop-filter:blur(25px);
+  border:1px solid rgba(255,255,255,0.15);
+  color:#7ecbff;
 }
 #chatScreen{
   display:none;
@@ -165,6 +184,7 @@ button{
 </div>
 
 <div id="contacts"></div>
+<div id="logoutBtn" onclick="logout()" style="display:none;">Logout</div>
 
 <div id="chatScreen">
   <div id="header" class="glass">
@@ -188,7 +208,7 @@ const client=supabase.createClient(supabaseUrl,supabaseKey);
 
 const users={
   "Harvinder":"1234",
-  "Pooja":"5678",
+  "Sunita":"5678",
   "Monika":"9999"
 };
 
@@ -198,14 +218,13 @@ function login(){
   if(users[username.value]!==password.value)return alert("Wrong login");
 
   me=username.value;
-
-  // ✅ SAVE LOGIN
   localStorage.setItem("chatUser", me);
 
   loginScreen.style.display="none";
   contacts.style.display="block";
+  logoutBtn.style.display="block";
 
-  let list=me==="Harvinder"?["Pooja","Monika"]:["Harvinder"];
+  let list=me==="Harvinder"?["Sunita","Monika"]:["Harvinder"];
 
   contacts.innerHTML="";
   list.forEach(u=>{
@@ -217,9 +236,15 @@ function login(){
   });
 }
 
+function logout(){
+  localStorage.removeItem("chatUser");
+  location.reload();
+}
+
 function openChat(u){
   other=u;
   contacts.style.display="none";
+  logoutBtn.style.display="none";
   chatScreen.style.display="block";
   headerName.innerText=u;
 
@@ -230,6 +255,7 @@ function openChat(u){
 function goBack(){
   chatScreen.style.display="none";
   contacts.style.display="block";
+  logoutBtn.style.display="block";
 }
 
 async function send(){
@@ -281,7 +307,6 @@ function realtime(){
     }).subscribe();
 }
 
-/* ✅ AUTO LOGIN */
 window.onload = () => {
   const savedUser = localStorage.getItem("chatUser");
 
@@ -290,8 +315,9 @@ window.onload = () => {
 
     loginScreen.style.display="none";
     contacts.style.display="block";
+    logoutBtn.style.display="block";
 
-    let list = me==="Harvinder"?["Pooja","Monika"]:["Harvinder"];
+    let list = me==="Harvinder"?["Sunita","Monika"]:["Harvinder"];
 
     contacts.innerHTML="";
     list.forEach(u=>{
@@ -306,7 +332,6 @@ window.onload = () => {
   }
 };
 
-/* HEADER FIX */
 const header=document.getElementById("header");
 
 function fixHeader(){
