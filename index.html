@@ -40,15 +40,15 @@ section.active { display: block; opacity: 1; transform: translateY(0); }
 .chat-item{ display:flex; align-items:center; gap:12px; padding:14px; border-radius:20px; background:rgba(255,255,255,0.2); backdrop-filter:blur(30px); margin-bottom:14px; cursor:pointer;}
 .avatar-list{ width:46px; height:46px; border-radius:50%; background-size: cover; border: 2px solid white; }
 
+/* 🛠️ FIXED HEADER: Added will-change for smooth movement */
 .header-chat{ position:fixed; top:0; left:0; right:0; padding-top: env(safe-area-inset-top); height: calc(70px + env(safe-area-inset-top)); display:flex; align-items:center; gap:10px; padding: 0 14px; background:rgba(255,255,255,0.18); backdrop-filter:blur(30px); z-index:1000; will-change: transform; }
 
 .avatar-chat{ width:36px; height:36px; border-radius:50%; background-size: cover; }
 .chat-area{ position:fixed; top: calc(75px + env(safe-area-inset-top)); bottom: 85px; left:0; right:0; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; }
 
-/* 🩹 FIX: Added width fit-content so bubbles follow message length */
 .msg-bubble{ max-width:70%; width: fit-content; padding:12px 16px; border-radius:20px; backdrop-filter:blur(20px); background:rgba(255,255,255,0.18); color:#e8eef5; }
-
 .msg-bubble.out{ margin-left:auto; background:linear-gradient(145deg, rgba(120,160,255,0.7), rgba(80,120,255,0.6)); color:white; }
+
 .inputBar{ position:fixed; left:10px; right:10px; bottom: 10px; display:flex; align-items: center; gap:8px; padding:8px 12px; border-radius:22px; background:rgba(255,255,255,0.2); backdrop-filter:blur(25px); z-index:1001; will-change: transform; }
 .chat-input{ flex:1; padding:10px 14px; border:none; outline:none; border-radius:18px; background:rgba(255,255,255,0.25); color: white;}
 .send-btn{ padding:10px 14px; border-radius:16px; background:rgba(120,170,255,0.8); color:white; font-weight:600; cursor: pointer;}
@@ -60,7 +60,6 @@ section.active { display: block; opacity: 1; transform: translateY(0); }
 .seen-tick { font-size: 10px; float: right; margin-left: 5px; opacity: 0.8; }
 .profile-edit input { width: 100%; padding: 12px; border-radius: 14px; border: none; background: rgba(255,255,255,0.5); margin-top: 8px; color: #000; outline: none;}
 
-/* 🌑 BLACKISH FROSTED LOGOUT BUTTON */
 .logout-frosted {
     margin-top: 15px;
     padding: 12px;
@@ -109,13 +108,10 @@ section.active { display: block; opacity: 1; transform: translateY(0); }
     <div class="profile-edit">
         <label style="color:#222; font-weight:600; font-size:13px;">Update Name</label>
         <input id="editName" placeholder="New Name...">
-        
         <label style="display:block; margin-top:10px; color:#222; font-weight:600; font-size:13px;">Change Password</label>
         <input id="editPass" type="password" placeholder="New Password...">
-        
         <label style="display:block; margin-top:10px; color:#222; font-weight:600; font-size:13px;">Update Photo</label>
         <input type="file" id="editAvatar" accept="image/*" style="border:none; background:transparent; font-size:11px; padding:5px 0;">
-        
         <div class="loginBtn" style="width:100%; margin-top:15px; text-align:center;" onclick="updateProfile()">Save Profile</div>
     </div>
     <div class="logout-frosted" onclick="logoutUser()">Logout</div>
@@ -145,14 +141,24 @@ const client = supabase.createClient(supabaseUrl, supabaseKey);
 
 let me = "", other = "", channel = null, userAvatars = {};
 
+/* 🛠️ IMPROVED VIEWPORT LOGIC: Fixes Header going Upward */
 if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', () => {
-    const h = document.getElementById("chatHeader");
-    const b = document.getElementById("chatInputBar");
-    const keyboardHeight = window.innerHeight - window.visualViewport.height;
-    b.style.transform = `translateY(-${keyboardHeight}px)`;
-    h.style.transform = `translateY(${window.visualViewport.offsetTop}px)`;
-  });
+  const syncLayout = () => {
+    const header = document.getElementById("chatHeader");
+    const inputBar = document.getElementById("chatInputBar");
+    
+    // Calculate how much the viewport shifted up (keyboard height)
+    const keyboardOffset = window.innerHeight - window.visualViewport.height;
+    
+    // Header MUST follow the offsetTop of the viewport to stay visible at the top
+    header.style.transform = `translateY(${window.visualViewport.offsetTop}px)`;
+    
+    // Input bar must go UP by the keyboard height
+    inputBar.style.transform = `translateY(-${keyboardOffset}px)`;
+  };
+
+  window.visualViewport.addEventListener('resize', syncLayout);
+  window.visualViewport.addEventListener('scroll', syncLayout);
 }
 
 async function loginUser(){
@@ -229,32 +235,23 @@ async function updateProfile() {
     const avatarFile = document.getElementById("editAvatar").files[0];
     const newName = document.getElementById("editName").value.trim();
     const newPass = document.getElementById("editPass").value.trim();
-    
-    // 🩹 FIX: Store original username to target the correct record even if changing name
     const originalMe = me;
     let updates = {};
     if(newName) updates.username = newName;
     if(newPass) updates.password = newPass;
-
     if(avatarFile) {
         const filePath = `avatars/${originalMe}_${Date.now()}.png`;
         await client.storage.from('chat-media').upload(filePath, avatarFile);
         const { data } = client.storage.from('chat-media').getPublicUrl(filePath);
         updates.avatar_url = data.publicUrl;
     }
-    
     if(Object.keys(updates).length === 0) return alert("Nothing to update");
-
-    // target original username
     const { error } = await client.from('users').update(updates).eq('username', originalMe);
     if(!error) {
         alert("Profile Updated!");
-        // Update local session to match new name if changed
         if(newName) localStorage.setItem("loggedInUser", newName);
         location.reload();
-    } else {
-        alert("Error updating profile");
-    }
+    } else { alert("Error updating profile"); }
 }
 
 function realtime(){
