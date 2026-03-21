@@ -1,160 +1,160 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Harvinder's World</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Harvinder Chat">
+<title>Harvinder's World</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Harvinder Chat">
 
-  <link rel="apple-touch-icon" href="https://via.placeholder.com/180">
+<link rel="apple-touch-icon" href="https://via.placeholder.com/180">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-  <style>
-    body {
-      margin:0;
-      font-family:-apple-system;
-      background: linear-gradient(145deg,#1c1f26,#0f1115);
-      color:white;
-    }
-
-    /* LOGIN */
-    #loginScreen {
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-    }
-
-    .card {
-      width:90%;
-      max-width:320px;
-      padding:25px;
-      border-radius:30px;
-      background:#1a1d23;
-      box-shadow:10px 10px 30px #0a0c10,
-                 -10px -10px 30px #2a2e36;
-      text-align:center;
-    }
-
-    input {
-      width:100%;
-      padding:12px;
-      margin:10px 0;
-      border-radius:20px;
-      border:none;
-      background:#14171c;
-      color:white;
-      box-shadow: inset 3px 3px 6px #0a0c10,
-                  inset -3px -3px 6px #2a2e36;
-    }
-
-    button {
-      padding:10px 15px;
-      border-radius:20px;
-      border:none;
-      background:linear-gradient(145deg,#4f8cff,#3a6edc);
-      color:white;
-      font-weight:bold;
-    }
-
-    /* CONTACTS */
-    #contacts {
-      display:none;
-      padding:15px;
-    }
-
-    .contact {
-      padding:15px;
-      border-radius:20px;
-      margin:10px 0;
-      background:#1a1d23;
-      box-shadow:5px 5px 15px #0a0c10,
-                 -5px -5px 15px #2a2e36;
-      font-size:16px;
-    }
-
-    /* CHAT */
-    #chatScreen {
-      display:none;
-      height:100vh;
-      flex-direction:column;
-    }
-
-    #header {
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:15px;
-      background:#1a1d23;
-    }
-
-    #chatBox {
-      flex:1;
-      overflow-y:auto;
-      padding:15px;
-    }
-
-    .msg {
-      display:flex;
-      margin:10px 0;
-    }
-
-    .left { justify-content:flex-start; }
-    .right { justify-content:flex-end; }
-
-    .bubble {
-      padding:12px;
-      border-radius:18px;
-      max-width:70%;
-      font-size:14px;
-    }
-
-    .left .bubble {
-      background:#1a1d23;
-      box-shadow:5px 5px 15px #0a0c10,
-                 -5px -5px 15px #2a2e36;
-    }
-
-    .right .bubble {
-      background:linear-gradient(145deg,#4f8cff,#3a6edc);
-    }
-
-    /* INPUT */
-    #bottom {
-      display:flex;
-      padding:10px;
-      gap:10px;
-      background:#1a1d23;
-    }
-
-    #bottom input {
-      flex:1;
-      padding:12px;
-      border-radius:20px;
-      border:none;
-      background:#14171c;
-      color:white;
-    }
-
-    #sendBtn {
-      width:45px;
-      height:45px;
-      border-radius:50%;
-      background:linear-gradient(145deg,#4f8cff,#3a6edc);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-    }
-  </style>
+<style>
+body{
+  margin:0;
+  font-family:-apple-system;
+  background:linear-gradient(145deg,#1c1f26,#0f1115);
+  color:white;
+  overflow:hidden;
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
+}
+.glass{
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(20px);
+}
+#loginScreen{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.card{
+  width:90%;
+  max-width:320px;
+  padding:25px;
+  border-radius:30px;
+  background:#1a1d23;
+  text-align:center;
+}
+input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:20px;
+  border:none;
+  background:#14171c;
+  color:white;
+}
+button{
+  padding:10px 15px;
+  border-radius:20px;
+  border:none;
+  background:linear-gradient(145deg,#4f8cff,#3a6edc);
+  color:white;
+}
+#contacts{
+  display:none;
+  padding:15px;
+}
+.contact{
+  padding:15px;
+  border-radius:20px;
+  margin:10px 0;
+  background:#1a1d23;
+}
+#chatScreen{
+  display:none;
+  position:fixed;
+  top:0;
+  width:100%;
+  height:100%;
+}
+#header{
+  position:fixed;
+  top:0;
+  width:100%;
+  height:60px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:15px;
+  z-index:1000;
+}
+#headerName{
+  font-size:16px;
+  font-weight:600;
+  color:#ffffff;
+}
+#chatBox{
+  position:fixed;
+  top:60px;
+  bottom:70px;
+  width:100%;
+  overflow-y:auto;
+  padding:15px 12px;
+}
+.msg{
+  display:flex;
+  margin:10px 0;
+}
+.left{
+  justify-content:flex-start;
+  margin-left:5px;
+}
+.right{
+  justify-content:flex-end;
+  margin-right:5px;
+}
+.bubble{
+  padding:12px 14px;
+  border-radius:18px;
+  max-width:65%;
+  font-size:14px;
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+}
+.left .bubble{
+  background:#1a1d23;
+}
+.right .bubble{
+  background:linear-gradient(145deg,#4f8cff,#3a6edc);
+}
+#bottom{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  padding:10px;
+  gap:10px;
+  z-index:1000;
+}
+#msgInput{
+  flex:1;
+  padding:12px;
+  border-radius:25px;
+  border:none;
+  background:#14171c;
+  color:white;
+}
+#sendBtn{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(145deg,#4f8cff,#3a6edc);
+}
+</style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen">
   <div class="card">
     <h3>Harvinder's World</h3>
@@ -164,156 +164,158 @@
   </div>
 </div>
 
-<!-- CONTACT LIST -->
 <div id="contacts"></div>
 
-<!-- CHAT -->
 <div id="chatScreen">
-  <div id="header">
+  <div id="header" class="glass">
     <button onclick="goBack()">←</button>
     <div id="headerName"></div>
   </div>
 
   <div id="chatBox"></div>
 
-  <div id="bottom">
+  <div id="bottom" class="glass">
     <input id="msgInput" placeholder="Message...">
     <div id="sendBtn" onclick="send()">➤</div>
   </div>
 </div>
 
 <script>
-const supabaseUrl = "https://xtdmegkgzhyjqomhwfsk.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0ZG1lZ2tnemh5anFvbWh3ZnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTk0ODcsImV4cCI6MjA4OTU3NTQ4N30.ItvZpVxoYz4r_KZibnLmcxHLQ48UaGmfxiGOYZfOLbE";
+const supabaseUrl="https://xtdmegkgzhyjqomhwfsk.supabase.co";
+const supabaseKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0ZG1lZ2tnemh5anFvbWh3ZnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTk0ODcsImV4cCI6MjA4OTU3NTQ4N30.ItvZpVxoYz4r_KZibnLmcxHLQ48UaGmfxiGOYZfOLbE";
 
-const client = supabase.createClient(supabaseUrl, supabaseKey);
+const client=supabase.createClient(supabaseUrl,supabaseKey);
 
-// USERS
-const users = {
-  "Harvinder": "1234",
-  "Pooja": "5678",
-  "Monika": "9999"
+const users={
+  "Harvinder":"1234",
+  "Pooja":"5678",
+  "Monika":"9999"
 };
 
-let me = "";
-let other = "";
+let me="",other="",channel=null;
 
-// LOGIN
 function login(){
-  const u = username.value;
-  const p = password.value;
+  if(users[username.value]!==password.value)return alert("Wrong login");
 
-  if(!users[u] || users[u] !== p){
-    alert("Wrong login");
-    return;
-  }
+  me=username.value;
 
-  me = u;
+  // ✅ SAVE LOGIN
+  localStorage.setItem("chatUser", me);
 
-  loginScreen.style.display = "none";
-  contacts.style.display = "block";
+  loginScreen.style.display="none";
+  contacts.style.display="block";
 
-  contacts.innerHTML = "";
+  let list=me==="Harvinder"?["Pooja","Monika"]:["Harvinder"];
 
-  let visibleUsers = [];
-
-  if(me === "Harvinder"){
-    visibleUsers = ["Pooja","Monika"];
-  } else if(me === "Pooja"){
-    visibleUsers = ["Harvinder"];
-  } else if(me === "Monika"){
-    visibleUsers = ["Harvinder"];
-  }
-
-  visibleUsers.forEach(user=>{
-    const div = document.createElement("div");
-    div.className = "contact";
-    div.innerText = user;
-
-    div.onclick = () => openChat(user);
-
-    contacts.appendChild(div);
+  contacts.innerHTML="";
+  list.forEach(u=>{
+    let d=document.createElement("div");
+    d.className="contact";
+    d.innerText=u;
+    d.onclick=()=>openChat(u);
+    contacts.appendChild(d);
   });
 }
 
-// OPEN CHAT
-function openChat(user){
-  other = user;
-
-  contacts.style.display = "none";
-  chatScreen.style.display = "flex";
-
-  headerName.innerText = other;
+function openChat(u){
+  other=u;
+  contacts.style.display="none";
+  chatScreen.style.display="block";
+  headerName.innerText=u;
 
   loadMessages();
   realtime();
 }
 
-// BACK
 function goBack(){
-  chatScreen.style.display = "none";
-  contacts.style.display = "block";
+  chatScreen.style.display="none";
+  contacts.style.display="block";
 }
 
-// SEND
 async function send(){
-  const text = msgInput.value;
-  if(!text) return;
+  if(!msgInput.value)return;
 
   await client.from("messages").insert([
-    { content:text, sender:me, receiver:other }
+    {content:msgInput.value,sender:me,receiver:other}
   ]);
 
-  msgInput.value = "";
+  msgInput.value="";
 }
 
-// LOAD
 async function loadMessages(){
-  const { data } = await client.from("messages").select("*");
+  const {data}=await client.from("messages")
+    .select("*")
+    .or(`and(sender.eq.${me},receiver.eq.${other}),and(sender.eq.${other},receiver.eq.${me})`)
+    .order("id",{ascending:true});
 
-  chatBox.innerHTML = "";
-
-  data.forEach(m=>{
-    if(
-      (m.sender===me && m.receiver===other) ||
-      (m.sender===other && m.receiver===me)
-    ){
-      addMsg(m);
-    }
-  });
+  chatBox.innerHTML="";
+  data.forEach(addMsg);
+  chatBox.scrollTop=chatBox.scrollHeight;
 }
 
-// ADD MSG
 function addMsg(m){
-  const div = document.createElement("div");
-  const isMe = m.sender === me;
+  let d=document.createElement("div");
+  let isMe=m.sender===me;
 
-  div.className = "msg " + (isMe ? "right" : "left");
-  div.innerHTML = `<div class="bubble">${m.content}</div>`;
+  d.className="msg "+(isMe?"right":"left");
+  d.innerHTML=`<div class="bubble">${m.content}</div>`;
 
-  chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
+  chatBox.appendChild(d);
+  chatBox.scrollTop=chatBox.scrollHeight;
 }
 
-// REALTIME
 function realtime(){
-  client.channel("chat")
-    .on("postgres_changes", {
-      event:"INSERT",
-      schema:"public",
-      table:"messages"
-    }, payload=>{
-      const m = payload.new;
+  if(channel) client.removeChannel(channel);
+
+  channel=client.channel("chat")
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages"},
+    payload=>{
+      let m=payload.new;
 
       if(
-        (m.sender===me && m.receiver===other) ||
-        (m.sender===other && m.receiver===me)
+        (m.sender===me&&m.receiver===other)||
+        (m.sender===other&&m.receiver===me)
       ){
         addMsg(m);
       }
-    })
-    .subscribe();
+    }).subscribe();
 }
+
+/* ✅ AUTO LOGIN */
+window.onload = () => {
+  const savedUser = localStorage.getItem("chatUser");
+
+  if(savedUser && users[savedUser]){
+    me = savedUser;
+
+    loginScreen.style.display="none";
+    contacts.style.display="block";
+
+    let list = me==="Harvinder"?["Pooja","Monika"]:["Harvinder"];
+
+    contacts.innerHTML="";
+    list.forEach(u=>{
+      let d=document.createElement("div");
+      d.className="contact";
+      d.innerText=u;
+      d.onclick=()=>openChat(u);
+      contacts.appendChild(d);
+    });
+  } else {
+    localStorage.removeItem("chatUser");
+  }
+};
+
+/* HEADER FIX */
+const header=document.getElementById("header");
+
+function fixHeader(){
+  if(!window.visualViewport)return;
+  header.style.transform=`translateY(${window.visualViewport.offsetTop}px)`;
+}
+
+window.visualViewport?.addEventListener("resize",fixHeader);
+window.visualViewport?.addEventListener("scroll",fixHeader);
 </script>
 
 </body>
