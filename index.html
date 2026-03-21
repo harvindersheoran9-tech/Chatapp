@@ -82,14 +82,58 @@ section.active {
 .logout{ margin-top:12px; padding:16px; border-radius:18px; text-align:center; background:rgba(255,255,255,0.6); backdrop-filter:blur(20px); font-weight:600; box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 10px 25px rgba(0,0,0,0.3); cursor: pointer;}
 
 /* --- PAGE 3: CHATBOX STYLES --- */
-.header-chat{ position:fixed; top:0; left:0; right:0; height:70px; display:flex; align-items:center; gap:10px; padding:0 14px; background:rgba(255,255,255,0.18); backdrop-filter:blur(30px); box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 4px 20px rgba(0,0,0,0.2); z-index:1000; transition: transform 0.3s ease; }
+.header-chat{ 
+  position:fixed; 
+  top:0; 
+  left:0; 
+  right:0; 
+  /* Fix 1: Add Safe Area padding for notch/status bar */
+  padding-top: env(safe-area-inset-top); 
+  height: calc(70px + env(safe-area-inset-top)); 
+  display:flex; 
+  align-items:center; 
+  gap:10px; 
+  padding-left: 14px;
+  padding-right: 14px;
+  background:rgba(255,255,255,0.18); 
+  backdrop-filter:blur(30px); 
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 4px 20px rgba(0,0,0,0.2); 
+  z-index:1000; 
+}
 .avatar-chat{ width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#fff,#bbb); box-shadow:0 0 10px rgba(255,255,255,0.5); }
-.chat-area{ position:fixed; top:80px; bottom:90px; left:0; right:0; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; -webkit-overflow-scrolling:touch; scroll-behavior:smooth; }
+.chat-area{ 
+  position:fixed; 
+  top: calc(75px + env(safe-area-inset-top)); 
+  bottom: 85px; 
+  left:0; 
+  right:0; 
+  overflow-y:auto; 
+  padding:16px; 
+  display:flex; 
+  flex-direction:column; 
+  gap:12px; 
+  -webkit-overflow-scrolling:touch; 
+  scroll-behavior:smooth; 
+}
 .msg-bubble{ max-width:70%; padding:12px 16px; border-radius:20px; position:relative; backdrop-filter:blur(20px); background:rgba(255,255,255,0.18); box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 8px 25px rgba(0,0,0,0.35); animation:pop 0.25s ease; color:#e8eef5;}
 .msg-bubble.out{ margin-left:auto; background:linear-gradient( 145deg, rgba(120,160,255,0.7), rgba(80,120,255,0.6) ); color:white; box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 10px 30px rgba(79,140,255,0.6); }
 @keyframes pop{ from{ opacity:0; transform:translateY(8px) scale(0.96); } to{ opacity:1; transform:translateY(0) scale(1); } }
-.inputBar{ position:fixed; left:10px; right:10px; bottom:10px; display:flex; gap:10px; padding:10px; border-radius:22px; background:rgba(255,255,255,0.2); backdrop-filter:blur(25px); box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 10px 30px rgba(0,0,0,0.3); transition:transform 0.2s ease; z-index:200; }
-.chat-input{ flex:1; padding:12px 14px; border:none; outline:none; border-radius:18px; background:rgba(255,255,255,0.25); backdrop-filter:blur(18px); box-shadow: inset 0 1px 2px rgba(255,255,255,0.5), 0 4px 15px rgba(0,0,0,0.2); }
+
+.inputBar{ 
+  position:fixed; 
+  left:10px; 
+  right:10px; 
+  bottom: 10px; 
+  display:flex; 
+  gap:10px; 
+  padding:10px; 
+  border-radius:22px; 
+  background:rgba(255,255,255,0.2); 
+  backdrop-filter:blur(25px); 
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 10px 30px rgba(0,0,0,0.3); 
+  z-index:1001; 
+}
+.chat-input{ flex:1; padding:12px 14px; border:none; outline:none; border-radius:18px; background:rgba(255,255,255,0.25); backdrop-filter:blur(18px); font-size: 16px; /* Prevents auto-zoom on iOS */}
 .send-btn{ padding:12px 16px; border-radius:16px; background:rgba(120,160,255,0.8); color:white; font-weight:600; cursor: pointer;}
 </style>
 </head>
@@ -152,18 +196,16 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const client = supabase.createClient(supabaseUrl, supabaseKey);
 
 const accounts = { "Harvinder": "1234", "Monika": "5678", "Sunita": "9999" };
-
 let me = "";
 let other = "";
 let channel = null;
 
-/* 🛠 AUTO-LOGIN ON LOAD */
+/* 🛠 AUTO-LOGIN */
 window.onload = () => {
   const savedUser = localStorage.getItem("loggedInUser");
   if(savedUser && accounts[savedUser]) {
     me = savedUser;
     buildChatList();
-    // Fast skip to list without transition for better UX
     document.getElementById("pageLogin").classList.remove("active");
     document.getElementById("pageLogin").style.display = "none";
     const list = document.getElementById("pageList");
@@ -174,14 +216,39 @@ window.onload = () => {
   }
 };
 
-/* 🚪 LOGIN LOGIC */
+/* ⌨️ KEYBOARD & VIEWPORT FIXES */
+if (window.visualViewport) {
+  const chatHeader = document.getElementById('chatHeader');
+  const chatInputBar = document.getElementById('chatInputBar');
+  const chatContent = document.getElementById('chatContent');
+
+  function handleViewportChange() {
+    const vv = window.visualViewport;
+    const offset = vv.offsetTop;
+    const height = vv.height;
+    const viewportHeight = window.innerHeight;
+
+    // Pin header to the top of the visible area
+    chatHeader.style.transform = `translateY(${offset}px)`;
+    
+    // Pin input bar to the bottom of the visible area (keyboard height taken into account)
+    const keyboardHeight = viewportHeight - height;
+    chatInputBar.style.transform = `translateY(-${keyboardHeight}px)`;
+
+    // Adjust chat content scroll
+    chatContent.scrollTop = chatContent.scrollHeight;
+  }
+
+  visualViewport.addEventListener('resize', handleViewportChange);
+  visualViewport.addEventListener('scroll', handleViewportChange);
+}
+
 function loginUser(){
   const u = document.getElementById("uField").value.trim();
   const p = document.getElementById("pField").value.trim();
-
   if(accounts[u] && accounts[u] === p){
     me = u;
-    localStorage.setItem("loggedInUser", u); // Save session
+    localStorage.setItem("loggedInUser", u);
     buildChatList();
     showPage('pageList');
   } else {
@@ -190,7 +257,7 @@ function loginUser(){
 }
 
 function logoutUser() {
-  localStorage.removeItem("loggedInUser"); // Clear session
+  localStorage.removeItem("loggedInUser");
   location.reload();
 }
 
@@ -215,7 +282,6 @@ function buildChatList() {
   });
 }
 
-/* 💬 CHAT LOGIC */
 function openChat(name){
   other = name;
   document.getElementById("chattingWithName").innerText = name;
@@ -229,7 +295,6 @@ async function loadMessages(){
     .select("*")
     .or(`and(sender.eq.${me},receiver.eq.${other}),and(sender.eq.${other},receiver.eq.${me})`)
     .order("id", {ascending: true});
-
   if(error) return;
   const chatContent = document.getElementById("chatContent");
   chatContent.innerHTML = "";
@@ -247,7 +312,12 @@ async function sendMessage(){
   let val = input.value.trim();
   if(!val) return;
   const { error } = await client.from("messages").insert([{ content: val, sender: me, receiver: other }]);
-  if(!error) input.value = "";
+  if(!error) {
+      input.value = "";
+      // Force scroll on send
+      const chatContent = document.getElementById("chatContent");
+      chatContent.scrollTop = chatContent.scrollHeight;
+  }
 }
 
 function realtime(){
@@ -265,7 +335,6 @@ function realtime(){
     }).subscribe();
 }
 
-/* 🎬 UI NAVIGATION */
 function showPage(pageId) {
   const allSections = document.querySelectorAll('section');
   const targetSection = document.getElementById(pageId);
@@ -300,4 +369,3 @@ for(let i=0;i<45;i++){
 </script>
 </body>
 </html>
-
