@@ -8,7 +8,7 @@
 
 <link rel="apple-touch-icon" href="https://via.placeholder.com/180">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover, interactive-widget=resizes-content" />
   <title>Harvinder's World</title>
 
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -18,50 +18,141 @@
   <script src="https://unpkg.com/@babel/standalone@7.24.6/babel.min.js"></script>
 
   <style>
+    :root {
+      --bg: #e0e5ec;
+      --tide: linear-gradient(-45deg, #a8b2c2, #c5ccd4, #94a3b8, #b8babd);
+      --primary: #4d547d;
+      --text: #222;
+      --text-muted: #666;
+      --glass-bg: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+      --glass-s: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.2));
+      --border-tl: rgba(255,255,255,0.8);
+      --border-br: rgba(255,255,255,0.2);
+      --shadow-d: rgba(163,177,198,0.6);
+      --shadow-l: rgba(255,255,255,0.8);
+      --shadow-d-sm: rgba(163,177,198,0.5);
+      --shadow-l-sm: rgba(255,255,255,0.9);
+      --panel-bg: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.75));
+      --input-bg: rgba(0,0,0,0.03);
+      --btn-grad: linear-gradient(135deg, #6c75a3, #4d547d);
+      --bubble-own: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.5));
+      --bubble-oth: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.2));
+      --overlay: rgba(0,0,0,0.4);
+      --svg-stroke: #444;
+      --divider: rgba(0,0,0,0.4);
+    }
+    
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --tide: linear-gradient(-45deg, #020617, #0f172a, #1e293b, #0f172a);
+      --primary: #818cf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --glass-bg: linear-gradient(135deg, rgba(30,41,59,0.5), rgba(15,23,42,0.3));
+      --glass-s: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.6));
+      --border-tl: rgba(255,255,255,0.15);
+      --border-br: rgba(0,0,0,0.6);
+      --shadow-d: rgba(0,0,0,0.8);
+      --shadow-l: rgba(30,41,59,0.6);
+      --shadow-d-sm: rgba(0,0,0,0.5);
+      --shadow-l-sm: rgba(30,41,59,0.8);
+      --panel-bg: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(2,6,23,0.85));
+      --input-bg: rgba(0,0,0,0.4);
+      --btn-grad: linear-gradient(135deg, #4f46e5, #312e81);
+      --bubble-own: linear-gradient(135deg, rgba(79,70,229,0.4), rgba(49,46,129,0.2));
+      --bubble-oth: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.5));
+      --overlay: rgba(0,0,0,0.7);
+      --svg-stroke: #f8fafc;
+      --divider: rgba(255,255,255,0.3);
+    }
+
     *, *::before, *::after {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
       -webkit-font-smoothing: antialiased;
     }
-    html, body, #root {
-      margin: 0; padding: 0; width: 100%; height: 100%;
+    html, body {
+      margin: 0; padding: 0; width: 100%;
+      height: 100%;
       overflow: hidden;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #e0e5ec;
+      background: var(--bg);
+      color: var(--text);
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+    #root {
+      width: 100%; 
+      height: 100%;
+      position: absolute; top: 0; left: 0;
+      overflow: hidden;
     }
     input { outline: none; }
+    
     .glass {
-      background: rgba(255,255,255,0.25);
+      background: var(--glass-bg);
       backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-      border: 1px solid rgba(255,255,255,0.4);
+      border-top: 1.5px solid var(--border-tl);
+      border-left: 1.5px solid var(--border-tl);
+      border-right: 1px solid var(--border-br);
+      border-bottom: 1px solid var(--border-br);
+      box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.15), inset 0 2px 4px var(--border-tl);
+      will-change: transform, opacity;
+      transition: all 0.4s ease;
     }
     .glass-s {
-      background: rgba(255,255,255,0.35);
-      backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-      border: 1px solid rgba(255,255,255,0.5);
+      background: var(--glass-s);
+      backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
+      border-top: 1px solid var(--border-tl);
+      border-bottom: 1px solid var(--border-br);
+      box-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.15);
+      transition: all 0.4s ease;
+    }
+    
+    @keyframes liquidFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     .tide {
-      background: linear-gradient(to bottom, #949ca5 0%, #b8babd 30%, #e8c9ba 60%, #94a3b8 100%);
+      background: var(--tide);
+      background-size: 400% 400%;
+      animation: liquidFlow 15s ease infinite;
       background-attachment: fixed; position: relative;
+      transition: background 0.6s ease;
     }
+    
     .ns::-webkit-scrollbar { display: none; }
     .ns { -ms-overflow-style: none; scrollbar-width: none; }
 
     @keyframes orb1 { from{transform:rotate(0deg) translateX(72px) rotate(0deg)} to{transform:rotate(360deg) translateX(72px) rotate(-360deg)} }
     @keyframes orb2 { from{transform:rotate(120deg) translateX(80px) rotate(-120deg)} to{transform:rotate(480deg) translateX(80px) rotate(-480deg)} }
     @keyframes orb3 { from{transform:rotate(240deg) translateX(65px) rotate(-240deg)} to{transform:rotate(-120deg) translateX(65px) rotate(120deg)} }
-    .od1{animation:orb1 4s linear infinite}
-    .od2{animation:orb2 6s linear infinite}
-    .od3{animation:orb3 5s linear infinite}
+    .od1{animation:orb1 8s linear infinite}
+    .od2{animation:orb2 10s linear infinite}
+    .od3{animation:orb3 9s linear infinite}
 
-    @keyframes lp { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-    .lp{animation:lp 2.5s ease-in-out infinite}
+    @keyframes lp { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
+    .lp{animation:lp 3s ease-in-out infinite}
 
-    @keyframes rip { 0%{transform:scale(1);opacity:0.3} 100%{transform:scale(2.2);opacity:0} }
-    .pr{animation:rip 2.5s cubic-bezier(0,0.2,0.8,1) infinite}
+    @keyframes rip { 0%{transform:scale(1);opacity:0.4} 100%{transform:scale(2.5);opacity:0} }
+    .pr{animation:rip 3s cubic-bezier(0.23, 1, 0.32, 1) infinite}
 
     @keyframes lb { 0%{width:0%} 100%{width:100%} }
-    .lb{animation:lb 2.5s ease-in-out forwards}
+    .lb{animation:lb 2.8s cubic-bezier(0.65, 0, 0.35, 1) forwards}
+    
+    .date-divider {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--divider);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.1);
+    }
   </style>
 </head>
 <body>
@@ -106,20 +197,36 @@
       const [page,     setPage]     = useState("login");
       const [panel,    setPanel]    = useState(false);
       const [loading,  setLoading]  = useState(false);
+      
+      // Theme State
+      const [isDark,   setIsDark]   = useState(localStorage.getItem("hw_dark") === "true");
 
       const meRef  = useRef(me);
       const othRef = useRef(other);
       useEffect(() => { meRef.current  = me;    }, [me]);
       useEffect(() => { othRef.current = other; }, [other]);
 
+      useEffect(() => {
+        localStorage.setItem("hw_dark", isDark);
+        document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      }, [isDark]);
+
       const addMsg = useCallback((msg) => {
         const myMe  = meRef.current;
         const myOth = othRef.current;
+
         const rel = (msg.sender===myMe && msg.receiver===myOth) ||
                     (msg.sender===myOth && msg.receiver===myMe);
-        if (rel) setMessages(prev => [...prev, msg]);
+        if (rel) setMessages(prev => {
+            if(prev.find(m => m.id === msg.id)) return prev;
+            return [...prev, msg];
+        });
         if (msg.receiver===myMe && msg.sender!==myMe)
           notify(msg.sender, msg.content || "Sent a file");
+      }, []);
+
+      const updateMsg = useCallback((msg) => {
+        setMessages(prev => prev.map(m => m.id === msg.id ? msg : m));
       }, []);
 
       const startRT = useCallback(() => {
@@ -128,8 +235,14 @@
           .on("postgres_changes",
             { event: "INSERT", schema: "public", table: "messages" },
             pl => addMsg(pl.new))
+          .on("postgres_changes",
+            { event: "UPDATE", schema: "public", table: "messages" },
+            pl => updateMsg(pl.new))
+          .on("postgres_changes",
+            { event: "DELETE", schema: "public", table: "messages" },
+            pl => setMessages(prev => prev.filter(m => m.id !== pl.old.id)))
           .subscribe();
-      }, [addMsg]);
+      }, [addMsg, updateMsg]);
 
       const stopRT = useCallback(() => {
         if (_channel) { sb.removeChannel(_channel); _channel = null; }
@@ -182,14 +295,33 @@
         const { data } = await sb.from("messages").select("*")
           .or("and(sender.eq." + myMe + ",receiver.eq." + username + "),and(sender.eq." + username + ",receiver.eq." + myMe + ")")
           .order("id", { ascending: true });
-        if (data) setMessages(data);
+        
+        if (data) {
+            setMessages(data);
+            
+            const hasUnread = data.some(m => m.receiver === myMe && m.sender === username && m.seen === false);
+            if (hasUnread) {
+              await sb.from("messages")
+                .update({ seen: true })
+                .eq("receiver", myMe)
+                .eq("sender", username)
+                .eq("seen", false);
+            }
+        }
       }, [avatars]);
 
       const sendMsg = useCallback(async (text) => {
         if (!text.trim()) return;
         await sb.from("messages").insert([{
-          content: text, sender: meRef.current, receiver: othRef.current, seen: false
+          content: text, sender: meRef.current, receiver: othRef.current, seen: false,
+          created_at: new Date().toISOString()
         }]);
+      }, []);
+
+      const deleteMsg = useCallback(async (id) => {
+        if (!id) return;
+        const { error } = await sb.from("messages").delete().eq("id", id);
+        if(!error) setMessages(prev => prev.filter(m => m.id !== id));
       }, []);
 
       const uploadMedia = useCallback(async (file) => {
@@ -202,6 +334,7 @@
         await sb.from("messages").insert([{
           sender: meRef.current, receiver: othRef.current, content: "",
           [isImg ? "image" : "audio"]: data.publicUrl,
+          created_at: new Date().toISOString()
         }]);
       }, []);
 
@@ -228,7 +361,8 @@
         <Ctx.Provider value={{
           me, meAvatar, users, avatars, messages, other, otherAv,
           page, setPage, panel, setPanel, loading,
-          login, logout, openChat, sendMsg, uploadMedia,
+          isDark, setIsDark,
+          login, logout, openChat, sendMsg, deleteMsg, uploadMedia,
           updateProfile, buildUsers, startRT,
         }}>
           {children}
@@ -240,8 +374,8 @@
 
     const LogoSVG = ({ w = 56 }) => (
       <svg style={{ width: w, opacity: 0.8 }} viewBox="0 0 200 80" fill="none" strokeWidth="4" strokeLinecap="round">
-        <path d="M30 40 L60 20 L90 40 L120 20 L150 40" stroke="#4d547d" />
-        <path d="M30 40 L60 60 L90 40 L120 60 L150 40" stroke="#4d547d" />
+        <path d="M30 40 L60 20 L90 40 L120 20 L150 40" stroke="var(--primary)" />
+        <path d="M30 40 L60 60 L90 40 L120 60 L150 40" stroke="var(--primary)" />
       </svg>
     );
 
@@ -251,9 +385,11 @@
         <div style={{
           width: size, height: size, borderRadius: "50%", flexShrink: 0,
           background: src ? "url(" + src + ") center/cover no-repeat" : "hsl(" + hue + ",50%,55%)",
-          border: "2px solid white",
+          border: "2.5px solid var(--border-tl)",
           display: "flex", alignItems: "center", justifyContent: "center",
           color: "white", fontWeight: 700, fontSize: size * 0.28,
+          boxShadow: "0 6px 15px rgba(0,0,0,0.15), inset 0 2px 5px rgba(255,255,255,0.2)",
+          transform: "translateZ(0)"
         }}>
           {!src && name.slice(0, 2).toUpperCase()}
         </div>
@@ -261,11 +397,11 @@
     }
 
     const PV = {
-      initial: { opacity: 0, scale: 1.08, y: 20, filter: "blur(10px)" },
-      animate: { opacity: 1, scale: 1, y: 0, filter: "blur(0px)",
-        transition: { duration: 0.7, ease: [0.2, 0.8, 0.2, 1] } },
-      exit: { opacity: 0, scale: 0.95, y: -15, filter: "blur(8px)",
-        transition: { duration: 0.45, ease: [0.4, 0, 1, 1] } },
+      initial: { opacity: 0, x: 20, filter: "blur(10px)" },
+      animate: { opacity: 1, x: 0, filter: "blur(0px)",
+        transition: { duration: 0.6, ease: [0.23, 1, 0.32, 1] } },
+      exit: { opacity: 0, x: -20, filter: "blur(8px)",
+        transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
     };
 
     function SplashScreen({ visible }) {
@@ -273,32 +409,32 @@
         <AnimatePresence>
           {visible && (
             <motion.div
-              style={{ position: "fixed", inset: 0, zIndex: 9999, background: "#e0e5ec",
+              style={{ position: "fixed", inset: 0, zIndex: 9999, background: "var(--bg)",
                 display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
-              initial={{ opacity: 1, y: 0 }}
-              exit={{ y: "-100%", opacity: 0 }}
-              transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0, scale: 1.1 }}
+              transition={{ duration: 0.9, ease: [0.23, 1, 0.32, 1] }}
             >
               <div style={{ position: "relative", width: 144, height: 144,
                 display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <div className="pr" style={{ position: "absolute", width: 96, height: 96,
-                  borderRadius: "50%", background: "#4d547d", zIndex: 1 }} />
+                  borderRadius: "50%", background: "var(--primary)", zIndex: 1 }} />
                 <div className="lp" style={{ position: "relative", zIndex: 2, width: 96, height: 96,
-                  borderRadius: "50%", background: "#e0e5ec",
+                  borderRadius: "50%", background: "var(--bg)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: "10px 10px 20px #b8bec5, -10px -10px 20px #ffffff" }}>
+                  boxShadow: "10px 10px 20px var(--shadow-d), -10px -10px 20px var(--shadow-l)" }}>
                   <LogoSVG w={56} />
                 </div>
               </div>
               <motion.div style={{ marginTop: 32, textAlign: "center", padding: "0 20px" }}
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}>
-                <h1 style={{ color: "#4d547d", fontSize: 30, fontWeight: 900, margin: 0 }}>Harvinder's World</h1>
-                <p style={{ color: "#888", fontSize: 13, marginTop: 8 }}>It's Harvinder's world, you're just chatting in it.</p>
+                <h1 style={{ color: "var(--primary)", fontSize: 30, fontWeight: 900, margin: 0 }}>Harvinder's World</h1>
+                <p style={{ color: "var(--text-muted)", fontSize: 13, marginTop: 8 }}>Elevated conversation experience.</p>
               </motion.div>
               <div style={{ position: "absolute", bottom: 56, width: 144, height: 4,
                 borderRadius: 4, overflow: "hidden", background: "rgba(0,0,0,0.06)" }}>
-                <div className="lb" style={{ height: "100%", background: "#4d547d", borderRadius: 4 }} />
+                <div className="lb" style={{ height: "100%", background: "var(--primary)", borderRadius: 4 }} />
               </div>
             </motion.div>
           )}
@@ -322,20 +458,21 @@
       };
 
       const inp = {
-        border: "none", background: "#e0e5ec", color: "#4d547d",
-        boxShadow: "inset 6px 6px 12px #b8bec5, inset -6px -6px 12px #ffffff",
+        border: "1px solid var(--border-tl)", background: "var(--bg)", color: "var(--primary)",
+        boxShadow: "inset 6px 6px 12px var(--shadow-d-sm), inset -6px -6px 12px var(--shadow-l-sm)",
         borderRadius: 20, padding: "16px 20px", fontSize: 15, fontWeight: 500, width: "100%",
+        transition: "box-shadow 0.3s ease"
       };
 
       return (
-        <div style={{ width: "100%", height: "100%", background: "#e0e5ec",
+        <div style={{ width: "100%", height: "100%", background: "var(--bg)",
           overflowY: "auto", display: "flex", justifyContent: "center", paddingTop: 80 }}>
           <div style={{ width: "100%", maxWidth: 360, padding: "0 24px 40px", textAlign: "center" }}>
 
             <div style={{ position: "relative", width: 176, height: 176, margin: "0 auto",
               display: "flex", alignItems: "center", justifyContent: "center" }}>
               <div style={{ position: "absolute", width: 176, height: 176, borderRadius: "50%",
-                border: "1px solid rgba(255,255,255,0.2)" }} />
+                border: "2px solid var(--border-tl)", boxShadow: "0 10px 20px rgba(0,0,0,0.15)" }} />
               {["od1", "od2", "od3"].map((cls, i) => (
                 <div key={i} className={cls} style={{ position: "absolute", width: 6, height: 6,
                   borderRadius: "50%", background: "white",
@@ -343,27 +480,27 @@
               ))}
               <div style={{ width: 112, height: 112, borderRadius: "50%", position: "relative", zIndex: 2,
                 display: "flex", alignItems: "center", justifyContent: "center",
-                background: "#e0e5ec",
-                boxShadow: "9px 9px 16px rgba(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
+                background: "var(--bg)", border: "1px solid var(--border-tl)",
+                boxShadow: "10px 10px 20px var(--shadow-d), -10px -10px 20px var(--shadow-l), inset 2px 2px 5px var(--border-tl)" }}>
                 <LogoSVG w={64} />
               </div>
             </div>
 
             <div style={{ marginTop: 20, display: "flex", flexWrap: "wrap",
-              justifyContent: "center", color: "#4d547d" }}>
+              justifyContent: "center", color: "var(--primary)", textShadow: "2px 2px 4px var(--shadow-d)" }}>
               {APP.split("").map((ch, i) => (
                 <motion.span key={i}
                   style={{ display: "inline-block", fontSize: 32, fontWeight: 900, lineHeight: 1 }}
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 1.8, delay: i * 0.07, repeat: Infinity, repeatDelay: 7, ease: "easeInOut" }}>
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 2.2, delay: i * 0.05, repeat: Infinity, repeatDelay: 5, ease: "easeInOut" }}>
                   {ch === " " ? "\u00A0" : ch}
                 </motion.span>
               ))}
             </div>
 
             <motion.div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 20 }}
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.65, ease: [0.32, 0.72, 0, 1] }}>
+              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.7, ease: [0.23, 1, 0.32, 1] }}>
               <input style={inp} type="text" placeholder="Username"
                 value={user} onChange={e => { setUser(e.target.value); setErr(""); }}
                 onKeyDown={e => e.key === "Enter" && go()} />
@@ -371,25 +508,26 @@
                 value={pass} onChange={e => { setPass(e.target.value); setErr(""); }}
                 onKeyDown={e => e.key === "Enter" && go()} />
               {err && (
-                <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+                <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
                   style={{ color: "#ff3b30", fontSize: 12, fontWeight: 500, margin: "-8px 0 0" }}>
                   {err}
                 </motion.p>
               )}
-              <button disabled={loading}
+              <motion.button disabled={loading}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.96 }}
                 style={{ width: "80%", margin: "0 auto", padding: "16px 0", borderRadius: 20,
-                  border: "none", cursor: "pointer", fontSize: 15, fontWeight: 700,
-                  background: "#e0e5ec", color: "#4d547d",
+                  border: "1px solid var(--border-tl)", cursor: "pointer", fontSize: 15, fontWeight: 700,
+                  background: "var(--bg)", color: "var(--primary)",
                   boxShadow: pressed
-                    ? "inset 4px 4px 8px #b8bec5, inset -4px -4px 8px #ffffff"
-                    : "7px 7px 15px #b8bec5, -7px -7px 15px #ffffff",
-                  transform: pressed ? "scale(0.94)" : "scale(1)",
-                  transition: "all 0.3s", opacity: loading ? 0.7 : 1 }}
+                    ? "inset 6px 6px 12px var(--shadow-d-sm), inset -6px -6px 12px var(--shadow-l-sm)"
+                    : "8px 8px 16px var(--shadow-d), -8px -8px 16px var(--shadow-l)",
+                  transition: "all 0.3s cubic-bezier(0.23, 1, 0.32, 1)", opacity: loading ? 0.7 : 1 }}
                 onPointerDown={() => setPressed(true)}
                 onPointerUp={() => { setPressed(false); go(); }}
                 onPointerLeave={() => setPressed(false)}>
                 {loading ? "Signing in..." : "Sign In"}
-              </button>
+              </motion.button>
             </motion.div>
           </div>
         </div>
@@ -398,7 +536,7 @@
 
     function ChatListPage() {
       const { me, meAvatar, users, avatars, openChat, logout,
-              panel, setPanel, updateProfile } = useApp();
+              panel, setPanel, updateProfile, isDark, setIsDark } = useApp();
       const [editName, setEditName] = useState("");
       const [editPass, setEditPass] = useState("");
       const [avFile,   setAvFile]   = useState(null);
@@ -427,53 +565,74 @@
 
             <motion.div className="glass"
               style={{ height: 75, borderRadius: 35, display: "flex", alignItems: "center",
-                padding: "0 20px", justifyContent: "space-between", marginBottom: 24,
-                boxShadow: "0 10px 30px rgba(0,0,0,0.08)" }}
-              initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}>
-              <div style={{ width: 44, height: 44, borderRadius: "50%", background: "white",
-                boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-                display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg viewBox="0 0 200 80" style={{ width: 24 }}>
-                  <path d="M30 40 L60 20 L90 40 L120 20 L150 40" stroke="#111" strokeWidth="8" fill="none" />
-                  <path d="M30 40 L60 60 L90 40 L120 60 L150 40" stroke="#111" strokeWidth="8" fill="none" />
+                padding: "0 20px", justifyContent: "space-between", marginBottom: 24 }}
+              initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}>
+              
+              {/* Logo now functions as the Dark Mode Toggle */}
+              <motion.div 
+                onClick={() => setIsDark(!isDark)}
+                whileTap={{ scale: 0.85, rotate: 180 }}
+                style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--panel-bg)",
+                  boxShadow: "0 6px 12px rgba(0,0,0,0.1), inset 0 2px 4px var(--border-tl)",
+                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <svg viewBox="0 0 200 80" style={{ width: 24, filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.2))" }}>
+                  <path d="M30 40 L60 20 L90 40 L120 20 L150 40" stroke="var(--svg-stroke)" strokeWidth="8" fill="none" />
+                  <path d="M30 40 L60 60 L90 40 L120 60 L150 40" stroke="var(--svg-stroke)" strokeWidth="8" fill="none" />
                 </svg>
+              </motion.div>
+
+              <span style={{ flex: 1, textAlign: "center", fontWeight: 800, color: "var(--text)", fontSize: 18, textShadow: "0 2px 4px rgba(255,255,255,0.1)" }}>Messages</span>
+              
+              <div style={{ display: 'flex', gap: 10 }}>
+                {/* Profile Settings */}
+                <motion.button onClick={() => setPanel(true)}
+                  whileTap={{ rotate: 90, scale: 0.9 }}
+                  style={{ width: 40, height: 40, borderRadius: "50%",
+                    borderTop: "1px solid var(--border-tl)", borderLeft: "1px solid var(--border-tl)",
+                    borderRight: "1px solid var(--border-br)", borderBottom: "1px solid var(--border-br)",
+                    background: "var(--glass-bg)",
+                    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                    cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg viewBox="0 0 24 24" style={{ fill: "none", stroke: "var(--svg-stroke)", width: 22, strokeWidth: 2.5, filter: "drop-shadow(0 1px 1px var(--border-tl))" }}>
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.3.7a7 7 0 0 0-1.7-1l-.3-2.5h-4l-.3 2.5a7 7 0 0 0-1.7 1l-2.3-.7-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.3-.7a7 7 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7 7 0 0 0 1.7-1l2.3.7 2-3.5-2-1.5c.1-.3.1-.7.1-1z" />
+                  </svg>
+                </motion.button>
               </div>
-              <span style={{ flex: 1, textAlign: "center", fontWeight: 700, color: "#444", fontSize: 18 }}>Messages</span>
-              <button onClick={() => setPanel(true)}
-                style={{ width: 40, height: 40, borderRadius: "50%",
-                  border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.3)",
-                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg viewBox="0 0 24 24" style={{ fill: "none", stroke: "#444", width: 22, strokeWidth: 2.5 }}>
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.3.7a7 7 0 0 0-1.7-1l-.3-2.5h-4l-.3 2.5a7 7 0 0 0-1.7 1l-2.3-.7-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.3-.7a7 7 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7 7 0 0 0 1.7-1l2.3.7 2-3.5-2-1.5c.1-.3.1-.7.1-1z" />
-                </svg>
-              </button>
             </motion.div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <motion.div 
+              style={{ display: "flex", flexDirection: "column", gap: 14 }}
+              initial="hidden" animate="show"
+              variants={{
+                show: { transition: { staggerChildren: 0.08 } }
+              }}>
               {others.length === 0 && (
-                <div style={{ textAlign: "center", padding: "48px 0", color: "#999", fontSize: 14 }}>
+                <div style={{ textAlign: "center", padding: "48px 0", color: "var(--text-muted)", fontSize: 14, fontWeight: 600, textShadow: "0 1px 2px rgba(255,255,255,0.1)" }}>
                   No other users yet.
                 </div>
               )}
-              {others.map((u, i) => (
+              {others.map((u) => (
                 <motion.div key={u.username} className="glass"
-                  style={{ display: "flex", alignItems: "center", gap: 12, padding: 16,
-                    borderRadius: 30, cursor: "pointer", boxShadow: "0 8px 20px rgba(0,0,0,0.05)" }}
-                  initial={{ opacity: 0, y: 22, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: i * 0.07, duration: 0.5, ease: [0.175, 0.885, 0.32, 1.275] }}
-                  whileTap={{ scale: 0.96 }}
+                  style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px",
+                    borderRadius: 30, cursor: "pointer" }}
+                  variants={{
+                    hidden: { opacity: 0, y: 20, scale: 0.95 },
+                    show: { opacity: 1, y: 0, scale: 1 }
+                  }}
+                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
                   onClick={() => openChat(u.username, avatars)}>
-                  <Avatar src={avatars[u.username]} name={u.username} size={50} />
+                  <Avatar src={avatars[u.username]} name={u.username} size={54} />
                   <div>
-                    <div style={{ fontWeight: 600, color: "#333", fontSize: 14 }}>{u.username}</div>
-                    <div style={{ fontSize: 12, color: "#888", marginTop: 2 }}>Tap to message</div>
+                    <div style={{ fontWeight: 700, color: "var(--text)", fontSize: 15, textShadow: "0 1px 1px rgba(255,255,255,0.1)" }}>{u.username}</div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4, fontWeight: 500 }}>Tap to message</div>
                   </div>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           <AnimatePresence>
@@ -481,51 +640,58 @@
               <>
                 <motion.div
                   style={{ position: "fixed", inset: 0, zIndex: 2000,
-                    background: "rgba(0,0,0,0.2)", backdropFilter: "blur(10px)" }}
+                    background: "var(--overlay)", backdropFilter: "blur(15px)" }}
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                   transition={{ duration: 0.4 }}
                   onClick={() => setPanel(false)} />
                 <motion.div
-                  style={{ position: "fixed", zIndex: 2001, width: "85%", maxWidth: 300,
+                  style={{ position: "fixed", zIndex: 2001, width: "85%", maxWidth: 320,
                     top: "50%", left: "50%",
-                    background: "rgba(255,255,255,0.88)", backdropFilter: "blur(50px)",
-                    border: "1px solid white", borderRadius: 35, padding: 25,
-                    boxShadow: "0 30px 60px rgba(0,0,0,0.15)" }}
-                  initial={{ opacity: 0, x: "-50%", y: "-50%", scale: 0.9 }}
+                    background: "var(--panel-bg)",
+                    backdropFilter: "blur(50px)",
+                    borderTop: "2px solid var(--border-tl)", borderLeft: "2px solid var(--border-tl)",
+                    borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)",
+                    borderRadius: 35, padding: 25,
+                    boxShadow: "0 30px 60px rgba(0,0,0,0.5), inset 0 2px 5px var(--border-tl)" }}
+                  initial={{ opacity: 0, x: "-50%", y: "-40%", scale: 0.9 }}
                   animate={{ opacity: 1, x: "-50%", y: "-50%", scale: 1 }}
-                  exit={{ opacity: 0, x: "-50%", y: "-50%", scale: 0.9 }}
-                  transition={{ duration: 0.5, ease: [0.175, 0.885, 0.32, 1.275] }}>
-                  <div style={{ fontWeight: 700, color: "#555", fontSize: 15, marginBottom: 16 }}>Profile Settings</div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                    <Avatar src={avPrev || meAvatar} name={me} size={52} />
+                  exit={{ opacity: 0, x: "-50%", y: "-45%", scale: 0.9 }}
+                  transition={{ type: "spring", damping: 22, stiffness: 300 }}>
+                  <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 16, marginBottom: 20, textAlign: "center" }}>Profile Settings</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
+                    <Avatar src={avPrev || meAvatar} name={me} size={60} />
                     <div>
-                      <div style={{ fontWeight: 600, color: "#444", fontSize: 14 }}>{me}</div>
+                      <div style={{ fontWeight: 700, color: "var(--text)", fontSize: 15 }}>{me}</div>
                       <button onClick={() => fileRef.current && fileRef.current.click()}
-                        style={{ fontSize: 12, color: "#4d547d", border: "none",
-                          background: "none", cursor: "pointer", padding: 0, marginTop: 4, fontWeight: 500 }}>
+                        style={{ fontSize: 12, color: "var(--primary)", border: "none",
+                          background: "none", cursor: "pointer", padding: 0, marginTop: 4, fontWeight: 600 }}>
                         Change photo
                       </button>
                       <input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*" onChange={onAv} />
                     </div>
                   </div>
-                  <div style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>Update Name</div>
+                  <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6, fontWeight: 600, marginLeft: 4 }}>Update Name</div>
                   <input value={editName} onChange={e => setEditName(e.target.value)} placeholder={me}
-                    style={{ width: "100%", padding: 12, borderRadius: 12, fontSize: 13, border: "none",
-                      background: "rgba(0,0,0,0.05)", color: "#000", marginBottom: 12 }} />
-                  <div style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>Change Password</div>
+                    style={{ width: "100%", padding: "14px 16px", borderRadius: 16, fontSize: 14, border: "none",
+                      background: "var(--input-bg)", color: "var(--text)", marginBottom: 16,
+                      boxShadow: "inset 3px 3px 6px rgba(0,0,0,0.1), inset -3px -3px 6px var(--border-tl)" }} />
+                  <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6, fontWeight: 600, marginLeft: 4 }}>Change Password</div>
                   <input type="password" value={editPass} onChange={e => setEditPass(e.target.value)}
                     placeholder="New password..."
-                    style={{ width: "100%", padding: 12, borderRadius: 12, fontSize: 13, border: "none",
-                      background: "rgba(0,0,0,0.05)", color: "#000", marginBottom: 16 }} />
-                  <button onClick={save} disabled={saving}
-                    style={{ width: "100%", padding: 12, borderRadius: 12, border: "none",
-                      cursor: "pointer", fontSize: 14, fontWeight: 700, color: "white",
-                      background: saving ? "#ccc" : "#4d547d",
-                      boxShadow: "0 4px 15px rgba(77,84,125,0.35)" }}>
+                    style={{ width: "100%", padding: "14px 16px", borderRadius: 16, fontSize: 14, border: "none",
+                      background: "var(--input-bg)", color: "var(--text)", marginBottom: 24,
+                      boxShadow: "inset 3px 3px 6px rgba(0,0,0,0.1), inset -3px -3px 6px var(--border-tl)" }} />
+                  <motion.button onClick={save} disabled={saving}
+                    whileTap={{ scale: 0.96 }}
+                    style={{ width: "100%", padding: 14, borderRadius: 16, border: "none",
+                      cursor: "pointer", fontSize: 15, fontWeight: 800, color: "white",
+                      background: saving ? "#ccc" : "var(--btn-grad)",
+                      boxShadow: "0 8px 20px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.2)",
+                      transition: "all 0.3s" }}>
                     {saved ? "Saved!" : saving ? "Saving..." : "Save Profile"}
-                  </button>
+                  </motion.button>
                   <button onClick={logout}
-                    style={{ width: "100%", marginTop: 12, fontSize: 14, fontWeight: 600,
+                    style={{ width: "100%", marginTop: 16, fontSize: 14, fontWeight: 700,
                       color: "#ff3b30", border: "none", background: "none", cursor: "pointer" }}>
                     Logout
                   </button>
@@ -537,72 +703,114 @@
       );
     }
 
-    function MsgBubble({ msg, isOwn }) {
-      const t = msg.created_at
-        ? new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+    function MsgBubble({ msg, isOwn, onImageClick, onDelete }) {
+      const dateObj = msg.created_at ? new Date(msg.created_at) : null;
+      const t = dateObj ? dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+      
+      const lastClick = useRef(0);
+
+      const handleTap = (e) => {
+        const now = Date.now();
+        if (now - lastClick.current < 300) {
+          if (isOwn && msg.id) {
+            if (window.confirm("Delete this message?")) onDelete(msg.id);
+          }
+        }
+        lastClick.current = now;
+      };
+
       return (
         <motion.div style={{ display: "flex", justifyContent: isOwn ? "flex-end" : "flex-start" }}
-          initial={{ opacity: 0, scale: 0.65, y: 18, filter: "blur(5px)" }}
+          initial={{ opacity: 0, scale: 0.85, y: 15, filter: "blur(6px)" }}
           animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.48, ease: [0.175, 0.885, 0.32, 1.275] }}>
-          <div style={{ maxWidth: "75%", padding: "14px 18px", borderRadius: 22,
-            background: isOwn ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.4)",
-            backdropFilter: "blur(20px)", color: isOwn ? "#000" : "#333",
-            border: "1px solid " + (isOwn ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.4)"),
-            boxShadow: "0 4px 15px rgba(0,0,0,0.04)" }}>
-            {msg.content && <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5 }}>{msg.content}</p>}
+          transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}>
+          <div 
+            onClick={handleTap}
+            style={{ maxWidth: "78%", padding: "14px 20px", borderRadius: 24,
+            background: isOwn ? "var(--bubble-own)" : "var(--bubble-oth)",
+            backdropFilter: "blur(20px)", color: "var(--text)",
+            borderTop: "1.5px solid var(--border-tl)",
+            borderLeft: "1.5px solid var(--border-tl)",
+            borderBottom: "1px solid var(--border-br)",
+            borderRight: "1px solid var(--border-br)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.15), inset 0 2px 6px var(--border-tl)",
+            willChange: "transform", position: "relative",
+            userSelect: "none", WebkitTouchCallout: "none" }}>
+            
+            {msg.content && <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5, fontWeight: 500 }}>{msg.content}</p>}
+            
             {msg.image && (
-              <img src={msg.image} alt="media" onClick={() => window.open(msg.image)}
-                style={{ maxWidth: "100%", maxHeight: 220, borderRadius: 12, marginTop: 4,
-                  cursor: "pointer", objectFit: "cover", display: "block" }} />
+              <motion.img src={msg.image} alt="media" onClick={(e) => { e.stopPropagation(); onImageClick(msg.image); }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                style={{ maxWidth: "100%", maxHeight: 220, borderRadius: 14, marginTop: 6,
+                  cursor: "pointer", objectFit: "cover", display: "block",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }} />
             )}
             {msg.audio && (
-              <audio controls style={{ width: "100%", height: 30, marginTop: 6 }}>
+              <audio controls style={{ width: "100%", height: 35, marginTop: 8, filter: "var(--svg-drop)" }}>
                 <source src={msg.audio} />
               </audio>
             )}
-            {t && <p style={{ margin: "4px 0 0", fontSize: 10, color: "#aaa", textAlign: "right" }}>{t}</p>}
+            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, marginTop: 6 }}>
+              {t && <span style={{ fontSize: 10, fontWeight: 600, color: isOwn ? "var(--text-muted)" : "var(--text-muted)", opacity: 0.8 }}>{t}</span>}
+              {isOwn && (
+                <span style={{ fontSize: 13, color: msg.seen ? "var(--primary)" : "var(--text-muted)", lineHeight: 1, fontWeight: 900 }}>
+                   {msg.seen ? "✓✓" : "✓"}
+                </span>
+              )}
+            </div>
           </div>
         </motion.div>
       );
     }
 
     function ChatBoxPage() {
-      const { me, messages, other, otherAv, setPage, sendMsg, uploadMedia } = useApp();
+      const { me, messages, other, otherAv, setPage, sendMsg, deleteMsg, uploadMedia } = useApp();
       const [text, setText] = useState("");
+      const [fullScreenImage, setFullScreenImage] = useState(null);
       const chatRef = useRef(null);
       const fileRef = useRef(null);
+      const inpRef = useRef(null);
+
+      const scrollToBottom = () => {
+        if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      };
 
       useEffect(() => {
-        if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
+        scrollToBottom();
       }, [messages]);
 
       useEffect(() => {
-        if (!window.visualViewport) return;
-        const sync = () => {
-          const bar = document.getElementById("hw-bar");
-          const hdr = document.getElementById("hw-hdr");
-          if (!bar || !hdr) return;
-          
-          const vv = window.visualViewport;
-          const off = window.innerHeight - vv.height;
-          
-          // Apply inverse transform to header to keep it at the top of the actual viewport
-          hdr.style.transform = `translateY(${vv.offsetTop}px) translateZ(0)`;
-          // Move the input bar up with the keyboard
-          bar.style.transform = `translateY(-${off}px) translateZ(0)`;
-          
-          if (off > 0 && chatRef.current) {
-             chatRef.current.scrollTop = chatRef.current.scrollHeight;
-          }
-        };
-        window.visualViewport.addEventListener("resize", sync);
-        window.visualViewport.addEventListener("scroll", sync);
-        return () => {
-          window.visualViewport.removeEventListener("resize", sync);
-          window.visualViewport.removeEventListener("scroll", sync);
-        };
+        window.visualViewport?.addEventListener("resize", scrollToBottom);
+        return () => window.visualViewport?.removeEventListener("resize", scrollToBottom);
       }, []);
+
+      const groupedMessages = [];
+      let lastDate = "";
+      messages.forEach(m => {
+        let label = "Previous Messages";
+        if (m.created_at) {
+          const dateObj = new Date(m.created_at);
+          const d = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+          
+          const todayObj = new Date();
+          const today = todayObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+          
+          const yesterdayObj = new Date(Date.now() - 86400000);
+          const yesterday = yesterdayObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+          
+          label = d;
+          if (d === today) label = "Today";
+          else if (d === yesterday) label = "Yesterday";
+        }
+        
+        if (label !== lastDate) {
+          groupedMessages.push({ type: 'date', label });
+          lastDate = label;
+        }
+        groupedMessages.push({ type: 'msg', data: m });
+      });
 
       const send = async () => {
         const t = text.trim(); if (!t) return;
@@ -616,57 +824,144 @@
       };
 
       return (
-        <div className="tide" style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
-          {/* Header is fixed to top - doesn't move with keyboard transform */}
+        <div className="tide" style={{ 
+          width: "100%", height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" 
+        }}>
+          
           <div id="hw-hdr" className="glass-s" style={{
-            position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
+            flexShrink: 0,
+            zIndex: 1000,
             height: "calc(75px + env(safe-area-inset-top))",
             paddingTop: "env(safe-area-inset-top)",
-            display: "flex", alignItems: "center", gap: 12, padding: "0 18px",
-            borderBottom: "1px solid rgba(255,255,255,0.3)",
-            willChange: "transform" }}>
-            <motion.button onClick={() => setPage("list")} whileTap={{ scale: 0.85 }}
-              style={{ fontSize: 24, color: "#666", border: "none", background: "none",
-                cursor: "pointer", paddingRight: 8, lineHeight: 1 }}>&#8592;</motion.button>
-            <Avatar src={otherAv} name={other} size={36} />
+            display: "flex", alignItems: "center", gap: 14, padding: "0 20px" }}>
+            <motion.button onClick={() => setPage("list")} whileTap={{ x: -5, scale: 0.9 }}
+              style={{ fontSize: 26, color: "var(--text)", border: "none", background: "none",
+                cursor: "pointer", paddingRight: 4, lineHeight: 1, filter: "drop-shadow(0 1px 1px var(--border-tl))" }}>&#8592;</motion.button>
+            <Avatar src={otherAv} name={other} size={40} />
             <div>
-              <div style={{ fontWeight: 700, color: "#333", fontSize: 14 }}>{other}</div>
-              <div style={{ fontSize: 11, color: "#aaa" }}>Active now</div>
+              <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 16, textShadow: "0 1px 1px rgba(255,255,255,0.1)" }}>{other}</div>
+              <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600 }}>Active now</div>
             </div>
           </div>
 
-          {/* Chat area is fixed, so it doesn't move with the keyboard transform */}
           <div ref={chatRef} className="ns" style={{
-            position: "fixed",
-            top: "calc(85px + env(safe-area-inset-top))",
-            bottom: 100, left: 0, right: 0,
-            overflowY: "auto", padding: "16px 16px 8px",
-            display: "flex", flexDirection: "column", gap: 10 }}>
-            {messages.map((m, i) => <MsgBubble key={m.id || i} msg={m} isOwn={m.sender === me} />)}
+            flex: 1,
+            overflowY: "auto", 
+            padding: "20px 16px 0px 16px",
+            display: "flex", flexDirection: "column", gap: 12,
+            scrollBehavior: "smooth", WebkitOverflowScrolling: "touch" }}>
+            {groupedMessages.map((item, i) => (
+              item.type === 'date' ? (
+                <div key={"date-"+i} className="date-divider">{item.label}</div>
+              ) : (
+                <MsgBubble 
+                  key={item.data.id || i} 
+                  msg={item.data} 
+                  isOwn={item.data.sender === me} 
+                  onImageClick={setFullScreenImage} 
+                  onDelete={deleteMsg}
+                />
+              )
+            ))}
+            <div style={{ height: 16, flexShrink: 0 }}></div>
           </div>
 
-          {/* Input bar moves based on translateY calculated from visualViewport */}
-          <div id="hw-bar" style={{
-            position: "fixed", left: 16, right: 16, bottom: 20, zIndex: 1001,
-            display: "flex", alignItems: "center", gap: 8,
-            padding: "10px 16px", borderRadius: 30,
-            background: "rgba(255,255,255,0.3)", backdropFilter: "blur(40px)",
-            border: "1px solid rgba(255,255,255,0.4)",
-            boxShadow: "0 15px 35px rgba(0,0,0,0.1)", willChange: "transform" }}>
-            <label style={{ fontSize: 20, cursor: "pointer", userSelect: "none", flexShrink: 0 }}>
-              +<input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*,audio/*" onChange={onFile} />
-            </label>
-            <input type="text" placeholder="Message..." value={text}
-              onChange={e => setText(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && send()}
-              style={{ flex: 1, border: "none", fontSize: 14, padding: "8px 12px",
-                borderRadius: 20, background: "rgba(255,255,255,0.3)", color: "#000" }} />
-            <motion.button onClick={send} whileTap={{ scale: 0.82 }}
-              style={{ width: 36, height: 36, borderRadius: "50%", border: "none",
-                cursor: "pointer", background: "#4d547d", color: "white", fontSize: 16,
-                fontWeight: 700, flexShrink: 0, display: "flex", alignItems: "center",
-                justifyContent: "center", boxShadow: "0 4px 12px rgba(77,84,125,0.4)" }}>&#8593;</motion.button>
+          <div style={{
+            flexShrink: 0,
+            padding: "0px 16px 20px 16px",
+            paddingBottom: "calc(20px + env(safe-area-inset-bottom))",
+            zIndex: 1001 }}>
+            
+            <div id="hw-bar" style={{
+              display: "flex", alignItems: "center", gap: 10,
+              padding: "12px 16px", borderRadius: 30,
+              background: "var(--glass-s)",
+              backdropFilter: "blur(40px)",
+              borderTop: "1.5px solid var(--border-tl)",
+              borderLeft: "1.5px solid var(--border-tl)",
+              borderBottom: "1px solid var(--border-br)",
+              borderRight: "1px solid var(--border-br)",
+              boxShadow: "0 15px 40px rgba(0,0,0,0.2), inset 0 2px 5px var(--border-tl)" }}>
+              
+              <motion.label 
+                whileTap={{ scale: 0.8 }} 
+                style={{ fontSize: 24, cursor: "pointer", userSelect: "none", display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, flexShrink: 0,
+                  color: "var(--text)", textShadow: "0 1px 1px rgba(255,255,255,0.2)" }}
+              >
+                +<input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*,audio/*" onChange={onFile} />
+              </motion.label>
+
+              <input 
+                ref={inpRef}
+                type="text" 
+                placeholder="Message..." 
+                value={text}
+                onChange={e => setText(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && send()}
+                style={{ 
+                  flex: 1, minWidth: 0, border: "none", fontSize: 15, fontWeight: 500,
+                  padding: "10px 14px", height: "40px",
+                  lineHeight: "20px", borderRadius: 20, 
+                  background: "var(--input-bg)", color: "var(--text)", 
+                  boxShadow: "inset 2px 2px 4px rgba(0,0,0,0.1), inset -2px -2px 4px var(--border-tl)",
+                  WebkitAppearance: "none"
+                }} />
+              
+              <motion.button onClick={send} 
+                disabled={!text.trim()}
+                whileTap={text.trim() ? { scale: 0.85, y: -2 } : {}}
+                style={{ width: 40, height: 40, borderRadius: "50%", border: "none",
+                  cursor: text.trim() ? "pointer" : "default", 
+                  background: text.trim() ? "var(--btn-grad)" : "var(--border-br)", 
+                  color: text.trim() ? "white" : "var(--text-muted)", fontSize: 18,
+                  fontWeight: 800, flexShrink: 0, display: "flex", alignItems: "center",
+                  justifyContent: "center", 
+                  boxShadow: text.trim() ? "0 6px 16px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.2)" : "inset 0 2px 4px var(--border-tl)",
+                  borderTop: text.trim() ? "1px solid var(--border-tl)" : "none",
+                  transition: "all 0.3s ease",
+                  opacity: text.trim() ? 1 : 0.7 }}>&#8593;</motion.button>
+            </div>
           </div>
+
+          <AnimatePresence>
+            {fullScreenImage && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+                  zIndex: 9999, background: "rgba(0,0,0,0.85)",
+                  backdropFilter: "blur(20px)", display: "flex",
+                  alignItems: "center", justifyContent: "center", padding: 20
+                }}
+                onClick={() => setFullScreenImage(null)}
+              >
+                <button
+                  style={{
+                    position: "absolute", top: "env(safe-area-inset-top, 20px)", right: 20,
+                    background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: "50%",
+                    width: 44, height: 44, color: "white", fontSize: 28, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center", marginTop: 20,
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
+                  }}
+                  onClick={() => setFullScreenImage(null)}
+                >
+                  &times;
+                </button>
+                <motion.img
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                  src={fullScreenImage}
+                  style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 16, boxShadow: "0 20px 50px rgba(0,0,0,0.5)" }}
+                  onClick={(e) => e.stopPropagation()} 
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       );
     }
@@ -685,6 +980,34 @@
         if (saved && me) {
           buildUsers().then(() => { setPage("list"); startRT(); });
         }
+      }, []);
+
+      useEffect(() => {
+        const root = document.getElementById("root");
+        const setVh = () => {
+          if (!window.visualViewport) return;
+          root.style.height = window.visualViewport.height + "px";
+          if (window.scrollY > 0 || window.visualViewport.offsetTop > 0) {
+            window.scrollTo(0, 0);
+          }
+        };
+
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener('resize', setVh);
+          window.visualViewport.addEventListener('scroll', setVh);
+          setVh();
+        }
+
+        const lockScroll = () => window.scrollTo(0, 0);
+        window.addEventListener('scroll', lockScroll, { passive: false });
+
+        return () => {
+          if (window.visualViewport) {
+            window.visualViewport.removeEventListener('resize', setVh);
+            window.visualViewport.removeEventListener('scroll', setVh);
+          }
+          window.removeEventListener('scroll', lockScroll);
+        };
       }, []);
 
       return (
