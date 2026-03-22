@@ -1,449 +1,722 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Harvinder Chat">
 
 <link rel="apple-touch-icon" href="https://via.placeholder.com/180">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<style>
-/* --- ALL UI STYLES INTEGRATED --- */
-*{box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-font-smoothing: antialiased;}
-body{
-  margin:0;
-  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  overflow:hidden;
-  height:100vh;
-  background: #000;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" />
+  <title>Harvinder's World</title>
 
-/* --- TIDE THEME FOR CHATLIST & CHATBOX --- */
-#pageList, #pageChatBox {
-  background: linear-gradient(to bottom, #949ca5 0%, #b8babd 30%, #e8c9ba 60%, #94a3b8 100%) !important;
-  background-attachment: fixed;
-}
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://cdn.jsdelivr.net/npm/framer-motion@10.18.0/dist/framer-motion.js" crossorigin></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.6/babel.min.js"></script>
 
-#pageList::before, #pageChatBox::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.05) 100%);
-    pointer-events: none;
-}
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+    }
+    html, body, #root {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #e0e5ec;
+    }
+    input { outline: none; }
+    .glass {
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    .glass-s {
+      background: rgba(255,255,255,0.35);
+      backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .tide {
+      background: linear-gradient(to bottom, #949ca5 0%, #b8babd 30%, #e8c9ba 60%, #94a3b8 100%);
+      background-attachment: fixed; position: relative;
+    }
+    .ns::-webkit-scrollbar { display: none; }
+    .ns { -ms-overflow-style: none; scrollbar-width: none; }
 
-section { 
-  display: none; 
-  height: 100vh; 
-  width: 100%; 
-  position: absolute; 
-  top: 0; 
-  left: 0; 
-  opacity: 0; 
-  transform: translateY(10px); 
-  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
-  will-change: transform, opacity;
-}
-section.active { 
-  display: block; 
-  opacity: 1; 
-  transform: translateY(0);
-}
+    @keyframes orb1 { from{transform:rotate(0deg) translateX(72px) rotate(0deg)} to{transform:rotate(360deg) translateX(72px) rotate(-360deg)} }
+    @keyframes orb2 { from{transform:rotate(120deg) translateX(80px) rotate(-120deg)} to{transform:rotate(480deg) translateX(80px) rotate(-480deg)} }
+    @keyframes orb3 { from{transform:rotate(240deg) translateX(65px) rotate(-240deg)} to{transform:rotate(-120deg) translateX(65px) rotate(120deg)} }
+    .od1{animation:orb1 4s linear infinite}
+    .od2{animation:orb2 6s linear infinite}
+    .od3{animation:orb3 5s linear infinite}
 
-/* --- LOGIN PAGE --- */
-#pageLogin {
-    background: #e0e5ec; /* Standard Neumorphic Background Color */
-}
-#loginScreen{ display:flex; justify-content:center; align-items:flex-start; padding-top:90px; }
-.loginWrap{ width:100%; max-width:360px; padding:0 22px; text-align:center; }
-.logoWrapper { position: relative; width: 180px; height: 180px; margin: auto; display: flex; align-items: center; justify-content: center; }
-.orbitRing { position: absolute; width: 170px; height: 170px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; pointer-events: none; }
-.logoCircle{ width:120px; height:120px; border-radius:50%; position:relative; z-index: 2; background: #e0e5ec; display:flex; align-items:center; justify-content:center; box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5); transform: translateZ(0); }
-.orbitDot { position: absolute; width: 6px; height: 6px; background: white; border-radius: 50%; box-shadow: 0 0 10px rgba(255,255,255,0.8); z-index: 1; will-change: transform; }
-.dot1 { animation: orbitPath1 4s linear infinite; }
-.dot2 { animation: orbitPath2 6s linear infinite; }
-.dot3 { animation: orbitPath3 5s linear infinite; }
-@keyframes orbitPath1 { from { transform: rotate(0deg) translateX(72px) rotate(0deg); } to { transform: rotate(360deg) translateX(72px) rotate(-360deg); } }
-@keyframes orbitPath2 { from { transform: rotate(120deg) translateX(80px) rotate(-120deg); } to { transform: rotate(480deg) translateX(80px) rotate(-480deg); } }
-@keyframes orbitPath3 { from { transform: rotate(240deg) translateX(65px) rotate(-240deg); } to { transform: rotate(-120deg) translateX(65px) rotate(120deg); } }
-.logoSVG{ width:60px; opacity:0.7; }
-.appName { margin-top: 18px; font-size: 32px; font-weight: 900; display: flex; justify-content: center; color: #4d547d; }
-.appName span { display: inline-block; position: relative; animation: flyAroundOrbit 10s cubic-bezier(0.4, 0, 0.2, 1) infinite; will-change: transform; }
-@keyframes flyAroundOrbit { 0% { transform: translate(0, 0) rotate(0deg); } 10% { transform: translate(0, -100px) scale(0.8); } 30% { transform: translate(0, -100px) rotate(360deg) translateX(90px) rotate(-360deg); } 50%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); } }
+    @keyframes lp { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    .lp{animation:lp 2.5s ease-in-out infinite}
 
-/* LOGIN CARD & INPUTS UPDATED TO NEUMORPHIC */
-.loginCard{ margin-top:34px; padding:22px; border-radius:28px; display:flex; flex-direction:column; gap:20px; }
+    @keyframes rip { 0%{transform:scale(1);opacity:0.3} 100%{transform:scale(2.2);opacity:0} }
+    .pr{animation:rip 2.5s cubic-bezier(0,0.2,0.8,1) infinite}
 
-.loginCard input{ 
-  width:100%; 
-  padding:16px 20px; 
-  border-radius:20px; 
-  border:none; 
-  outline:none;
-  background: #e0e5ec; 
-  color: #4d547d; 
-  font-size:15px; 
-  box-shadow: inset 6px 6px 12px #b8bec5, inset -6px -6px 12px #ffffff;
-  transition: 0.3s; 
-}
-.loginCard input::placeholder { color: #a3b1c6; }
-
-/* LOGIN BUTTON UPDATED TO NEUMORPHIC */
-.loginBtn{ 
-  width:80%; 
-  margin:15px auto 0; 
-  padding:15px; 
-  border-radius:20px; 
-  border:none; 
-  background: #e0e5ec; 
-  color: #4d547d; 
-  font-weight:700; 
-  font-size:16px;
-  cursor: pointer; 
-  box-shadow: 7px 7px 15px #b8bec5, -7px -7px 15px #ffffff;
-  transition: all 0.2s ease; 
-}
-.loginBtn:active {
-  box-shadow: inset 4px 4px 8px #b8bec5, inset -4px -4px 8px #ffffff;
-  transform: scale(0.98);
-}
-
-
-/* --- DESIGN FIXES --- */
-.container{ padding: max(20px, env(safe-area-inset-top)) 16px 20px; position: relative; z-index: 1;}
-
-.header-list{ 
-  height:75px; padding:0 20px; border-radius:35px; display:flex; 
-  align-items:center; justify-content:space-between; 
-  background: rgba(255, 255, 255, 0.25); 
-  backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); 
-  border: 1px solid rgba(255, 255, 255, 0.4); 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
-  margin-bottom: 25px; 
-}
-
-.chat-item{ 
-  display:flex; align-items:center; gap:12px; padding:16px; border-radius:30px; 
-  background: rgba(255, 255, 255, 0.25); 
-  backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
-  margin-bottom:12px; cursor:pointer; 
-  border: 1px solid rgba(255, 255, 255, 0.4); 
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease;
-}
-.chat-item:active { transform: scale(0.98); }
-
-.header-chat{ 
-  position:fixed; top:0; left:0; right:0; padding-top: env(safe-area-inset-top); 
-  height: calc(75px + env(safe-area-inset-top)); display:flex; align-items:center; 
-  gap:10px; padding: 0 18px; z-index:1000; 
-  background: rgba(255, 255, 255, 0.25); 
-  backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.inputBar{ 
-  position:fixed; left:16px; right:16px; bottom: 20px; 
-  display:flex; align-items: center; gap:8px; padding:10px 16px; z-index:1001; 
-  border-radius:30px; 
-  background: rgba(255, 255, 255, 0.3); 
-  backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); 
-  border: 1px solid rgba(255, 255, 255, 0.4); 
-  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-}
-
-.chat-area{ 
-  position:fixed; top: calc(85px + env(safe-area-inset-top)); bottom: 100px; 
-  left:0; right:0; overflow-y:auto; padding:16px; 
-  display:flex; flex-direction:column; gap:12px; 
-}
-
-.msg-bubble{ 
-  max-width:75%; padding:14px 18px; border-radius:22px; 
-  background: rgba(255, 255, 255, 0.4); 
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-  color: #333; 
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-}
-.msg-bubble.out{ 
-  margin-left:auto; 
-  background: rgba(255, 255, 255, 0.7); 
-  color: #000;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-}
-
-.chat-input{ flex:1; padding:10px 14px; border:none; outline:none; border-radius:20px; background:rgba(255,255,255,0.3); color: #000;}
-.chat-input::placeholder { color: rgba(0,0,0,0.4); }
-
-.logoSmall {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: white; display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.settings{ 
-    width:40px; height:40px; border-radius:50%; 
-    background:rgba(255,255,255,0.3); 
-    border: 1px solid rgba(255,255,255,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-.settings svg{ stroke:#444; width:22px; height:22px; }
-
-/* PANEL & OVERLAY */
-.overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.2); backdrop-filter:blur(10px); opacity:0; pointer-events:none; z-index: 2000; transition:0.3s; display: none; }
-.overlay.active{ opacity:1; pointer-events:auto; display: block; }
-.panel{ position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.9); width:85%; max-width:320px; padding:25px; border-radius:35px; background: rgba(255, 255, 255, 0.85); backdrop-filter:blur(50px); -webkit-backdrop-filter:blur(50px); border: 1px solid #fff; box-shadow: 0 30px 60px rgba(0,0,0,0.15); opacity:0; pointer-events: none; transition:0.3s; z-index: 2001; display: none; }
-.panel.active{ opacity:1; transform:translate(-50%,-50%) scale(1); pointer-events: auto; display: block;}
-.profile-edit input { background: rgba(0,0,0,0.05); color: #000; border: none; width: 100%; padding: 12px; border-radius: 12px; margin-bottom: 10px; }
-.profile-edit label { color: #666; font-size: 13px; margin-bottom: 4px; display: block; }
-</style>
+    @keyframes lb { 0%{width:0%} 100%{width:100%} }
+    .lb{animation:lb 2.5s ease-in-out forwards}
+  </style>
 </head>
 <body>
+  <div id="root"></div>
 
-<section id="pageLogin"> <div id="loginScreen">
-    <div class="loginWrap">
-      <div class="logoWrapper">
-        <div class="orbitRing"></div>
-        <div class="orbitDot dot1"></div>
-        <div class="orbitDot dot2"></div>
-        <div class="orbitDot dot3"></div>
-        <div class="logoCircle">
-          <svg class="logoSVG" viewBox="0 0 200 80"><path d="M30 40 L60 20 L90 40 L120 20 L150 40" stroke="#4d547d" stroke-width="3" fill="none"/><path d="M30 40 L60 60 L90 40 L120 60 L150 40" stroke="#4d547d" stroke-width="3" fill="none"/></svg>
-        </div>
-      </div>
-      <div class="appName">
-        <span>M</span><span>y</span><span style="width:10px;"></span><span>W</span><span>o</span><span>r</span><span>l</span><span>d</span>
-      </div>
-      <div class="loginCard">
-        <input id="uField" placeholder="Username">
-        <input id="pField" type="password" placeholder="Password">
-        <button class="loginBtn" onclick="loginUser()">Sign In</button>
-      </div>
-    </div>
-  </div>
-</section>
+  <script>
+    window.FramerMotion = window.Motion;
+  </script>
 
-<section id="pageList">
-  <div class="container" id="listContainer">
-    <div class="header-list">
-      <div class="logoSmall">
-          <svg viewBox="0 0 200 80" style="width:24px"><path d="M30 40 L60 20 L90 40 L120 20 L150 40" stroke="#111" stroke-width="8" fill="none"/><path d="M30 40 L60 60 L90 40 L120 60 L150 40" stroke="#111" stroke-width="8" fill="none"/></svg>
-      </div>
-      <div style="font-weight: 700; color: #444; font-size: 18px; flex: 1; text-align: center;">Messages</div>
-      <div class="settings" onclick="openSettings()"><svg viewBox="0 0 24 24" style="fill:none; stroke-width:2.5;"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.3.7a7 7 0 0 0-1.7-1l-.3-2.5h-4l-.3 2.5a7 7 0 0 0-1.7 1l-2.3-.7-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.3-.7a7 7 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7 7 0 0 0 1.7-1l2.3.7 2-3.5-2-1.5c.1-.3.1-.7.1-1z"/></svg></div>
-    </div>
-    <div class="list" id="userChatList"></div>
-  </div>
-  <div class="overlay" id="overlay" onclick="closeSettings()"></div>
-  <div class="panel" id="panel">
-    <div class="profile-edit">
-        <label>Update Name</label>
-        <input id="editName" placeholder="New Name...">
-        <label>Change Password</label>
-        <input id="editPass" type="password" placeholder="New Password...">
-        <label>Update Photo</label>
-        <input type="file" id="editAvatar" accept="image/*" style="border:none; background:transparent; font-size:11px; padding:5px 0;">
-        <div class="loginBtn" style="width:100%; margin-top:15px; text-align:center;" onclick="updateProfile()">Save Profile</div>
-    </div>
-    <div class="logout-frosted" onclick="logoutUser()" style="color: #ff3b30; text-align: center; margin-top: 15px; font-weight: 600; cursor: pointer;">Logout</div>
-  </div>
-</section>
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useContext, createContext, useCallback } = React;
+    const { createRoot } = ReactDOM;
+    const { motion, AnimatePresence } = window.FramerMotion;
+    const { createClient } = supabase;
 
-<section id="pageChatBox">
-  <div class="header-chat" id="chatHeader">
-    <div onclick="showPage('pageList')" style="cursor:pointer; font-size: 24px; color: #444; padding-right: 10px;">←</div>
-    <div class="avatar-chat" id="headerAvatar" style="width:36px; height:36px; border-radius:50%; background-size:cover;"></div>
-    <div><b id="chattingWithName" style="color: #333;">User</b></div>
-  </div>
-  <div class="chat-area" id="chatContent"></div>
-  <div class="inputBar" id="chatInputBar">
-    <label style="font-size:20px; cursor:pointer;" for="fileInput">📎</label>
-    <input type="file" id="fileInput" hidden accept="image/*,audio/*" onchange="uploadMedia(this)">
-    <input class="chat-input" id="messageInput" placeholder="Message...">
-    <div class="send-btn" onclick="sendMessage()" style="color: #007aff; font-weight: 600;">Send</div>
-  </div>
-</section>
+    const SB_URL = "https://xtdmegkgzhyjqomhwfsk.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0ZG1lZ2tnemh5anFvbWh3ZnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTk0ODcsImV4cCI6MjA4OTU3NTQ4N30.ItvZpVxoYz4r_KZibnLmcxHLQ48UaGmfxiGOYZfOLbE";
+    const sb = createClient(SB_URL, SB_KEY);
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-/* LOGIC REMAINS COMPLETELY UNTOUCHED AS REQUESTED */
-const supabaseUrl = "https://xtdmegkgzhyjqomhwfsk.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0ZG1lZ2tnemh5anFvbWh3ZnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTk0ODcsImV4cCI6MjA4OTU3NTQ4N30.ItvZpVxoYz4r_KZibnLmcxHLQ48UaGmfxiGOYZfOLbE";
-const client = supabase.createClient(supabaseUrl, supabaseKey);
+    let _channel = null;
 
-let me = "", other = "", channel = null, userAvatars = {};
-
-if (window.visualViewport) {
-  const syncLayout = () => {
-    const header = document.getElementById("chatHeader");
-    const inputBar = document.getElementById("chatInputBar");
-    const keyboardOffset = window.innerHeight - window.visualViewport.height;
-    header.style.top = `${window.visualViewport.offsetTop}px`;
-    inputBar.style.transform = `translateY(-${keyboardOffset}px) translateZ(0)`;
-  };
-  window.visualViewport.addEventListener('resize', syncLayout);
-  window.visualViewport.addEventListener('scroll', syncLayout);
-}
-
-async function askPermission() { if ("Notification" in window) await Notification.requestPermission(); }
-function notify(sender, text) {
-  if (Notification.permission === "granted") {
-    const options = { body: text, icon: userAvatars[sender] || "https://via.placeholder.com/180" };
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.ready.then(reg => reg.showNotification(`New message: ${sender}`, options));
-    } else { new Notification(`Message from ${sender}`, options); }
-  }
-}
-
-async function loginUser(){
-  await askPermission(); 
-  const u = document.getElementById("uField").value.trim();
-  const p = document.getElementById("pField").value.trim();
-  if(!u || !p) return alert("Fill all fields");
-  const { data } = await client.from('users').select('*').eq('username', u).eq('password', p).maybeSingle();
-  if(data){ 
-    me = data.username; 
-    localStorage.setItem("loggedInUser", me); 
-    await buildChatList(); 
-    showPage('pageList'); 
-  } else { alert("Invalid Username or Password"); }
-}
-
-async function buildChatList() {
-  const { data: allUsers } = await client.from('users').select('*');
-  const listDiv = document.getElementById("userChatList");
-  listDiv.innerHTML = "";
-  if(allUsers) {
-    allUsers.forEach(u => {
-      userAvatars[u.username] = u.avatar_url || "https://via.placeholder.com/50";
-      if(u.username !== me) {
-        const item = document.createElement("div");
-        item.className = "chat-item";
-        item.onclick = () => openChat(u.username);
-        item.innerHTML = `<div class="avatar-list" style="background-image: url('${userAvatars[u.username]}'); width:50px; height:50px; border-radius:50%; background-size:cover; border: 2px solid white;"></div><div><div style="color:#333; font-weight:600;">${u.username}</div><div style="color:rgba(0,0,0,0.4); font-size:12px;">Tap to message</div></div>`;
-        listDiv.appendChild(item);
+    function notify(sender, text) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        try { new Notification("Message from " + sender, { body: text }); } catch(_) {}
       }
-    });
-  }
-}
-
-async function openChat(name){
-  other = name;
-  document.getElementById("chattingWithName").innerText = name;
-  document.getElementById("headerAvatar").style.backgroundImage = `url('${userAvatars[name]}')`;
-  showPage('pageChatBox');
-  loadMessages();
-  realtime();
-}
-
-async function loadMessages(){
-  const {data} = await client.from("messages").select("*").or(`and(sender.eq.${me},receiver.eq.${other}),and(sender.eq.${other},receiver.eq.${me})`).order("id", {ascending: true});
-  const chatContent = document.getElementById("chatContent");
-  chatContent.innerHTML = "";
-  if(data) data.forEach(m => chatContent.appendChild(createMsgBubble(m)));
-  chatContent.scrollTop = chatContent.scrollHeight;
-}
-
-function createMsgBubble(m) {
-  let div = document.createElement("div");
-  div.className = "msg-bubble " + (m.sender === me ? "out" : "");
-  let html = `<div>${m.content || ''}</div>`;
-  if (m.image) html += `<img src="${m.image}" class="chat-img" onclick="window.open('${m.image}')" style="max-width:100%; border-radius:12px; margin-top:5px;">`;
-  if (m.audio) html += `<audio controls style="width:100%; height:30px; margin-top:5px;"><source src="${m.audio}"></audio>`;
-  div.innerHTML = html;
-  return div;
-}
-
-async function sendMessage(){
-  let input = document.getElementById("messageInput");
-  let val = input.value.trim();
-  if(!val) return;
-  await client.from("messages").insert([{ content: val, sender: me, receiver: other, seen: false }]);
-  input.value = "";
-}
-
-async function uploadMedia(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const fileName = `${Date.now()}_${file.name}`;
-  await client.storage.from('chat-media').upload(fileName, file);
-  const { data } = client.storage.from('chat-media').getPublicUrl(fileName);
-  const isImg = file.type.startsWith('image/');
-  await client.from("messages").insert([{ sender: me, receiver: other, [isImg ? 'image' : 'audio']: data.publicUrl, content: "" }]);
-}
-
-async function updateProfile() {
-    const avatarFile = document.getElementById("editAvatar").files[0];
-    const newName = document.getElementById("editName").value.trim();
-    const newPass = document.getElementById("editPass").value.trim();
-    let updates = {};
-    if(newName) updates.username = newName;
-    if(newPass) updates.password = newPass;
-    if(avatarFile) {
-        const filePath = `avatars/${me}_${Date.now()}.png`;
-        await client.storage.from('chat-media').upload(filePath, avatarFile);
-        const { data } = client.storage.from('chat-media').getPublicUrl(filePath);
-        updates.avatar_url = data.publicUrl;
     }
-    const { error } = await client.from('users').update(updates).eq('username', me);
-    if(!error) { alert("Profile Updated!"); location.reload(); }
-}
-
-function realtime(){
-  if(channel) client.removeChannel(channel);
-  channel = client.channel("room").on("postgres_changes", {event: "INSERT", schema: "public", table: "messages"}, payload => {
-    const m = payload.new;
-    if((m.sender === me && m.receiver === other) || (m.sender === other && m.receiver === me)){
-      document.getElementById("chatContent").appendChild(createMsgBubble(m));
-      document.getElementById("chatContent").scrollTop = document.getElementById("chatContent").scrollHeight;
+    async function reqNotif() {
+      if ("Notification" in window && Notification.permission === "default")
+        await Notification.requestPermission();
     }
-    if (m.receiver === me && (document.hidden || other !== m.sender)) notify(m.sender, m.content || "Sent a file");
-  }).subscribe();
-}
 
-function showPage(id, skipAnim = false) {
-  const sections = document.querySelectorAll('section');
-  const target = document.getElementById(id);
-  sections.forEach(s => { 
-    if(s.classList.contains('active')){ 
-      s.classList.remove('active'); s.style.display="none";
+    const Ctx = createContext(null);
+
+    function AppProvider({ children }) {
+      const [me,       setMe]       = useState(localStorage.getItem("hw_me") || "");
+      const [meAvatar, setMeAvatar] = useState(localStorage.getItem("hw_meAvatar") || "");
+      const [users,    setUsers]    = useState([]);
+      const [avatars,  setAvatars]  = useState({});
+      const [messages, setMessages] = useState([]);
+      const [other,    setOther]    = useState("");
+      const [otherAv,  setOtherAv]  = useState("");
+      const [page,     setPage]     = useState("login");
+      const [panel,    setPanel]    = useState(false);
+      const [loading,  setLoading]  = useState(false);
+
+      const meRef  = useRef(me);
+      const othRef = useRef(other);
+      useEffect(() => { meRef.current  = me;    }, [me]);
+      useEffect(() => { othRef.current = other; }, [other]);
+
+      const addMsg = useCallback((msg) => {
+        const myMe  = meRef.current;
+        const myOth = othRef.current;
+        const rel = (msg.sender===myMe && msg.receiver===myOth) ||
+                    (msg.sender===myOth && msg.receiver===myMe);
+        if (rel) setMessages(prev => [...prev, msg]);
+        if (msg.receiver===myMe && msg.sender!==myMe)
+          notify(msg.sender, msg.content || "Sent a file");
+      }, []);
+
+      const startRT = useCallback(() => {
+        if (_channel) sb.removeChannel(_channel);
+        _channel = sb.channel("room")
+          .on("postgres_changes",
+            { event: "INSERT", schema: "public", table: "messages" },
+            pl => addMsg(pl.new))
+          .subscribe();
+      }, [addMsg]);
+
+      const stopRT = useCallback(() => {
+        if (_channel) { sb.removeChannel(_channel); _channel = null; }
+      }, []);
+
+      const buildUsers = useCallback(async () => {
+        const { data } = await sb.from("users").select("*");
+        if (data) {
+          const av = {};
+          data.forEach(u => { av[u.username] = u.avatar_url || ""; });
+          setUsers(data); setAvatars(av);
+        }
+      }, []);
+
+      const login = useCallback(async (username, password) => {
+        setLoading(true);
+        const { data } = await sb.from("users").select("*")
+          .eq("username", username).eq("password", password).maybeSingle();
+        setLoading(false);
+        if (data) {
+          const av = data.avatar_url || "";
+          localStorage.setItem("hw_me", data.username);
+          localStorage.setItem("hw_meAvatar", av);
+          setMe(data.username); setMeAvatar(av); setPage("list");
+          const { data: all } = await sb.from("users").select("*");
+          if (all) {
+            const avMap = {};
+            all.forEach(u => { avMap[u.username] = u.avatar_url || ""; });
+            setUsers(all); setAvatars(avMap);
+          }
+          startRT();
+          return true;
+        }
+        return false;
+      }, [startRT]);
+
+      const logout = useCallback(() => {
+        stopRT();
+        localStorage.removeItem("hw_me");
+        localStorage.removeItem("hw_meAvatar");
+        setMe(""); setMeAvatar(""); setPage("login");
+        setUsers([]); setMessages([]); setOther("");
+      }, [stopRT]);
+
+      const openChat = useCallback(async (username, avMap) => {
+        const av = avMap || avatars;
+        setOther(username); setOtherAv(av[username] || "");
+        setPage("chat"); setMessages([]);
+        const myMe = meRef.current;
+        const { data } = await sb.from("messages").select("*")
+          .or("and(sender.eq." + myMe + ",receiver.eq." + username + "),and(sender.eq." + username + ",receiver.eq." + myMe + ")")
+          .order("id", { ascending: true });
+        if (data) setMessages(data);
+      }, [avatars]);
+
+      const sendMsg = useCallback(async (text) => {
+        if (!text.trim()) return;
+        await sb.from("messages").insert([{
+          content: text, sender: meRef.current, receiver: othRef.current, seen: false
+        }]);
+      }, []);
+
+      const uploadMedia = useCallback(async (file) => {
+        if (!file) return;
+        const name = Date.now() + "_" + file.name;
+        const { error } = await sb.storage.from("chat-media").upload(name, file);
+        if (error) return;
+        const { data } = sb.storage.from("chat-media").getPublicUrl(name);
+        const isImg = file.type.startsWith("image/");
+        await sb.from("messages").insert([{
+          sender: meRef.current, receiver: othRef.current, content: "",
+          [isImg ? "image" : "audio"]: data.publicUrl,
+        }]);
+      }, []);
+
+      const updateProfile = useCallback(async (name, password, avatarFile) => {
+        const upd = {};
+        if (name && name !== meRef.current) upd.username = name;
+        if (password) upd.password = password;
+        if (avatarFile) {
+          const fp = "avatars/" + meRef.current + "_" + Date.now() + ".png";
+          await sb.storage.from("chat-media").upload(fp, avatarFile);
+          const { data } = sb.storage.from("chat-media").getPublicUrl(fp);
+          upd.avatar_url = data.publicUrl;
+        }
+        const { error } = await sb.from("users").update(upd).eq("username", meRef.current);
+        if (!error) {
+          if (upd.username) { localStorage.setItem("hw_me", upd.username); setMe(upd.username); }
+          if (upd.avatar_url) { localStorage.setItem("hw_meAvatar", upd.avatar_url); setMeAvatar(upd.avatar_url); }
+          return true;
+        }
+        return false;
+      }, []);
+
+      return (
+        <Ctx.Provider value={{
+          me, meAvatar, users, avatars, messages, other, otherAv,
+          page, setPage, panel, setPanel, loading,
+          login, logout, openChat, sendMsg, uploadMedia,
+          updateProfile, buildUsers, startRT,
+        }}>
+          {children}
+        </Ctx.Provider>
+      );
     }
-  });
-  requestAnimationFrame(() => {
-    if(target) {
-      target.style.display="block";
-      target.offsetHeight;
-      target.classList.add('active');
-      target.style.opacity="1";
-      target.style.transform = "translateY(0) translateZ(0)";
+
+    const useApp = () => useContext(Ctx);
+
+    const LogoSVG = ({ w = 56 }) => (
+      <svg style={{ width: w, opacity: 0.8 }} viewBox="0 0 200 80" fill="none" strokeWidth="4" strokeLinecap="round">
+        <path d="M30 40 L60 20 L90 40 L120 20 L150 40" stroke="#4d547d" />
+        <path d="M30 40 L60 60 L90 40 L120 60 L150 40" stroke="#4d547d" />
+      </svg>
+    );
+
+    function Avatar({ src, name, size = 50 }) {
+      const hue = (name.charCodeAt(0) * 47) % 360;
+      return (
+        <div style={{
+          width: size, height: size, borderRadius: "50%", flexShrink: 0,
+          background: src ? "url(" + src + ") center/cover no-repeat" : "hsl(" + hue + ",50%,55%)",
+          border: "2px solid white",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          color: "white", fontWeight: 700, fontSize: size * 0.28,
+        }}>
+          {!src && name.slice(0, 2).toUpperCase()}
+        </div>
+      );
     }
-  });
-}
 
-function openSettings(){ 
-  document.getElementById("panel").classList.add("active"); 
-  document.getElementById("overlay").classList.add("active"); 
-}
-function closeSettings(){ 
-  document.getElementById("panel").classList.remove("active"); 
-  document.getElementById("overlay").classList.remove("active"); 
-}
-function logoutUser() { localStorage.clear(); location.reload(); }
+    const PV = {
+      initial: { opacity: 0, scale: 1.08, y: 20, filter: "blur(10px)" },
+      animate: { opacity: 1, scale: 1, y: 0, filter: "blur(0px)",
+        transition: { duration: 0.7, ease: [0.2, 0.8, 0.2, 1] } },
+      exit: { opacity: 0, scale: 0.95, y: -15, filter: "blur(8px)",
+        transition: { duration: 0.45, ease: [0.4, 0, 1, 1] } },
+    };
 
-window.onload = async () => {
-  const savedUser = localStorage.getItem("loggedInUser");
-  if(savedUser) { 
-    me = savedUser; 
-    await buildChatList(); 
-    showPage('pageList', true); 
-    realtime(); 
-  } else { showPage('pageLogin', true); }
-};
-</script>
+    function SplashScreen({ visible }) {
+      return (
+        <AnimatePresence>
+          {visible && (
+            <motion.div
+              style={{ position: "fixed", inset: 0, zIndex: 9999, background: "#e0e5ec",
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
+              initial={{ opacity: 1, y: 0 }}
+              exit={{ y: "-100%", opacity: 0 }}
+              transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
+            >
+              <div style={{ position: "relative", width: 144, height: 144,
+                display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div className="pr" style={{ position: "absolute", width: 96, height: 96,
+                  borderRadius: "50%", background: "#4d547d", zIndex: 1 }} />
+                <div className="lp" style={{ position: "relative", zIndex: 2, width: 96, height: 96,
+                  borderRadius: "50%", background: "#e0e5ec",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "10px 10px 20px #b8bec5, -10px -10px 20px #ffffff" }}>
+                  <LogoSVG w={56} />
+                </div>
+              </div>
+              <motion.div style={{ marginTop: 32, textAlign: "center", padding: "0 20px" }}
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}>
+                <h1 style={{ color: "#4d547d", fontSize: 30, fontWeight: 900, margin: 0 }}>Harvinder's World</h1>
+                <p style={{ color: "#888", fontSize: 13, marginTop: 8 }}>It's Harvinder's world, you're just chatting in it.</p>
+              </motion.div>
+              <div style={{ position: "absolute", bottom: 56, width: 144, height: 4,
+                borderRadius: 4, overflow: "hidden", background: "rgba(0,0,0,0.06)" }}>
+                <div className="lb" style={{ height: "100%", background: "#4d547d", borderRadius: 4 }} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      );
+    }
+
+    function LoginPage() {
+      const { login, loading } = useApp();
+      const [user, setUser]     = useState("");
+      const [pass, setPass]     = useState("");
+      const [err,  setErr]      = useState("");
+      const [pressed, setPressed] = useState(false);
+      const APP = "Harvinder's World";
+
+      const go = async () => {
+        if (!user.trim() || !pass.trim()) { setErr("Please fill in both fields."); return; }
+        await reqNotif();
+        const ok = await login(user.trim(), pass.trim());
+        if (!ok) setErr("Invalid username or password.");
+      };
+
+      const inp = {
+        border: "none", background: "#e0e5ec", color: "#4d547d",
+        boxShadow: "inset 6px 6px 12px #b8bec5, inset -6px -6px 12px #ffffff",
+        borderRadius: 20, padding: "16px 20px", fontSize: 15, fontWeight: 500, width: "100%",
+      };
+
+      return (
+        <div style={{ width: "100%", height: "100%", background: "#e0e5ec",
+          overflowY: "auto", display: "flex", justifyContent: "center", paddingTop: 80 }}>
+          <div style={{ width: "100%", maxWidth: 360, padding: "0 24px 40px", textAlign: "center" }}>
+
+            <div style={{ position: "relative", width: 176, height: 176, margin: "0 auto",
+              display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ position: "absolute", width: 176, height: 176, borderRadius: "50%",
+                border: "1px solid rgba(255,255,255,0.2)" }} />
+              {["od1", "od2", "od3"].map((cls, i) => (
+                <div key={i} className={cls} style={{ position: "absolute", width: 6, height: 6,
+                  borderRadius: "50%", background: "white",
+                  boxShadow: "0 0 10px rgba(255,255,255,0.8)", zIndex: 1 }} />
+              ))}
+              <div style={{ width: 112, height: 112, borderRadius: "50%", position: "relative", zIndex: 2,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: "#e0e5ec",
+                boxShadow: "9px 9px 16px rgba(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
+                <LogoSVG w={64} />
+              </div>
+            </div>
+
+            <div style={{ marginTop: 20, display: "flex", flexWrap: "wrap",
+              justifyContent: "center", color: "#4d547d" }}>
+              {APP.split("").map((ch, i) => (
+                <motion.span key={i}
+                  style={{ display: "inline-block", fontSize: 32, fontWeight: 900, lineHeight: 1 }}
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 1.8, delay: i * 0.07, repeat: Infinity, repeatDelay: 7, ease: "easeInOut" }}>
+                  {ch === " " ? "\u00A0" : ch}
+                </motion.span>
+              ))}
+            </div>
+
+            <motion.div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 20 }}
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.65, ease: [0.32, 0.72, 0, 1] }}>
+              <input style={inp} type="text" placeholder="Username"
+                value={user} onChange={e => { setUser(e.target.value); setErr(""); }}
+                onKeyDown={e => e.key === "Enter" && go()} />
+              <input style={inp} type="password" placeholder="Password"
+                value={pass} onChange={e => { setPass(e.target.value); setErr(""); }}
+                onKeyDown={e => e.key === "Enter" && go()} />
+              {err && (
+                <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+                  style={{ color: "#ff3b30", fontSize: 12, fontWeight: 500, margin: "-8px 0 0" }}>
+                  {err}
+                </motion.p>
+              )}
+              <button disabled={loading}
+                style={{ width: "80%", margin: "0 auto", padding: "16px 0", borderRadius: 20,
+                  border: "none", cursor: "pointer", fontSize: 15, fontWeight: 700,
+                  background: "#e0e5ec", color: "#4d547d",
+                  boxShadow: pressed
+                    ? "inset 4px 4px 8px #b8bec5, inset -4px -4px 8px #ffffff"
+                    : "7px 7px 15px #b8bec5, -7px -7px 15px #ffffff",
+                  transform: pressed ? "scale(0.94)" : "scale(1)",
+                  transition: "all 0.3s", opacity: loading ? 0.7 : 1 }}
+                onPointerDown={() => setPressed(true)}
+                onPointerUp={() => { setPressed(false); go(); }}
+                onPointerLeave={() => setPressed(false)}>
+                {loading ? "Signing in..." : "Sign In"}
+              </button>
+            </motion.div>
+          </div>
+        </div>
+      );
+    }
+
+    function ChatListPage() {
+      const { me, meAvatar, users, avatars, openChat, logout,
+              panel, setPanel, updateProfile } = useApp();
+      const [editName, setEditName] = useState("");
+      const [editPass, setEditPass] = useState("");
+      const [avFile,   setAvFile]   = useState(null);
+      const [avPrev,   setAvPrev]   = useState("");
+      const [saving,   setSaving]   = useState(false);
+      const [saved,    setSaved]    = useState(false);
+      const fileRef = useRef(null);
+      const others  = users.filter(u => u.username !== me);
+
+      const onAv = e => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        setAvFile(f); setAvPrev(URL.createObjectURL(f));
+      };
+
+      const save = async () => {
+        setSaving(true);
+        const ok = await updateProfile(editName, editPass, avFile || undefined);
+        setSaving(false);
+        if (ok) { setSaved(true); setTimeout(() => { setSaved(false); setPanel(false); }, 1200); }
+      };
+
+      return (
+        <div className="tide" style={{ width: "100%", height: "100%", overflowY: "auto", position: "relative" }}>
+          <div style={{ position: "relative", zIndex: 1, padding: "20px 16px 24px" }}>
+
+            <motion.div className="glass"
+              style={{ height: 75, borderRadius: 35, display: "flex", alignItems: "center",
+                padding: "0 20px", justifyContent: "space-between", marginBottom: 24,
+                boxShadow: "0 10px 30px rgba(0,0,0,0.08)" }}
+              initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}>
+              <div style={{ width: 44, height: 44, borderRadius: "50%", background: "white",
+                boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+                display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg viewBox="0 0 200 80" style={{ width: 24 }}>
+                  <path d="M30 40 L60 20 L90 40 L120 20 L150 40" stroke="#111" strokeWidth="8" fill="none" />
+                  <path d="M30 40 L60 60 L90 40 L120 60 L150 40" stroke="#111" strokeWidth="8" fill="none" />
+                </svg>
+              </div>
+              <span style={{ flex: 1, textAlign: "center", fontWeight: 700, color: "#444", fontSize: 18 }}>Messages</span>
+              <button onClick={() => setPanel(true)}
+                style={{ width: 40, height: 40, borderRadius: "50%",
+                  border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.3)",
+                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg viewBox="0 0 24 24" style={{ fill: "none", stroke: "#444", width: 22, strokeWidth: 2.5 }}>
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.3.7a7 7 0 0 0-1.7-1l-.3-2.5h-4l-.3 2.5a7 7 0 0 0-1.7 1l-2.3-.7-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.3-.7a7 7 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7 7 0 0 0 1.7-1l2.3.7 2-3.5-2-1.5c.1-.3.1-.7.1-1z" />
+                </svg>
+              </button>
+            </motion.div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {others.length === 0 && (
+                <div style={{ textAlign: "center", padding: "48px 0", color: "#999", fontSize: 14 }}>
+                  No other users yet.
+                </div>
+              )}
+              {others.map((u, i) => (
+                <motion.div key={u.username} className="glass"
+                  style={{ display: "flex", alignItems: "center", gap: 12, padding: 16,
+                    borderRadius: 30, cursor: "pointer", boxShadow: "0 8px 20px rgba(0,0,0,0.05)" }}
+                  initial={{ opacity: 0, y: 22, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: i * 0.07, duration: 0.5, ease: [0.175, 0.885, 0.32, 1.275] }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => openChat(u.username, avatars)}>
+                  <Avatar src={avatars[u.username]} name={u.username} size={50} />
+                  <div>
+                    <div style={{ fontWeight: 600, color: "#333", fontSize: 14 }}>{u.username}</div>
+                    <div style={{ fontSize: 12, color: "#888", marginTop: 2 }}>Tap to message</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <AnimatePresence>
+            {panel && (
+              <>
+                <motion.div
+                  style={{ position: "fixed", inset: 0, zIndex: 2000,
+                    background: "rgba(0,0,0,0.2)", backdropFilter: "blur(10px)" }}
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  onClick={() => setPanel(false)} />
+                <motion.div
+                  style={{ position: "fixed", zIndex: 2001, width: "85%", maxWidth: 300,
+                    top: "50%", left: "50%",
+                    background: "rgba(255,255,255,0.88)", backdropFilter: "blur(50px)",
+                    border: "1px solid white", borderRadius: 35, padding: 25,
+                    boxShadow: "0 30px 60px rgba(0,0,0,0.15)" }}
+                  initial={{ opacity: 0, x: "-50%", y: "-50%", scale: 0.9 }}
+                  animate={{ opacity: 1, x: "-50%", y: "-50%", scale: 1 }}
+                  exit={{ opacity: 0, x: "-50%", y: "-50%", scale: 0.9 }}
+                  transition={{ duration: 0.5, ease: [0.175, 0.885, 0.32, 1.275] }}>
+                  <div style={{ fontWeight: 700, color: "#555", fontSize: 15, marginBottom: 16 }}>Profile Settings</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                    <Avatar src={avPrev || meAvatar} name={me} size={52} />
+                    <div>
+                      <div style={{ fontWeight: 600, color: "#444", fontSize: 14 }}>{me}</div>
+                      <button onClick={() => fileRef.current && fileRef.current.click()}
+                        style={{ fontSize: 12, color: "#4d547d", border: "none",
+                          background: "none", cursor: "pointer", padding: 0, marginTop: 4, fontWeight: 500 }}>
+                        Change photo
+                      </button>
+                      <input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*" onChange={onAv} />
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>Update Name</div>
+                  <input value={editName} onChange={e => setEditName(e.target.value)} placeholder={me}
+                    style={{ width: "100%", padding: 12, borderRadius: 12, fontSize: 13, border: "none",
+                      background: "rgba(0,0,0,0.05)", color: "#000", marginBottom: 12 }} />
+                  <div style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>Change Password</div>
+                  <input type="password" value={editPass} onChange={e => setEditPass(e.target.value)}
+                    placeholder="New password..."
+                    style={{ width: "100%", padding: 12, borderRadius: 12, fontSize: 13, border: "none",
+                      background: "rgba(0,0,0,0.05)", color: "#000", marginBottom: 16 }} />
+                  <button onClick={save} disabled={saving}
+                    style={{ width: "100%", padding: 12, borderRadius: 12, border: "none",
+                      cursor: "pointer", fontSize: 14, fontWeight: 700, color: "white",
+                      background: saving ? "#ccc" : "#4d547d",
+                      boxShadow: "0 4px 15px rgba(77,84,125,0.35)" }}>
+                    {saved ? "Saved!" : saving ? "Saving..." : "Save Profile"}
+                  </button>
+                  <button onClick={logout}
+                    style={{ width: "100%", marginTop: 12, fontSize: 14, fontWeight: 600,
+                      color: "#ff3b30", border: "none", background: "none", cursor: "pointer" }}>
+                    Logout
+                  </button>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </div>
+      );
+    }
+
+    function MsgBubble({ msg, isOwn }) {
+      const t = msg.created_at
+        ? new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+      return (
+        <motion.div style={{ display: "flex", justifyContent: isOwn ? "flex-end" : "flex-start" }}
+          initial={{ opacity: 0, scale: 0.65, y: 18, filter: "blur(5px)" }}
+          animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.48, ease: [0.175, 0.885, 0.32, 1.275] }}>
+          <div style={{ maxWidth: "75%", padding: "14px 18px", borderRadius: 22,
+            background: isOwn ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.4)",
+            backdropFilter: "blur(20px)", color: isOwn ? "#000" : "#333",
+            border: "1px solid " + (isOwn ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.4)"),
+            boxShadow: "0 4px 15px rgba(0,0,0,0.04)" }}>
+            {msg.content && <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5 }}>{msg.content}</p>}
+            {msg.image && (
+              <img src={msg.image} alt="media" onClick={() => window.open(msg.image)}
+                style={{ maxWidth: "100%", maxHeight: 220, borderRadius: 12, marginTop: 4,
+                  cursor: "pointer", objectFit: "cover", display: "block" }} />
+            )}
+            {msg.audio && (
+              <audio controls style={{ width: "100%", height: 30, marginTop: 6 }}>
+                <source src={msg.audio} />
+              </audio>
+            )}
+            {t && <p style={{ margin: "4px 0 0", fontSize: 10, color: "#aaa", textAlign: "right" }}>{t}</p>}
+          </div>
+        </motion.div>
+      );
+    }
+
+    function ChatBoxPage() {
+      const { me, messages, other, otherAv, setPage, sendMsg, uploadMedia } = useApp();
+      const [text, setText] = useState("");
+      const chatRef = useRef(null);
+      const fileRef = useRef(null);
+
+      useEffect(() => {
+        if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      }, [messages]);
+
+      useEffect(() => {
+        if (!window.visualViewport) return;
+        const sync = () => {
+          const bar = document.getElementById("hw-bar");
+          const hdr = document.getElementById("hw-hdr");
+          if (!bar || !hdr) return;
+          
+          const vv = window.visualViewport;
+          const off = window.innerHeight - vv.height;
+          
+          // Apply inverse transform to header to keep it at the top of the actual viewport
+          hdr.style.transform = `translateY(${vv.offsetTop}px) translateZ(0)`;
+          // Move the input bar up with the keyboard
+          bar.style.transform = `translateY(-${off}px) translateZ(0)`;
+          
+          if (off > 0 && chatRef.current) {
+             chatRef.current.scrollTop = chatRef.current.scrollHeight;
+          }
+        };
+        window.visualViewport.addEventListener("resize", sync);
+        window.visualViewport.addEventListener("scroll", sync);
+        return () => {
+          window.visualViewport.removeEventListener("resize", sync);
+          window.visualViewport.removeEventListener("scroll", sync);
+        };
+      }, []);
+
+      const send = async () => {
+        const t = text.trim(); if (!t) return;
+        setText(""); await sendMsg(t);
+      };
+
+      const onFile = async e => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        await uploadMedia(f); e.target.value = "";
+      };
+
+      return (
+        <div className="tide" style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+          {/* Header is fixed to top - doesn't move with keyboard transform */}
+          <div id="hw-hdr" className="glass-s" style={{
+            position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
+            height: "calc(75px + env(safe-area-inset-top))",
+            paddingTop: "env(safe-area-inset-top)",
+            display: "flex", alignItems: "center", gap: 12, padding: "0 18px",
+            borderBottom: "1px solid rgba(255,255,255,0.3)",
+            willChange: "transform" }}>
+            <motion.button onClick={() => setPage("list")} whileTap={{ scale: 0.85 }}
+              style={{ fontSize: 24, color: "#666", border: "none", background: "none",
+                cursor: "pointer", paddingRight: 8, lineHeight: 1 }}>&#8592;</motion.button>
+            <Avatar src={otherAv} name={other} size={36} />
+            <div>
+              <div style={{ fontWeight: 700, color: "#333", fontSize: 14 }}>{other}</div>
+              <div style={{ fontSize: 11, color: "#aaa" }}>Active now</div>
+            </div>
+          </div>
+
+          {/* Chat area is fixed, so it doesn't move with the keyboard transform */}
+          <div ref={chatRef} className="ns" style={{
+            position: "fixed",
+            top: "calc(85px + env(safe-area-inset-top))",
+            bottom: 100, left: 0, right: 0,
+            overflowY: "auto", padding: "16px 16px 8px",
+            display: "flex", flexDirection: "column", gap: 10 }}>
+            {messages.map((m, i) => <MsgBubble key={m.id || i} msg={m} isOwn={m.sender === me} />)}
+          </div>
+
+          {/* Input bar moves based on translateY calculated from visualViewport */}
+          <div id="hw-bar" style={{
+            position: "fixed", left: 16, right: 16, bottom: 20, zIndex: 1001,
+            display: "flex", alignItems: "center", gap: 8,
+            padding: "10px 16px", borderRadius: 30,
+            background: "rgba(255,255,255,0.3)", backdropFilter: "blur(40px)",
+            border: "1px solid rgba(255,255,255,0.4)",
+            boxShadow: "0 15px 35px rgba(0,0,0,0.1)", willChange: "transform" }}>
+            <label style={{ fontSize: 20, cursor: "pointer", userSelect: "none", flexShrink: 0 }}>
+              +<input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*,audio/*" onChange={onFile} />
+            </label>
+            <input type="text" placeholder="Message..." value={text}
+              onChange={e => setText(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && send()}
+              style={{ flex: 1, border: "none", fontSize: 14, padding: "8px 12px",
+                borderRadius: 20, background: "rgba(255,255,255,0.3)", color: "#000" }} />
+            <motion.button onClick={send} whileTap={{ scale: 0.82 }}
+              style={{ width: 36, height: 36, borderRadius: "50%", border: "none",
+                cursor: "pointer", background: "#4d547d", color: "white", fontSize: 16,
+                fontWeight: 700, flexShrink: 0, display: "flex", alignItems: "center",
+                justifyContent: "center", boxShadow: "0 4px 12px rgba(77,84,125,0.4)" }}>&#8593;</motion.button>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [splash, setSplash] = useState(true);
+      const { me, page, setPage, buildUsers, startRT } = useApp();
+
+      useEffect(() => {
+        const t = setTimeout(() => setSplash(false), 3000);
+        return () => clearTimeout(t);
+      }, []);
+
+      useEffect(() => {
+        const saved = localStorage.getItem("hw_me");
+        if (saved && me) {
+          buildUsers().then(() => { setPage("list"); startRT(); });
+        }
+      }, []);
+
+      return (
+        <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden", background: "#000" }}>
+          <SplashScreen visible={splash} />
+          <AnimatePresence mode="wait">
+            {page === "login" && (
+              <motion.div key="login" style={{ position: "absolute", inset: 0 }}
+                variants={PV} initial="initial" animate="animate" exit="exit">
+                <LoginPage />
+              </motion.div>
+            )}
+            {page === "list" && (
+              <motion.div key="list" style={{ position: "absolute", inset: 0 }}
+                variants={PV} initial="initial" animate="animate" exit="exit">
+                <ChatListPage />
+              </motion.div>
+            )}
+            {page === "chat" && (
+              <motion.div key="chat" style={{ position: "absolute", inset: 0 }}
+                variants={PV} initial="initial" animate="animate" exit="exit">
+                <ChatBoxPage />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      );
+    }
+
+    createRoot(document.getElementById("root")).render(
+      <AppProvider><App /></AppProvider>
+    );
+  </script>
 </body>
 </html>
