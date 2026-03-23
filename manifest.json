@@ -1,6 +1,6 @@
 {
-  "name": "Harvinder Chat",
-  "short_name": "Chat",
+  "name": "Harvinder World",
+  "short_name": "H World",
   "description": "Private real-time chat app for Harvinder",
   "start_url": "./",
   "display": "standalone",
