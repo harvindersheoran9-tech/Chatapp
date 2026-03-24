@@ -100,6 +100,7 @@
     input { outline: none; }
     input::placeholder { color: var(--text-muted); }
     
+    /* FROSTED GLASS BASE CLASSES */
     .glass {
       background: var(--glass-bg);
       backdrop-filter: blur(25px) saturate(120%);
@@ -125,6 +126,7 @@
       transform: translateZ(0);
     }
 
+    /* THE TRUE "LIQUID GLASS" EFFECT */
     .liquid-glass {
       background: transparent !important;
       backdrop-filter: none !important;
@@ -252,17 +254,6 @@
     let _channel = null;
     const PAGE_SIZE = 30; 
 
-    // We still define reqNotif and notify to prevent errors if you ever want them elsewhere
-    function notify(sender, text) {
-      if ("Notification" in window && Notification.permission === "granted") {
-        try { new Notification("Message from " + sender, { body: text }); } catch(_) {}
-      }
-    }
-    async function reqNotif() {
-      if ("Notification" in window && Notification.permission === "default")
-        await Notification.requestPermission();
-    }
-
     const Ctx = createContext(null);
 
     function AppProvider({ children }) {
@@ -337,11 +328,6 @@
                 [msg.sender]: (prev[msg.sender] || 0) + 1
             }));
         }
-
-        // FAKE NOTIFICATION DISABLED: 
-        // We comment this out so it relies solely on the real OneSignal push!
-        // if (msg.receiver === myMe && msg.sender !== myMe)
-        //   notify(msg.sender, msg.content ? "New message" : "Sent a file");
       }, []);
 
       const updateMsg = useCallback((msg) => {
@@ -422,7 +408,6 @@
             setMeAvatar(localStorage.getItem("hw_meAvatar") || "");
             meRef.current = savedMe;
             
-            // Tell OneSignal who this is for background pushes
             window.OneSignalDeferred.push(function(OneSignal) {
               OneSignal.login(savedMe);
             });
@@ -450,7 +435,6 @@
           setMe(data.username); setMeAvatar(av); setPage("list");
           meRef.current = data.username;
           
-          // Login to OneSignal and prompt for permission
           window.OneSignalDeferred.push(async function(OneSignal) {
             await OneSignal.login(data.username);
             await OneSignal.Slidedown.promptPush();
@@ -473,7 +457,6 @@
         setUnreadCounts({});
         setPanel(false); 
         
-        // Disconnect from OneSignal
         window.OneSignalDeferred.push(function(OneSignal) {
           OneSignal.logout();
         });
@@ -706,7 +689,7 @@
 
       const go = async () => {
         if (!user.trim() || !pass.trim()) { setErr("Please fill in both fields."); return; }
-        await reqNotif();
+        // We removed the native browser prompt from here! Only OneSignal asks now.
         const ok = await login(user.trim(), pass.trim());
         if (!ok) setErr("Invalid username or password.");
       };
