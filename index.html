@@ -267,16 +267,6 @@
     let _channel = null;
     const PAGE_SIZE = 30; 
 
-    function notify(sender, text) {
-      if ("Notification" in window && Notification.permission === "granted") {
-        try { new Notification("Message from " + sender, { body: text }); } catch(_) {}
-      }
-    }
-    async function reqNotif() {
-      if ("Notification" in window && Notification.permission === "default")
-        await Notification.requestPermission();
-    }
-
     const Ctx = createContext(null);
 
     function AppProvider({ children }) {
@@ -314,29 +304,23 @@
         document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
       }, [isDark]);
 
-      // THE RAW FETCH TRIGGER WITH ALERTS FOR MOBILE DEBUGGING
+      // CLEAN SUPABASE PUSH WITH DEBUG ALERTS
       const triggerPush = async (text) => {
         try {
-          const response = await fetch(`${SB_URL}/functions/v1/onesignal-notification`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${SB_KEY}`
-            },
-            body: JSON.stringify({ 
-              sender: meRef.current, 
-              receiver: othRef.current, 
-              content: text 
-            })
+          const { data, error } = await sb.functions.invoke('onesignal-notification', {
+            body: { sender: meRef.current, receiver: othRef.current, content: text }
           });
-
-          if (!response.ok) {
-            const errText = await response.text();
-            alert(`Supabase Rejected It: ${response.status} \nDetails: ${errText}`);
-          }
           
+          if (error) {
+            alert(`Supabase Error: ${error.message}`);
+            console.error("Edge Function Blocked:", error);
+          } else {
+            alert(`Push Success! Check the other phone.`);
+            console.log("Sent to OneSignal:", data);
+          }
         } catch (e) { 
-          alert(`Phone Blocked It (Network/CORS): ${e.message}`); 
+          alert(`Network/CORS Error: ${e.message}`);
+          console.error("Push network error:", e); 
         }
       };
 
