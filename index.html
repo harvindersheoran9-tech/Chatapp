@@ -17,7 +17,7 @@
       await OneSignal.init({
         appId: "9de2f507-7a1b-4f51-b6ac-16fe00c8c652",
         safari_web_id: "web.onesignal.auto.13f7d09c-87f4-478e-9a86-b96c3b883b5b",
-        notifyButton: { enable: false }, /* Hidden so it doesn't ruin your UI */
+        notifyButton: { enable: false },
         allowLocalhostAsSecureOrigin: true,
       });
     });
@@ -76,18 +76,12 @@
       touch-action: manipulation;
       -webkit-text-size-adjust: 100%;
       
-      /* EXACT BACKGROUND FROM YOUR IMAGE */
-      background-color: var(--bg); /* Smooth lighter gray */
+      background-color: var(--bg);
       background-image: 
-        /* Major sweep from bottom-left to mid-right */
         radial-gradient(ellipse 150% 140% at -20% 110%, transparent 65%, rgba(255, 255, 255, 0.08) 65.2%, rgba(0, 0, 0, 0.4) 66.5%, rgba(0, 0, 0, 0.1) 72%, transparent 80%),
-        /* Top right corner sweep */
         radial-gradient(ellipse 120% 120% at 90% -20%, transparent 55%, rgba(255, 255, 255, 0.06) 55.2%, rgba(0, 0, 0, 0.3) 57%, transparent 70%),
-        /* Large vertical sweep on the right */
         radial-gradient(ellipse 100% 180% at 140% 50%, transparent 60%, rgba(255, 255, 255, 0.05) 60.2%, rgba(0, 0, 0, 0.4) 62%, transparent 75%),
-        /* Subtle top left sweep */
         radial-gradient(ellipse 100% 100% at -10% -10%, transparent 40%, rgba(255, 255, 255, 0.04) 40.2%, rgba(0, 0, 0, 0.2) 42%, transparent 60%),
-        /* Extremely subtle premium noise texture (no black spots) */
         url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
       
       background-attachment: fixed;
@@ -106,7 +100,6 @@
     input { outline: none; }
     input::placeholder { color: var(--text-muted); }
     
-    /* FROSTED GLASS BASE CLASSES */
     .glass {
       background: var(--glass-bg);
       backdrop-filter: blur(25px) saturate(120%);
@@ -132,7 +125,6 @@
       transform: translateZ(0);
     }
 
-    /* THE TRUE "LIQUID GLASS" EFFECT (100% Transparent Match) */
     .liquid-glass {
       background: transparent !important;
       backdrop-filter: none !important;
@@ -301,6 +293,18 @@
         document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
       }, [isDark]);
 
+      const triggerPush = async (text) => {
+        try {
+          // SAFE EDGE FUNCTION TRIGGER (Fixed for SPCK)
+          fetch(`${SB_URL}/functions/v1/onesignal-notification`, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY },
+            body: JSON.stringify({ sender: meRef.current, receiver: othRef.current, content: text })
+          });
+        } catch (e) { console.warn("Push error:", e); }
+      };
+
       const addMsg = useCallback((msg) => {
         const myMe  = meRef.current;
         const myOth = othRef.current;
@@ -417,7 +421,6 @@
             setMeAvatar(localStorage.getItem("hw_meAvatar") || "");
             meRef.current = savedMe;
             
-            // Tell OneSignal who this is for background pushes
             window.OneSignalDeferred.push(function(OneSignal) {
               OneSignal.login(savedMe);
             });
@@ -445,7 +448,6 @@
           setMe(data.username); setMeAvatar(av); setPage("list");
           meRef.current = data.username;
           
-          // Login to OneSignal and prompt for permission
           window.OneSignalDeferred.push(async function(OneSignal) {
             await OneSignal.login(data.username);
             await OneSignal.Slidedown.promptPush();
@@ -468,7 +470,6 @@
         setUnreadCounts({});
         setPanel(false); 
         
-        // Disconnect from OneSignal
         window.OneSignalDeferred.push(function(OneSignal) {
           OneSignal.logout();
         });
@@ -542,7 +543,6 @@
         }
       }, [pageCount]);
 
-      /* --- UPDATED LOGIC TO CALL EDGE FUNCTION --- */
       const sendMsg = useCallback(async (text, prefix = "") => {
         if (!text.trim() && !prefix) return;
         const msgContent = prefix + text;
@@ -561,13 +561,29 @@
         }]);
 
         if (!error) {
-          // Trigger the lightweight notification edge function
-          sb.functions.invoke('onesignal-notification', {
-            body: { sender: meRef.current, receiver: othRef.current, content: text }
-          });
+          triggerPush(text);
         } else {
           setMessages(prev => prev.filter(m => m.id !== tempId));
-          console.error("DB Error:", error);
+        }
+      }, []);
+
+      const uploadMedia = useCallback(async (file, prefix = "") => {
+        if (!file) return;
+        const name = Date.now() + "_" + file.name;
+        const { error: uploadError } = await sb.storage.from("chat-media").upload(name, file);
+        if (uploadError) return;
+
+        const { data } = sb.storage.from("chat-media").getPublicUrl(name);
+        const isImg = file.type.startsWith("image/");
+        
+        const { error: insertError } = await sb.from("messages").insert([{
+          sender: meRef.current, receiver: othRef.current, content: prefix,
+          [isImg ? "image" : "audio"]: data.publicUrl,
+          created_at: new Date().toISOString()
+        }]);
+
+        if (!insertError) {
+          triggerPush(isImg ? "Sent a photo" : "Sent an audio message");
         }
       }, []);
 
@@ -575,32 +591,6 @@
         if (!id) return;
         const { error } = await sb.from("messages").delete().eq("id", id);
         if(!error) setMessages(prev => prev.filter(m => m.id !== id));
-      }, []);
-
-      /* --- UPDATED UPLOAD LOGIC TO CALL EDGE FUNCTION --- */
-      const uploadMedia = useCallback(async (file, prefix = "") => {
-        if (!file) return;
-        const name = Date.now() + "_" + file.name;
-        const { error: upErr } = await sb.storage.from("chat-media").upload(name, file);
-        if (upErr) return;
-        
-        const { data: pubData } = sb.storage.from("chat-media").getPublicUrl(name);
-        const isImg = file.type.startsWith("image/");
-        
-        const { error: insErr } = await sb.from("messages").insert([{
-          sender: meRef.current, receiver: othRef.current, content: prefix,
-          [isImg ? "image" : "audio"]: pubData.publicUrl, created_at: new Date().toISOString()
-        }]);
-
-        if (!insErr) {
-          sb.functions.invoke('onesignal-notification', {
-            body: { 
-              sender: meRef.current, 
-              receiver: othRef.current, 
-              content: isImg ? "Sent a photo" : "Sent an audio message" 
-            }
-          });
-        }
       }, []);
 
       const updateProfile = useCallback(async (name, password, avatarFile) => {
@@ -707,7 +697,6 @@
       const [pass, setPass]     = useState("");
       const [err,  setErr]      = useState("");
       const [pressed, setPressed] = useState(false);
-      const APP = "Harvinder's World";
 
       const go = async () => {
         if (!user.trim() || !pass.trim()) { setErr("Please fill in both fields."); return; }
@@ -726,7 +715,7 @@
               <div className="ns liquid-glass" style={{ width: 112, height: 112, position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center" }}><Logo w={64} /></div>
             </div>
             <div style={{ marginTop: 20, display: "flex", flexWrap: "wrap", justifyContent: "center", color: "var(--text)" }}>
-              {APP.split("").map((ch, i) => <motion.span key={i} style={{ display: "inline-block", fontSize: 32, fontWeight: 900, lineHeight: 1 }} animate={{ y: [0.01, -8, 0.01], z: 0.01 }} transition={{ duration: 2.2, delay: i * 0.05, repeat: Infinity, repeatDelay: 5, ease: "easeInOut" }}>{ch === " " ? "\u00A0" : ch}</motion.span>)}
+              {"Harvinder's World".split("").map((ch, i) => <motion.span key={i} style={{ display: "inline-block", fontSize: 32, fontWeight: 900, lineHeight: 1 }} animate={{ y: [0.01, -8, 0.01], z: 0.01 }} transition={{ duration: 2.2, delay: i * 0.05, repeat: Infinity, repeatDelay: 5, ease: "easeInOut" }}>{ch === " " ? "\u00A0" : ch}</motion.span>)}
             </div>
             <motion.div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 20 }} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.7, ease: [0.23, 1, 0.32, 1] }}>
               <input style={inp} type="text" placeholder="Username" value={user} onChange={e => { setUser(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} />
@@ -765,7 +754,7 @@
                 <motion.button onClick={() => setPanel(true)} whileTap={{ rotate: 90, scale: 0.9 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22, strokeWidth: 2.5 }}>
                     <circle cx="12" cy="12" r="3" />
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                   </svg>
                 </motion.button>
               </div>
@@ -1080,7 +1069,7 @@
             setTimeout(() => pre.remove(), 300);
           });
         }
-        const t = setTimeout(() => setMinTimeElapsed(true), 800); 
+        const t = setTimeout(() => setMinTimeElapsed(true), 1500); 
         return () => clearTimeout(t);
       }, []);
 
@@ -1096,17 +1085,17 @@
           
           <AnimatePresence mode="wait">
             {!splash && page === "login" && (
-              <motion.div key="login" style={{ position: "absolute", inset: 0, zIndex: 1, WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }} variants={PV} initial="initial" animate="animate" exit="exit">
+              <motion.div key="login" style={{ position: "absolute", inset: 0, zIndex: 1 }} variants={PV} initial="initial" animate="animate" exit="exit">
                 <LoginPage />
               </motion.div>
             )}
             {!splash && page === "list" && (
-              <motion.div key="list" style={{ position: "absolute", inset: 0, zIndex: 1, WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }} variants={PV} initial="initial" animate="animate" exit="exit">
+              <motion.div key="list" style={{ position: "absolute", inset: 0, zIndex: 1 }} variants={PV} initial="initial" animate="animate" exit="exit">
                 <ChatListPage />
               </motion.div>
             )}
             {!splash && page === "chat" && (
-              <motion.div key="chat" style={{ position: "absolute", inset: 0, zIndex: 1, WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }} variants={PV} initial="initial" animate="animate" exit="exit">
+              <motion.div key="chat" style={{ position: "absolute", inset: 0, zIndex: 1 }} variants={PV} initial="initial" animate="animate" exit="exit">
                 <ChatBoxPage />
               </motion.div>
             )}
