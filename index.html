@@ -13,7 +13,6 @@
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     // DYNAMIC GITHUB PAGES FIX
-    // This automatically finds your repo folder so OneSignal can find the Worker file
     const swPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
     
     window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -36,16 +35,20 @@
       --bg: #2a2a2d;
       --text: #ffffff;
       --text-muted: #98989d;
+      
       --glass-bg: rgba(255, 255, 255, 0.05);
       --glass-s: rgba(255, 255, 255, 0.1);
       --border-tl: rgba(255, 255, 255, 0.4);
       --border-br: rgba(0, 0, 0, 0.4);
       --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
       --glass-inset: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      
       --input-bg: rgba(0, 0, 0, 0.2);
       --input-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5), inset -2px -2px 5px rgba(255, 255, 255, 0.05);
+      
       --btn-grad: linear-gradient(135deg, #4a4a4d, #2a2a2d);
       --btn-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+      
       --panel-bg: rgba(20, 20, 22, 0.6);
       --bubble-own: rgba(255, 255, 255, 0.12);
       --bubble-oth: rgba(255, 255, 255, 0.05);
@@ -54,14 +57,27 @@
       --divider: rgba(255,255,255,0.2);
     }
     
-    [data-theme="dark"] { --bg: #2a2a2d; }
-    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
+    [data-theme="dark"] {
+      --bg: #2a2a2d;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+    }
     
     html, body {
-      margin: 0; padding: 0; width: 100%; height: 100%; height: var(--vh, 100%);
-      overflow: hidden; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      margin: 0; padding: 0; width: 100%;
+      height: 100%;
+      height: var(--vh, 100%);
+      overflow: hidden;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: var(--text); touch-action: manipulation; -webkit-text-size-adjust: 100%;
+      color: var(--text);
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+      
       background-color: var(--bg);
       background-image: 
         radial-gradient(ellipse 150% 140% at -20% 110%, transparent 65%, rgba(255, 255, 255, 0.08) 65.2%, rgba(0, 0, 0, 0.4) 66.5%, rgba(0, 0, 0, 0.1) 72%, transparent 80%),
@@ -69,37 +85,88 @@
         radial-gradient(ellipse 100% 180% at 140% 50%, transparent 60%, rgba(255, 255, 255, 0.05) 60.2%, rgba(0, 0, 0, 0.4) 62%, transparent 75%),
         radial-gradient(ellipse 100% 100% at -10% -10%, transparent 40%, rgba(255, 255, 255, 0.04) 40.2%, rgba(0, 0, 0, 0.2) 42%, transparent 60%),
         url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
-      background-attachment: fixed; background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 150px 150px;
-      background-position: center; transition: background 0.6s ease, color 0.4s ease;
+      
+      background-attachment: fixed;
+      background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 150px 150px;
+      background-position: center;
+      transition: background 0.6s ease, color 0.4s ease;
     }
 
-    #root { width: 100%; height: 100vh; height: var(--vh, 100dvh); position: absolute; top: 0; left: 0; overflow: hidden; }
-    input { outline: none; } input::placeholder { color: var(--text-muted); }
+    #root {
+      width: 100%; 
+      height: 100vh;
+      height: var(--vh, 100dvh);
+      position: absolute; top: 0; left: 0;
+      overflow: hidden;
+    }
+    
+    input { outline: none; }
+    input::placeholder { color: var(--text-muted); }
     
     .glass {
-      background: var(--glass-bg); backdrop-filter: blur(25px) saturate(120%); -webkit-backdrop-filter: blur(25px) saturate(120%);
-      border-top: 1.5px solid var(--border-tl); border-left: 1.5px solid var(--border-tl); border-bottom: 1px solid var(--border-br); border-right: 1px solid var(--border-br);
-      box-shadow: var(--glass-shadow), var(--glass-inset); transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease; transform: translateZ(0);
-    }
-    .glass-s {
-      background: var(--glass-s); backdrop-filter: blur(35px) saturate(120%); -webkit-backdrop-filter: blur(35px) saturate(120%);
-      border-top: 1.5px solid var(--border-tl); border-bottom: 1px solid var(--border-br); box-shadow: var(--glass-shadow), var(--glass-inset);
-      transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease; transform: translateZ(0);
-    }
-    .liquid-glass {
-      background: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-      border-radius: 50px !important; border: none !important; border-top: 1.5px solid rgba(255, 255, 255, 0.4) !important;
-      border-left: 1px solid rgba(255, 255, 255, 0.15) !important; border-bottom: 1.5px solid rgba(0, 0, 0, 0.6) !important;
-      border-right: 1px solid rgba(0, 0, 0, 0.3) !important; box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.05), 0 15px 35px rgba(0, 0, 0, 0.4) !important; color: #ffffff !important;
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px) saturate(120%);
+      -webkit-backdrop-filter: blur(25px) saturate(120%);
+      border-top: 1.5px solid var(--border-tl);
+      border-left: 1.5px solid var(--border-tl);
+      border-bottom: 1px solid var(--border-br);
+      border-right: 1px solid var(--border-br);
+      box-shadow: var(--glass-shadow), var(--glass-inset);
+      transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
     
-    .ns::-webkit-scrollbar { display: none; } .ns { -ms-overflow-style: none; scrollbar-width: none; }
+    .glass-s {
+      background: var(--glass-s);
+      backdrop-filter: blur(35px) saturate(120%);
+      -webkit-backdrop-filter: blur(35px) saturate(120%);
+      border-top: 1.5px solid var(--border-tl);
+      border-bottom: 1px solid var(--border-br);
+      box-shadow: var(--glass-shadow), var(--glass-inset);
+      transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
 
-    @keyframes orb1 { from{transform:rotate(0deg) translateX(72px) rotate(0deg)} to{transform:rotate(360deg) translateX(72px) rotate(-360deg)} }
-    @keyframes orb2 { from{transform:rotate(120deg) translateX(80px) rotate(-120deg)} to{transform:rotate(480deg) translateX(80px) rotate(-480deg)} }
-    @keyframes orb3 { from{transform:rotate(240deg) translateX(65px) rotate(-240deg)} to{transform:rotate(-120deg) translateX(65px) rotate(120deg)} }
-    @keyframes spinner { to { transform: rotate(360deg); } }
-    .od1{animation:orb1 8s linear infinite} .od2{animation:orb2 10s linear infinite} .od3{animation:orb3 9s linear infinite}
+    .liquid-glass {
+      background: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border-radius: 50px !important;
+      border: none !important;
+      border-top: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+      border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-bottom: 1.5px solid rgba(0, 0, 0, 0.6) !important;
+      border-right: 1px solid rgba(0, 0, 0, 0.3) !important;
+      box-shadow: 
+        inset 0 2px 3px rgba(255, 255, 255, 0.05),
+        0 15px 35px rgba(0, 0, 0, 0.4) !important; 
+      color: #ffffff !important;
+    }
+    
+    .ns::-webkit-scrollbar { display: none; }
+    .ns { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @keyframes orb1 { 
+      from { transform:rotate(0deg) translateX(72px) rotate(0deg); } 
+      to { transform:rotate(360deg) translateX(72px) rotate(-360deg); } 
+    }
+    @keyframes orb2 { 
+      from { transform:rotate(120deg) translateX(80px) rotate(-120deg); } 
+      to { transform:rotate(480deg) translateX(80px) rotate(-480deg); } 
+    }
+    @keyframes orb3 { 
+      from { transform:rotate(240deg) translateX(65px) rotate(-240deg); } 
+      to { transform:rotate(-120deg) translateX(65px) rotate(120deg); } 
+    }
+    @keyframes spinner { 
+      to { transform: rotate(360deg); } 
+    }
+
+    .od1 { animation: orb1 8s linear infinite; }
+    .od2 { animation: orb2 10s linear infinite; }
+    .od3 { animation: orb3 9s linear infinite; }
 
     @keyframes liquidMorph {
       0%   { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
@@ -107,13 +174,54 @@
       66%  { border-radius: 43% 57% 65% 35% / 46% 40% 60% 54%; }
       100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
     }
-    @keyframes floatOrb { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-6px) scale(1.02); } }
-    .liquid-orb { animation: liquidMorph 5s ease-in-out infinite, floatOrb 4s ease-in-out infinite; backface-visibility: hidden; transform: translate3d(0, 0, 0); isolation: isolate; }
-    .date-divider { text-align: center; margin: 20px 0; font-size: 11px; font-weight: 800; color: var(--divider); text-transform: uppercase; letter-spacing: 1px; }
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.02); }
+    }
 
-    .pulse-ring-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateY(-50px); width: 120px; height: 120px; z-index: 1; }
-    .pulse-ring { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 1.5px solid rgba(255, 255, 255, 0.5); border-radius: 50%; opacity: 0; animation: pulseRing 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
-    @keyframes pulseRing { 0% { transform: scale(0.8); opacity: 0; border-width: 3px; } 20% { opacity: 0.4; border-width: 1.5px; } 100% { transform: scale(4.5); opacity: 0; border-width: 0px; } }
+    .liquid-orb {
+      animation: liquidMorph 5s ease-in-out infinite, floatOrb 4s ease-in-out infinite;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      isolation: isolate;
+    }
+
+    .date-divider {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--divider);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .pulse-ring-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translateY(-50px);
+      width: 120px;
+      height: 120px;
+      z-index: 1; 
+    }
+    
+    .pulse-ring {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border: 1.5px solid rgba(255, 255, 255, 0.5); 
+      border-radius: 50%;
+      opacity: 0;
+      animation: pulseRing 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.8); opacity: 0; border-width: 3px; }
+      20% { opacity: 0.4; border-width: 1.5px; } 
+      100% { transform: scale(4.5); opacity: 0; border-width: 0px; } 
+    }
   </style>
 </head>
 <body>
@@ -142,7 +250,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.6/babel.min.js"></script>
 
-  <script> window.FramerMotion = window.Motion; </script>
+  <script>
+    window.FramerMotion = window.Motion;
+  </script>
 
   <script type="text/babel">
     const { useState, useEffect, useLayoutEffect, useRef, useContext, createContext, useCallback } = React;
@@ -157,20 +267,30 @@
     let _channel = null;
     const PAGE_SIZE = 30; 
 
+    function notify(sender, text) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        try { new Notification("Message from " + sender, { body: text }); } catch(_) {}
+      }
+    }
+    async function reqNotif() {
+      if ("Notification" in window && Notification.permission === "default")
+        await Notification.requestPermission();
+    }
+
     const Ctx = createContext(null);
 
     function AppProvider({ children }) {
-      const [me,       setMe]       = useState("");
+      const [me, setMe] = useState("");
       const [meAvatar, setMeAvatar] = useState("");
-      const [users,    setUsers]    = useState([]);
-      const [avatars,  setAvatars]  = useState({});
+      const [users, setUsers] = useState([]);
+      const [avatars, setAvatars] = useState({});
       const [messages, setMessages] = useState([]);
-      const [other,    setOther]    = useState("");
-      const [otherAv,  setOtherAv]  = useState("");
-      const [page,     setPage]     = useState(null); 
-      const [panel,    setPanel]    = useState(false);
-      const [loading,  setLoading]  = useState(false);
-      const [isDark,   setIsDark]   = useState(localStorage.getItem("hw_dark") !== "false");
+      const [other, setOther] = useState("");
+      const [otherAv, setOtherAv] = useState("");
+      const [page, setPage] = useState(null); 
+      const [panel, setPanel] = useState(false);
+      const [loading, setLoading] = useState(false);
+      const [isDark, setIsDark] = useState(localStorage.getItem("hw_dark") !== "false");
       const [onlineUsers, setOnlineUsers] = useState([]);
       const [unreadCounts, setUnreadCounts] = useState({});
       
@@ -178,30 +298,45 @@
       const [pageCount, setPageCount] = useState(1);
       const [appReady, setAppReady] = useState(false);
 
-      const meRef  = useRef(me);
+      const meRef = useRef(me);
       const othRef = useRef(other);
-      useEffect(() => { meRef.current  = me;    }, [me]);
-      useEffect(() => { othRef.current = other; }, [other]);
+      
+      useEffect(() => { 
+        meRef.current = me;    
+      }, [me]);
+      
+      useEffect(() => { 
+        othRef.current = other; 
+      }, [other]);
 
       useEffect(() => {
         localStorage.setItem("hw_dark", isDark);
         document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
       }, [isDark]);
 
-      // THE REAL EDGE FUNCTION TRIGGER (Permanent OneSignal System)
+      // THE RAW FETCH TRIGGER WITH ALERTS FOR MOBILE DEBUGGING
       const triggerPush = async (text) => {
         try {
-          const { data, error } = await sb.functions.invoke('onesignal-notification', {
-            body: { sender: meRef.current, receiver: othRef.current, content: text }
+          const response = await fetch(`${SB_URL}/functions/v1/onesignal-notification`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${SB_KEY}`
+            },
+            body: JSON.stringify({ 
+              sender: meRef.current, 
+              receiver: othRef.current, 
+              content: text 
+            })
           });
-          
-          if (error) {
-            console.error("Push Error (Edge Function Failed):", error);
-          } else {
-            console.log("Push Success (Sent to OneSignal):", data);
+
+          if (!response.ok) {
+            const errText = await response.text();
+            alert(`Supabase Rejected It: ${response.status} \nDetails: ${errText}`);
           }
+          
         } catch (e) { 
-          console.error("Push Error (Network):", e); 
+          alert(`Phone Blocked It (Network/CORS): ${e.message}`); 
         }
       };
 
@@ -215,10 +350,12 @@
         if (rel) {
             setMessages(prev => {
                 if(prev.find(m => m.id === msg.id)) return prev;
+                
                 let removedTemp = false;
                 const filtered = prev.filter(m => {
                     if (!removedTemp && m.isTemp && m.sender === msg.sender && m.content === msg.content) {
-                        removedTemp = true; return false; 
+                        removedTemp = true; 
+                        return false; 
                     }
                     return true;
                 });
@@ -234,8 +371,6 @@
                 ...prev, [msg.sender]: (prev[msg.sender] || 0) + 1
             }));
         }
-        
-        // Removed local fake notify() entirely. OneSignal handles everything now.
       }, []);
 
       const updateMsg = useCallback((msg) => {
@@ -243,7 +378,10 @@
       }, []);
 
       const startRT = useCallback(() => {
-        if (_channel) { sb.removeChannel(_channel); _channel = null; }
+        if (_channel) { 
+            sb.removeChannel(_channel); 
+            _channel = null; 
+        }
         
         _channel = sb.channel(`chat_${meRef.current}`, { config: { presence: { key: meRef.current } } })
           .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, pl => {
@@ -252,7 +390,8 @@
             else if (pl.eventType === "DELETE") setMessages(prev => prev.filter(m => m.id !== pl.old.id));
           })
           .on("presence", { event: "sync" }, () => {
-            setOnlineUsers(Object.keys(_channel.presenceState()));
+            const state = _channel.presenceState();
+            setOnlineUsers(Object.keys(state));
           })
           .subscribe(async (status) => {
             if (status === 'SUBSCRIBED' && meRef.current) {
@@ -262,7 +401,10 @@
       }, [addMsg, updateMsg]);
 
       const stopRT = useCallback(() => {
-        if (_channel) { sb.removeChannel(_channel); _channel = null; }
+        if (_channel) { 
+            sb.removeChannel(_channel); 
+            _channel = null; 
+        }
       }, []);
 
       useEffect(() => {
@@ -271,6 +413,7 @@
              const { data } = await sb.from("messages").select("*")
               .or(`and(sender.eq.${meRef.current},receiver.eq.${othRef.current}),and(sender.eq.${othRef.current},receiver.eq.${meRef.current})`)
               .order("created_at", { ascending: false }).limit(PAGE_SIZE);
+              
              if (data) {
                  setMessages(data.reverse());
                  const hasUnread = data.some(m => m.receiver === meRef.current && m.sender === othRef.current && m.seen === false);
@@ -280,6 +423,7 @@
              }
           }
         };
+        
         document.addEventListener("visibilitychange", handleVisibility);
         return () => document.removeEventListener("visibilitychange", handleVisibility);
       }, [page]);
@@ -288,15 +432,20 @@
         const { data } = await sb.from("users").select("*");
         if (data) {
           const av = {};
-          data.forEach(u => { av[u.username] = u.avatar_url || ""; });
-          setUsers(data); setAvatars(av);
+          data.forEach(u => { 
+              av[u.username] = u.avatar_url || ""; 
+          });
+          setUsers(data); 
+          setAvatars(av);
         }
 
         if (meRef.current) {
           const { data: unreads } = await sb.from("messages").select("sender").eq("receiver", meRef.current).eq("seen", false);
           if (unreads) {
             const counts = {};
-            unreads.forEach(m => { counts[m.sender] = (counts[m.sender] || 0) + 1; });
+            unreads.forEach(m => { 
+                counts[m.sender] = (counts[m.sender] || 0) + 1; 
+            });
             setUnreadCounts(counts);
           }
         }
@@ -306,9 +455,17 @@
         const initApp = async () => {
           const savedMe = localStorage.getItem("hw_me");
           if (savedMe) {
-            setMe(savedMe); setMeAvatar(localStorage.getItem("hw_meAvatar") || ""); meRef.current = savedMe;
-            window.OneSignalDeferred.push(function(OneSignal) { OneSignal.login(savedMe); });
-            await buildUsers(); startRT(); setPage("list");    
+            setMe(savedMe); 
+            setMeAvatar(localStorage.getItem("hw_meAvatar") || ""); 
+            meRef.current = savedMe;
+            
+            window.OneSignalDeferred.push(function(OneSignal) { 
+                OneSignal.login(savedMe); 
+            });
+            
+            await buildUsers(); 
+            startRT(); 
+            setPage("list");    
           } else {
             setPage("login");
           }
@@ -321,40 +478,72 @@
         setLoading(true);
         const { data } = await sb.from("users").select("*").eq("username", username).eq("password", password).maybeSingle();
         setLoading(false);
+        
         if (data) {
           const av = data.avatar_url || "";
-          localStorage.setItem("hw_me", data.username); localStorage.setItem("hw_meAvatar", av);
-          setMe(data.username); setMeAvatar(av); setPage("list"); meRef.current = data.username;
+          localStorage.setItem("hw_me", data.username); 
+          localStorage.setItem("hw_meAvatar", av);
+          
+          setMe(data.username); 
+          setMeAvatar(av); 
+          setPage("list"); 
+          meRef.current = data.username;
           
           window.OneSignalDeferred.push(async function(OneSignal) {
             await OneSignal.login(data.username);
             await OneSignal.Slidedown.promptPush();
           });
-          await buildUsers(); startRT(); return true;
+          
+          await buildUsers(); 
+          startRT(); 
+          return true;
         }
         return false;
       }, [startRT, buildUsers]);
 
       const logout = useCallback(() => {
         stopRT();
-        localStorage.removeItem("hw_me"); localStorage.removeItem("hw_meAvatar");
-        setMe(""); setMeAvatar(""); setPage("login"); setUsers([]); setMessages([]); setOther("");
-        setOnlineUsers([]); setUnreadCounts({}); setPanel(false); 
-        window.OneSignalDeferred.push(function(OneSignal) { OneSignal.logout(); });
+        localStorage.removeItem("hw_me"); 
+        localStorage.removeItem("hw_meAvatar");
+        
+        setMe(""); 
+        setMeAvatar(""); 
+        setPage("login"); 
+        setUsers([]); 
+        setMessages([]); 
+        setOther("");
+        setOnlineUsers([]); 
+        setUnreadCounts({}); 
+        setPanel(false); 
+        
+        window.OneSignalDeferred.push(function(OneSignal) { 
+            OneSignal.logout(); 
+        });
       }, [stopRT]);
 
       const openChat = useCallback(async (username, avMap) => {
-        if (loading) return; setLoading(true);
+        if (loading) return; 
+        setLoading(true);
+        
         const av = avMap || avatars;
-        setOther(username); setOtherAv(av[username] || ""); setPageCount(1); setHasMore(false); setMessages([]); setUnreadCounts(prev => ({ ...prev, [username]: 0 })); setPage("chat"); 
+        setOther(username); 
+        setOtherAv(av[username] || ""); 
+        setPageCount(1); 
+        setHasMore(false); 
+        setMessages([]); 
+        setUnreadCounts(prev => ({ ...prev, [username]: 0 })); 
+        setPage("chat"); 
 
         const myMe = meRef.current;
         const { data } = await sb.from("messages").select("*")
           .or(`and(sender.eq.${myMe},receiver.eq.${username}),and(sender.eq.${username},receiver.eq.${myMe})`)
-          .order("created_at", { ascending: false }).limit(PAGE_SIZE);
+          .order("created_at", { ascending: false })
+          .limit(PAGE_SIZE);
         
         if (data) {
-            setHasMore(data.length === PAGE_SIZE); setMessages(data.reverse()); 
+            setHasMore(data.length === PAGE_SIZE); 
+            setMessages(data.reverse()); 
+            
             const hasUnread = data.some(m => m.receiver === myMe && m.sender === username && m.seen === false);
             if (hasUnread) {
               await sb.from("messages").update({ seen: true }).eq("receiver", myMe).eq("sender", username).eq("seen", false);
@@ -364,37 +553,61 @@
       }, [avatars, loading]);
 
       const closeChat = useCallback(() => {
-        setPage("list"); setTimeout(() => { setOther(""); setOtherAv(""); setMessages([]); }, 250); 
+        setPage("list"); 
+        setTimeout(() => { 
+            setOther(""); 
+            setOtherAv(""); 
+            setMessages([]); 
+        }, 250); 
       }, []);
 
       const loadMore = useCallback(async () => {
-        const myMe = meRef.current; const myOth = othRef.current;
+        const myMe = meRef.current; 
+        const myOth = othRef.current;
+        
         if (!myMe || !myOth) return;
 
-        const nextPage = pageCount + 1; const start = pageCount * PAGE_SIZE; const end = (nextPage * PAGE_SIZE) - 1;
+        const nextPage = pageCount + 1; 
+        const start = pageCount * PAGE_SIZE; 
+        const end = (nextPage * PAGE_SIZE) - 1;
+        
         const { data } = await sb.from("messages").select("*")
           .or(`and(sender.eq.${myMe},receiver.eq.${myOth}),and(sender.eq.${myOth},receiver.eq.${myMe})`)
-          .order("created_at", { ascending: false }).range(start, end);
+          .order("created_at", { ascending: false })
+          .range(start, end);
 
         if (data && data.length > 0) {
-            setMessages(prev => [...data.reverse(), ...prev]); setPageCount(nextPage); setHasMore(data.length === PAGE_SIZE);
-        } else { setHasMore(false); }
+            setMessages(prev => [...data.reverse(), ...prev]); 
+            setPageCount(nextPage); 
+            setHasMore(data.length === PAGE_SIZE);
+        } else { 
+            setHasMore(false); 
+        }
       }, [pageCount]);
 
       const sendMsg = useCallback(async (text, prefix = "") => {
         if (!text.trim() && !prefix) return;
         const msgContent = prefix + text;
         const tempId = 'temp_' + Date.now() + Math.random();
+        
         const tempMsg = {
-          id: tempId, content: msgContent, sender: meRef.current, receiver: othRef.current,
-          seen: false, created_at: new Date().toISOString(), isTemp: true
+          id: tempId, 
+          content: msgContent, 
+          sender: meRef.current, 
+          receiver: othRef.current,
+          seen: false, 
+          created_at: new Date().toISOString(), 
+          isTemp: true
         };
         
         setMessages(prev => [...prev, tempMsg]);
 
         const { error } = await sb.from("messages").insert([{
-          content: msgContent, sender: meRef.current, receiver: othRef.current, 
-          seen: false, created_at: tempMsg.created_at
+          content: msgContent, 
+          sender: meRef.current, 
+          receiver: othRef.current, 
+          seen: false, 
+          created_at: tempMsg.created_at
         }]);
 
         if (!error) {
@@ -408,6 +621,7 @@
       const uploadMedia = useCallback(async (file, prefix = "") => {
         if (!file) return;
         const name = Date.now() + "_" + file.name;
+        
         const { error: uploadError } = await sb.storage.from("chat-media").upload(name, file);
         if (uploadError) return;
 
@@ -415,8 +629,11 @@
         const isImg = file.type.startsWith("image/");
         
         const { error: insertError } = await sb.from("messages").insert([{
-          sender: meRef.current, receiver: othRef.current, content: prefix,
-          [isImg ? "image" : "audio"]: data.publicUrl, created_at: new Date().toISOString()
+          sender: meRef.current, 
+          receiver: othRef.current, 
+          content: prefix,
+          [isImg ? "image" : "audio"]: data.publicUrl, 
+          created_at: new Date().toISOString()
         }]);
 
         if (!insertError) {
@@ -427,23 +644,34 @@
       const deleteMsg = useCallback(async (id) => {
         if (!id) return;
         const { error } = await sb.from("messages").delete().eq("id", id);
-        if(!error) setMessages(prev => prev.filter(m => m.id !== id));
+        if (!error) {
+            setMessages(prev => prev.filter(m => m.id !== id));
+        }
       }, []);
 
       const updateProfile = useCallback(async (name, password, avatarFile) => {
         const upd = {};
         if (name && name !== meRef.current) upd.username = name;
         if (password) upd.password = password;
+        
         if (avatarFile) {
           const fp = "avatars/" + meRef.current + "_" + Date.now() + ".png";
           await sb.storage.from("chat-media").upload(fp, avatarFile);
           const { data } = sb.storage.from("chat-media").getPublicUrl(fp);
           upd.avatar_url = data.publicUrl;
         }
+        
         const { error } = await sb.from("users").update(upd).eq("username", meRef.current);
+        
         if (!error) {
-          if (upd.username) { localStorage.setItem("hw_me", upd.username); setMe(upd.username); }
-          if (upd.avatar_url) { localStorage.setItem("hw_meAvatar", upd.avatar_url); setMeAvatar(upd.avatar_url); }
+          if (upd.username) { 
+              localStorage.setItem("hw_me", upd.username); 
+              setMe(upd.username); 
+          }
+          if (upd.avatar_url) { 
+              localStorage.setItem("hw_meAvatar", upd.avatar_url); 
+              setMeAvatar(upd.avatar_url); 
+          }
           return true;
         }
         return false;
@@ -499,21 +727,26 @@
 
     function SplashScreen({ visible }) {
       const ringDelays = [0, 1.2, 2.4]; 
+
       return (
         <AnimatePresence>
           {visible && (
             <motion.div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: 'hidden', background: "var(--bg)" }}
-              initial={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}>
+              initial={{ opacity: 1 }} 
+              exit={{ opacity: 0, scale: 1.1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}>
+              
               <div className="pulse-ring-wrapper">
                 {ringDelays.map((delay, index) => (
                   <div key={index} className="pulse-ring" style={{ animationDelay: `-${delay}s` }} />
                 ))}
               </div>
+
               <motion.div initial={{ opacity: 0, scale: 0.4, y: -40 }} animate={{ opacity: 1, scale: 1, y: -50 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} style={{ position: "relative", width: 160, height: 160, display: "flex", justifyContent: "center", alignItems: "center", zIndex: 3 }}>
                 <div className="liquid-glass liquid-orb" style={{ position: "relative", zIndex: 2, width: 120, height: 120, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Logo w={70} />
                 </div>
               </motion.div>
+              
               <motion.div exit={{ opacity: 0 }} className="ns" style={{ position: "absolute", bottom: 60, width: 140, height: 4, borderRadius: 10, overflow: "hidden", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 5px 15px rgba(0,0,0,0.05)", transform: "translateZ(0)" }}>
                 <motion.div style={{ height: "100%", background: "var(--text)", borderRadius: 10 }} initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 0.8, ease: "easeInOut" }} />
               </motion.div>
@@ -532,12 +765,28 @@
       const APP = "Harvinder's World";
 
       const go = async () => {
-        if (!user.trim() || !pass.trim()) { setErr("Please fill in both fields."); return; }
+        if (!user.trim() || !pass.trim()) { 
+            setErr("Please fill in both fields."); 
+            return; 
+        }
         const ok = await login(user.trim(), pass.trim());
-        if (!ok) setErr("Invalid username or password.");
+        if (!ok) {
+            setErr("Invalid username or password.");
+        }
       };
 
-      const inp = { background: "var(--input-bg)", color: "var(--text)", boxShadow: "var(--input-shadow)", border: "none", borderRadius: 20, padding: "16px 20px", fontSize: 15, fontWeight: 600, width: "100%", transition: "all 0.3s ease" };
+      const inp = { 
+          background: "var(--input-bg)", 
+          color: "var(--text)", 
+          boxShadow: "var(--input-shadow)", 
+          border: "none", 
+          borderRadius: 20, 
+          padding: "16px 20px", 
+          fontSize: 15, 
+          fontWeight: 600, 
+          width: "100%", 
+          transition: "all 0.3s ease" 
+      };
 
       return (
         <div className="ns" style={{ width: "100%", height: "100%", overflowY: "auto", display: "flex", justifyContent: "center", paddingTop: 80 }}>
@@ -562,6 +811,7 @@
 
     function ChatListPage() {
       const { me, meAvatar, users, avatars, openChat, logout, panel, setPanel, updateProfile, isDark, setIsDark, unreadCounts, loading } = useApp();
+      
       const [editName, setEditName] = useState("");
       const [editPass, setEditPass] = useState("");
       const [avFile,   setAvFile]   = useState(null);
@@ -569,15 +819,35 @@
       const [saving,   setSaving]   = useState(false);
       const [saved,    setSaved]    = useState(false);
       const [search,   setSearch]   = useState("");
+      
       const fileRef = useRef(null);
       
       const others = users.filter(u => u.username !== me).filter(u => u.username.toLowerCase().includes(search.toLowerCase()));
-      const onAv = e => { const f = e.target.files && e.target.files[0]; if (!f) return; setAvFile(f); setAvPrev(URL.createObjectURL(f)); };
-      const save = async () => { setSaving(true); const ok = await updateProfile(editName, editPass, avFile || undefined); setSaving(false); if (ok) { setSaved(true); setTimeout(() => { setSaved(false); setPanel(false); }, 1200); } };
+      
+      const onAv = e => { 
+          const f = e.target.files && e.target.files[0]; 
+          if (!f) return; 
+          setAvFile(f); 
+          setAvPrev(URL.createObjectURL(f)); 
+      };
+      
+      const save = async () => { 
+          setSaving(true); 
+          const ok = await updateProfile(editName, editPass, avFile || undefined); 
+          setSaving(false); 
+          if (ok) { 
+              setSaved(true); 
+              setTimeout(() => { 
+                  setSaved(false); 
+                  setPanel(false); 
+              }, 1200); 
+          } 
+      };
 
       return (
         <div className="ns" style={{ width: "100%", height: "100%", overflowY: "auto", position: "relative" }}>
           <div style={{ position: "relative", zIndex: 1, padding: "20px 16px 24px" }}>
+
             <motion.div className="liquid-glass" style={{ height: 75, display: "flex", alignItems: "center", padding: "0 20px", justifyContent: "space-between", marginBottom: 16 }} initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}>
               <motion.div onClick={() => setIsDark(!isDark)} whileTap={{ scale: 0.85, rotate: 180 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Logo w={24} /></motion.div>
               <span style={{ flex: 1, textAlign: "center", fontWeight: 800, color: "var(--text)", fontSize: 18 }}>Messages</span>
@@ -585,7 +855,7 @@
                 <motion.button onClick={() => setPanel(true)} whileTap={{ rotate: 90, scale: 0.9 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22, strokeWidth: 2.5 }}>
                     <circle cx="12" cy="12" r="3" />
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                   </svg>
                 </motion.button>
               </div>
@@ -621,17 +891,43 @@
               <>
                 <motion.div 
                   style={{ position: "fixed", inset: 0, zIndex: 2000, background: "var(--overlay)", backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)" }} 
-                  initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} exit={{ opacity: 0, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} onClick={() => setPanel(false)} />
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} 
+                  exit={{ opacity: 0, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} 
+                  onClick={() => setPanel(false)} 
+                />
                 <motion.div 
-                  style={{ position: "fixed", zIndex: 2001, width: "calc(100% - 40px)", maxWidth: 320, top: 85, right: 20, originX: 0.9, originY: -0.05, overflow: "hidden", background: "var(--glass-bg)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", borderRadius: 30, boxShadow: "var(--glass-shadow), var(--glass-inset)" }} 
-                  initial={{ opacity: 0, scale: 0.05 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} exit={{ opacity: 0, scale: 0.05, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }}>
+                  style={{ 
+                    position: "fixed", zIndex: 2001, width: "calc(100% - 40px)", maxWidth: 320, 
+                    top: 85, right: 20, 
+                    originX: 0.9, originY: -0.05, 
+                    overflow: "hidden", 
+                    background: "var(--glass-bg)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", 
+                    borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", 
+                    borderRadius: 30, boxShadow: "var(--glass-shadow), var(--glass-inset)" 
+                  }} 
+                  initial={{ opacity: 0, scale: 0.05 }} 
+                  animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} 
+                  exit={{ opacity: 0, scale: 0.05, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} 
+                >
                   <div style={{ padding: 25, width: "100%", height: "100%" }}>
                     <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 16, marginBottom: 20, textAlign: "center" }}>Profile Settings</div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}><Avatar src={avPrev || meAvatar} name={me} size={60} /><div><div style={{ fontWeight: 800, color: "var(--text)", fontSize: 15 }}>{me}</div><button onClick={() => fileRef.current && fileRef.current.click()} style={{ fontSize: 12, color: "var(--text-muted)", border: "none", background: "none", cursor: "pointer", padding: 0, marginTop: 4, fontWeight: 700 }}>Change photo</button><input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*" onChange={onAv} /></div></div>
+                    
+                    <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
+                        <Avatar src={avPrev || meAvatar} name={me} size={60} />
+                        <div>
+                            <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 15 }}>{me}</div>
+                            <button onClick={() => fileRef.current && fileRef.current.click()} style={{ fontSize: 12, color: "var(--text-muted)", border: "none", background: "none", cursor: "pointer", padding: 0, marginTop: 4, fontWeight: 700 }}>Change photo</button>
+                            <input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*" onChange={onAv} />
+                        </div>
+                    </div>
+                    
                     <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6, fontWeight: 700, marginLeft: 4 }}>Update Name</div>
                     <input value={editName} onChange={e => setEditName(e.target.value)} placeholder={me} style={{ width: "100%", padding: "14px 16px", borderRadius: 16, fontSize: 14, fontWeight: 600, border: "none", background: "var(--input-bg)", color: "var(--text)", marginBottom: 16, boxShadow: "var(--input-shadow)", outline: "none" }} />
+                    
                     <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6, fontWeight: 700, marginLeft: 4 }}>Change Password</div>
                     <input type="password" value={editPass} onChange={e => setEditPass(e.target.value)} placeholder="New password..." style={{ width: "100%", padding: "14px 16px", borderRadius: 16, fontSize: 14, fontWeight: 600, border: "none", background: "var(--input-bg)", color: "var(--text)", marginBottom: 24, boxShadow: "var(--input-shadow)", outline: "none" }} />
+                    
                     <motion.button onClick={save} disabled={saving} whileTap={{ scale: 0.96 }} style={{ width: "100%", padding: 14, borderRadius: 16, border: "none", cursor: "pointer", fontSize: 15, fontWeight: 800, color: "#fff", background: saving ? "#ccc" : "var(--btn-grad)", boxShadow: "var(--btn-shadow)", transition: "all 0.3s" }}>{saved ? "Saved!" : saving ? "Saving..." : "Save Profile"}</motion.button>
                     <button onClick={logout} style={{ width: "100%", marginTop: 16, fontSize: 14, fontWeight: 800, color: "#ff3b30", border: "none", background: "none", cursor: "pointer" }}>Logout</button>
                   </div>
@@ -695,10 +991,17 @@
       return (
         <div style={{ display: "flex", justifyContent: isOwn ? "flex-end" : "flex-start", width: "100%" }}>
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 30 }} animate={{ opacity: msg.isTemp ? 0.7 : 1, scale: 1, y: 0 }} transition={{ type: "spring", stiffness: 400, damping: 28 }} 
-            onClick={handleTap} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.15} whileDrag={{ scale: 0.98, zIndex: 10 }} onDragEnd={(e, info) => { if (Math.abs(info.offset.x) > 50) onReply(msg); }} 
-            style={{ maxWidth: "78%", padding: "14px 20px", borderRadius: 24, background: isOwn ? "var(--bubble-own)" : "var(--bubble-oth)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", WebkitTransform: "translateZ(0)", transform: "translateZ(0)", color: "var(--text)", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", boxShadow: "var(--glass-shadow), var(--glass-inset)", position: "relative", zIndex: 2, userSelect: "none", WebkitTouchCallout: "none" }}>
-            
+            initial={{ opacity: 0, scale: 0.95, y: 30 }} 
+            animate={{ opacity: msg.isTemp ? 0.7 : 1, scale: 1, y: 0 }} 
+            transition={{ type: "spring", stiffness: 400, damping: 28 }} 
+            onClick={handleTap} 
+            drag="x" 
+            dragConstraints={{ left: 0, right: 0 }} 
+            dragElastic={0.15} 
+            whileDrag={{ scale: 0.98, zIndex: 10 }} 
+            onDragEnd={(e, info) => { if (Math.abs(info.offset.x) > 50) onReply(msg); }} 
+            style={{ maxWidth: "78%", padding: "14px 20px", borderRadius: 24, background: isOwn ? "var(--bubble-own)" : "var(--bubble-oth)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", WebkitTransform: "translateZ(0)", transform: "translateZ(0)", color: "var(--text)", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", boxShadow: "var(--glass-shadow), var(--glass-inset)", position: "relative", zIndex: 2, userSelect: "none", WebkitTouchCallout: "none" }}
+          >
             {replyData && (
               <div style={{ background: isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.1)", padding: "8px 12px", borderRadius: 16, borderLeft: `3px solid ${isOwn ? "var(--text)" : "var(--text)"}`, marginBottom: displayContent || msg.image || msg.audio ? 10 : 0, fontSize: 12.5 }}>
                 <div style={{ fontWeight: 900, marginBottom: 2 }}>{replyData.sender}</div>
