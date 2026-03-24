@@ -10,86 +10,216 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover, interactive-widget=resizes-content" />
   <title>Harvinder's World</title>
 
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "9de2f507-7a1b-4f51-b6ac-16fe00c8c652",
+        safari_web_id: "web.onesignal.auto.13f7d09c-87f4-478e-9a86-b96c3b883b5b",
+        notifyButton: { enable: false }, /* Hidden so it doesn't ruin your UI */
+        allowLocalhostAsSecureOrigin: true,
+      });
+    });
+  </script>
+
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #a6abbd;
-      --tide: linear-gradient(-45deg, #a6abbd, #c2c7d5, #9398a9, #d0d5e1);
-      --primary: #000000;
-      --text: #000000;
-      --text-muted: #444444;
-      --glass-bg: rgba(255, 255, 255, 0.45);
-      --glass-s: rgba(255, 255, 255, 0.55);
-      --border-tl: rgba(255, 255, 255, 0.9);
-      --border-br: rgba(255, 255, 255, 0.2);
-      --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-      --glass-inset: inset 0 2px 4px rgba(255, 255, 255, 0.9), inset 0 -2px 4px rgba(0, 0, 0, 0.05);
-      --input-bg: rgba(0, 0, 0, 0.03);
-      --input-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.12), inset -3px -3px 6px rgba(255, 255, 255, 0.6);
-      --btn-grad: linear-gradient(135deg, #6c75a3, #4d547d);
-      --btn-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.25);
-      --panel-bg: rgba(255, 255, 255, 0.45);
-      --bubble-own: rgba(255, 255, 255, 0.6);
-      --bubble-oth: rgba(255, 255, 255, 0.25);
-      --overlay: rgba(0,0,0,0.3);
-      --svg-stroke: #000000;
-      --divider: rgba(0, 0, 0, 0.4);
+      /* MATCHING THE DARK GREY THEME */
+      --bg: #2a2a2d;
+      --text: #ffffff;
+      --text-muted: #98989d;
+      
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-s: rgba(255, 255, 255, 0.1);
+      --border-tl: rgba(255, 255, 255, 0.4);
+      --border-br: rgba(0, 0, 0, 0.4);
+      --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      --glass-inset: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      
+      --input-bg: rgba(0, 0, 0, 0.2);
+      --input-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5), inset -2px -2px 5px rgba(255, 255, 255, 0.05);
+      
+      /* SLEEK THEME-MATCHING METALLIC GREY */
+      --btn-grad: linear-gradient(135deg, #4a4a4d, #2a2a2d);
+      --btn-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+      
+      --panel-bg: rgba(20, 20, 22, 0.6);
+      /* THEME-MATCHING TRANSLUCENT GREY */
+      --bubble-own: rgba(255, 255, 255, 0.12);
+      --bubble-oth: rgba(255, 255, 255, 0.05);
+      --overlay: rgba(0,0,0,0.6);
+      --svg-stroke: #ffffff;
+      --divider: rgba(255,255,255,0.2);
     }
     
     [data-theme="dark"] {
-      --bg: #1a1c23;
-      --tide: linear-gradient(-45deg, #1a1c23, #2a2d39, #14151a, #232630);
-      --primary: #ffffff;
-      --text: #ffffff;
-      --text-muted: #aaaaaa;
-      --glass-bg: rgba(30, 35, 45, 0.5);
-      --glass-s: rgba(40, 45, 60, 0.6);
-      --border-tl: rgba(255, 255, 255, 0.2);
-      --border-br: rgba(0, 0, 0, 0.4);
-      --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-      --glass-inset: inset 0 2px 4px rgba(255, 255, 255, 0.15), inset 0 -2px 4px rgba(0, 0, 0, 0.4);
-      --input-bg: rgba(0, 0, 0, 0.3);
-      --input-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.6), inset -3px -3px 6px rgba(255, 255, 255, 0.05);
-      --btn-grad: linear-gradient(135deg, #4f46e5, #312e81);
-      --btn-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.15);
-      --panel-bg: rgba(30, 35, 45, 0.5);
-      --bubble-own: rgba(79, 70, 229, 0.3);
-      --bubble-oth: rgba(30, 41, 59, 0.4);
-      --overlay: rgba(0,0,0,0.6);
-      --svg-stroke: #ffffff;
-      --divider: rgba(255,255,255,0.3);
+      --bg: #2a2a2d;
     }
 
-    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; height: var(--vh, 100%); overflow: hidden; position: fixed; top: 0; left: 0; right: 0; bottom: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--text); touch-action: manipulation; -webkit-text-size-adjust: 100%; background: var(--tide); background-size: 400% 400%; animation: liquidFlow 18s ease infinite; transition: background 0.6s ease, color 0.4s ease; }
-    body::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M25,25 Q35,15,45,25 T65,25 Q75,15,85,25' stroke='%23ffffff1a' fill='none' stroke-width='1' /%3E%3Cpath d='M25,75 Q35,85,45,75 T65,75 Q75,85,85,75' stroke='%23ffffff1a' fill='none' stroke-width='1' /%3E%3C/svg%3E"); opacity: 0.1; mix-blend-mode: overlay; pointer-events: none; z-index: -1; }
-    #root { width: 100%; height: 100vh; height: var(--vh, 100dvh); position: absolute; top: 0; left: 0; overflow: hidden; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    html, body {
+      margin: 0; padding: 0; width: 100%;
+      height: 100%;
+      height: var(--vh, 100%);
+      overflow: hidden;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+      
+      /* EXACT BACKGROUND FROM YOUR IMAGE */
+      background-color: var(--bg); /* Smooth lighter gray */
+      background-image: 
+        /* Major sweep from bottom-left to mid-right */
+        radial-gradient(ellipse 150% 140% at -20% 110%, transparent 65%, rgba(255, 255, 255, 0.08) 65.2%, rgba(0, 0, 0, 0.4) 66.5%, rgba(0, 0, 0, 0.1) 72%, transparent 80%),
+        /* Top right corner sweep */
+        radial-gradient(ellipse 120% 120% at 90% -20%, transparent 55%, rgba(255, 255, 255, 0.06) 55.2%, rgba(0, 0, 0, 0.3) 57%, transparent 70%),
+        /* Large vertical sweep on the right */
+        radial-gradient(ellipse 100% 180% at 140% 50%, transparent 60%, rgba(255, 255, 255, 0.05) 60.2%, rgba(0, 0, 0, 0.4) 62%, transparent 75%),
+        /* Subtle top left sweep */
+        radial-gradient(ellipse 100% 100% at -10% -10%, transparent 40%, rgba(255, 255, 255, 0.04) 40.2%, rgba(0, 0, 0, 0.2) 42%, transparent 60%),
+        /* Extremely subtle premium noise texture (no black spots) */
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+      
+      background-attachment: fixed;
+      background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 150px 150px;
+      background-position: center;
+      transition: background 0.6s ease, color 0.4s ease;
+    }
+
+    #root {
+      width: 100%; 
+      height: 100vh;
+      height: var(--vh, 100dvh);
+      position: absolute; top: 0; left: 0;
+      overflow: hidden;
+    }
     input { outline: none; }
-    .glass { background: var(--glass-bg); backdrop-filter: blur(25px) saturate(120%); -webkit-backdrop-filter: blur(25px) saturate(120%); border-top: 1.5px solid var(--border-tl); border-left: 1.5px solid var(--border-tl); border-bottom: 1px solid var(--border-br); border-right: 1px solid var(--border-br); box-shadow: var(--glass-shadow), var(--glass-inset); transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease; -webkit-transform: translateZ(0); transform: translateZ(0); }
-    .glass-s { background: var(--glass-s); backdrop-filter: blur(35px) saturate(120%); -webkit-backdrop-filter: blur(35px) saturate(120%); border-top: 1.5px solid var(--border-tl); border-bottom: 1px solid var(--border-br); box-shadow: var(--glass-shadow), var(--glass-inset); transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease; -webkit-transform: translateZ(0); transform: translateZ(0); }
-    @keyframes liquidFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    input::placeholder { color: var(--text-muted); }
+    
+    /* FROSTED GLASS BASE CLASSES */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px) saturate(120%);
+      -webkit-backdrop-filter: blur(25px) saturate(120%);
+      border-top: 1.5px solid var(--border-tl);
+      border-left: 1.5px solid var(--border-tl);
+      border-bottom: 1px solid var(--border-br);
+      border-right: 1px solid var(--border-br);
+      box-shadow: var(--glass-shadow), var(--glass-inset);
+      transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+    .glass-s {
+      background: var(--glass-s);
+      backdrop-filter: blur(35px) saturate(120%);
+      -webkit-backdrop-filter: blur(35px) saturate(120%);
+      border-top: 1.5px solid var(--border-tl);
+      border-bottom: 1px solid var(--border-br);
+      box-shadow: var(--glass-shadow), var(--glass-inset);
+      transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+
+    /* THE TRUE "LIQUID GLASS" EFFECT (100% Transparent Match) */
+    .liquid-glass {
+      background: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border-radius: 50px !important;
+      border: none !important;
+      border-top: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+      border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-bottom: 1.5px solid rgba(0, 0, 0, 0.6) !important;
+      border-right: 1px solid rgba(0, 0, 0, 0.3) !important;
+      box-shadow: 
+        inset 0 2px 3px rgba(255, 255, 255, 0.05),
+        0 15px 35px rgba(0, 0, 0, 0.4) !important; 
+      color: #ffffff !important;
+    }
+    
     .ns::-webkit-scrollbar { display: none; }
     .ns { -ms-overflow-style: none; scrollbar-width: none; }
+
     @keyframes orb1 { from{transform:rotate(0deg) translateX(72px) rotate(0deg)} to{transform:rotate(360deg) translateX(72px) rotate(-360deg)} }
     @keyframes orb2 { from{transform:rotate(120deg) translateX(80px) rotate(-120deg)} to{transform:rotate(480deg) translateX(80px) rotate(-480deg)} }
     @keyframes orb3 { from{transform:rotate(240deg) translateX(65px) rotate(-240deg)} to{transform:rotate(-120deg) translateX(65px) rotate(120deg)} }
     @keyframes spinner { to { transform: rotate(360deg); } }
+
     .od1{animation:orb1 8s linear infinite}
     .od2{animation:orb2 10s linear infinite}
     .od3{animation:orb3 9s linear infinite}
-    @keyframes liquidMorph { 0% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; } 33% { border-radius: 54% 46% 42% 58% / 60% 58% 42% 40%; } 66% { border-radius: 43% 57% 65% 35% / 46% 40% 60% 54%; } 100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; } }
-    @keyframes floatOrb { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-4px) scale(1.03); } }
-    @keyframes pulseRing { 0% { transform: scale(0.65); opacity: 0; } 15% { opacity: 0.15; } 100% { transform: scale(2.2); opacity: 0; } }
-    @keyframes blob1 { 0%, 100% { transform: scale(1) translateX(0); } 50% { transform: scale(1.1) translateX(20px); } }
-    @keyframes blob2 { 0%, 100% { transform: scale(1) translateX(0); } 50% { transform: scale(1.2) translateX(-20px); } }
-    @keyframes floatTitle { 0%, 100% { transform: translateY(-20px); } 50% { transform: translateY(-26px); } }
-    .liquid-orb { animation: liquidMorph 5s ease-in-out infinite, floatOrb 4s ease-in-out infinite; -webkit-backface-visibility: hidden; backface-visibility: hidden; -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0); isolation: isolate; }
-    .date-divider { text-align: center; margin: 20px 0; font-size: 11px; font-weight: 800; color: var(--divider); text-transform: uppercase; letter-spacing: 1px; }
+
+    @keyframes liquidMorph {
+      0%   { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+      33%  { border-radius: 54% 46% 42% 58% / 60% 58% 42% 40%; }
+      66%  { border-radius: 43% 57% 65% 35% / 46% 40% 60% 54%; }
+      100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+    }
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.02); }
+    }
+
+    .liquid-orb {
+      animation: liquidMorph 5s ease-in-out infinite, floatOrb 4s ease-in-out infinite;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      isolation: isolate;
+    }
+
+    .date-divider {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--divider);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .pulse-ring-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translateY(-50px);
+      width: 120px;
+      height: 120px;
+      z-index: 1; 
+    }
+    
+    .pulse-ring {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border: 1.5px solid rgba(255, 255, 255, 0.5); 
+      border-radius: 50%;
+      opacity: 0;
+      animation: pulseRing 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.8); opacity: 0; border-width: 3px; }
+      20% { opacity: 0.4; border-width: 1.5px; } 
+      100% { transform: scale(4.5); opacity: 0; border-width: 0px; } 
+    }
   </style>
 </head>
 <body>
-  <div id="pre-splash" style="position: fixed; inset: 0; z-index: 100000; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); transition: opacity 0.3s ease; pointer-events: none;"></div>
+  <div id="pre-splash" style="position: fixed; inset: 0; z-index: 100000; background: var(--bg); transition: opacity 0.3s ease; pointer-events: none;"></div>
+  
   <div id="root"></div>
 
   <script>
@@ -101,7 +231,9 @@
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', updateVH);
       window.visualViewport.addEventListener('scroll', updateVH);
-    } else { window.addEventListener('resize', updateVH); }
+    } else {
+      window.addEventListener('resize', updateVH);
+    }
     updateVH();
   </script>
 
@@ -111,7 +243,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.6/babel.min.js"></script>
 
-  <script> window.FramerMotion = window.Motion; </script>
+  <script>
+    window.FramerMotion = window.Motion;
+  </script>
 
   <script type="text/babel">
     const { useState, useEffect, useLayoutEffect, useRef, useContext, createContext, useCallback } = React;
@@ -149,7 +283,7 @@
       const [page,     setPage]     = useState(null); 
       const [panel,    setPanel]    = useState(false);
       const [loading,  setLoading]  = useState(false);
-      const [isDark,   setIsDark]   = useState(localStorage.getItem("hw_dark") === "true");
+      const [isDark,   setIsDark]   = useState(localStorage.getItem("hw_dark") !== "false");
       const [onlineUsers, setOnlineUsers] = useState([]);
       const [unreadCounts, setUnreadCounts] = useState({});
       
@@ -170,11 +304,14 @@
       const addMsg = useCallback((msg) => {
         const myMe  = meRef.current;
         const myOth = othRef.current;
-        const rel = (msg.sender===myMe && msg.receiver===myOth) || (msg.sender===myOth && msg.receiver===myMe);
+
+        const rel = (msg.sender === myMe && msg.receiver === myOth) ||
+                    (msg.sender === myOth && msg.receiver === myMe);
         
         if (rel) {
             setMessages(prev => {
                 if(prev.find(m => m.id === msg.id)) return prev;
+                
                 let removedTemp = false;
                 const filtered = prev.filter(m => {
                     if (!removedTemp && m.isTemp && m.sender === msg.sender && m.content === msg.content) {
@@ -183,18 +320,22 @@
                     }
                     return true;
                 });
+                
                 return [...filtered, msg];
             });
+
             if (msg.receiver === myMe && !msg.seen) {
                 sb.from("messages").update({ seen: true }).eq("id", msg.id).then();
             }
+
         } else if (msg.receiver === myMe) {
             setUnreadCounts(prev => ({
                 ...prev,
                 [msg.sender]: (prev[msg.sender] || 0) + 1
             }));
         }
-        if (msg.receiver===myMe && msg.sender!==myMe)
+
+        if (msg.receiver === myMe && msg.sender !== myMe)
           notify(msg.sender, msg.content ? "New message" : "Sent a file");
       }, []);
 
@@ -203,11 +344,14 @@
       }, []);
 
       const startRT = useCallback(() => {
-        if (_channel) sb.removeChannel(_channel);
-        _channel = sb.channel("room", { config: { presence: { key: meRef.current } } })
-          .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, pl => addMsg(pl.new))
-          .on("postgres_changes", { event: "UPDATE", schema: "public", table: "messages" }, pl => updateMsg(pl.new))
-          .on("postgres_changes", { event: "DELETE", schema: "public", table: "messages" }, pl => setMessages(prev => prev.filter(m => m.id !== pl.old.id)))
+        if (_channel) { sb.removeChannel(_channel); _channel = null; }
+        
+        _channel = sb.channel(`chat_${meRef.current}`, { config: { presence: { key: meRef.current } } })
+          .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, pl => {
+            if (pl.eventType === "INSERT") addMsg(pl.new);
+            else if (pl.eventType === "UPDATE") updateMsg(pl.new);
+            else if (pl.eventType === "DELETE") setMessages(prev => prev.filter(m => m.id !== pl.old.id));
+          })
           .on("presence", { event: "sync" }, () => {
             const state = _channel.presenceState();
             setOnlineUsers(Object.keys(state));
@@ -223,6 +367,26 @@
         if (_channel) { sb.removeChannel(_channel); _channel = null; }
       }, []);
 
+      useEffect(() => {
+        const handleVisibility = async () => {
+          if (document.visibilityState === 'visible' && meRef.current && page === 'chat' && othRef.current) {
+             const { data } = await sb.from("messages").select("*")
+              .or(`and(sender.eq.${meRef.current},receiver.eq.${othRef.current}),and(sender.eq.${othRef.current},receiver.eq.${meRef.current})`)
+              .order("created_at", { ascending: false })
+              .limit(PAGE_SIZE);
+             if (data) {
+                 setMessages(data.reverse());
+                 const hasUnread = data.some(m => m.receiver === meRef.current && m.sender === othRef.current && m.seen === false);
+                 if (hasUnread) {
+                    await sb.from("messages").update({ seen: true }).eq("receiver", meRef.current).eq("sender", othRef.current).eq("seen", false);
+                 }
+             }
+          }
+        };
+        document.addEventListener("visibilitychange", handleVisibility);
+        return () => document.removeEventListener("visibilitychange", handleVisibility);
+      }, [page]);
+
       const buildUsers = useCallback(async () => {
         const { data } = await sb.from("users").select("*");
         if (data) {
@@ -230,8 +394,13 @@
           data.forEach(u => { av[u.username] = u.avatar_url || ""; });
           setUsers(data); setAvatars(av);
         }
+
         if (meRef.current) {
-          const { data: unreads } = await sb.from("messages").select("sender").eq("receiver", meRef.current).eq("seen", false);
+          const { data: unreads } = await sb.from("messages")
+            .select("sender")
+            .eq("receiver", meRef.current)
+            .eq("seen", false);
+          
           if (unreads) {
             const counts = {};
             unreads.forEach(m => { counts[m.sender] = (counts[m.sender] || 0) + 1; });
@@ -247,10 +416,18 @@
             setMe(savedMe);
             setMeAvatar(localStorage.getItem("hw_meAvatar") || "");
             meRef.current = savedMe;
+            
+            // Tell OneSignal who this is for background pushes
+            window.OneSignalDeferred.push(function(OneSignal) {
+              OneSignal.login(savedMe);
+            });
+
             await buildUsers(); 
             startRT();          
             setPage("list");    
-          } else { setPage("login"); }
+          } else {
+            setPage("login");
+          }
           setAppReady(true);    
         };
         initApp();
@@ -258,7 +435,8 @@
 
       const login = useCallback(async (username, password) => {
         setLoading(true);
-        const { data } = await sb.from("users").select("*").eq("username", username).eq("password", password).maybeSingle();
+        const { data } = await sb.from("users").select("*")
+          .eq("username", username).eq("password", password).maybeSingle();
         setLoading(false);
         if (data) {
           const av = data.avatar_url || "";
@@ -266,6 +444,13 @@
           localStorage.setItem("hw_meAvatar", av);
           setMe(data.username); setMeAvatar(av); setPage("list");
           meRef.current = data.username;
+          
+          // Login to OneSignal and prompt for permission
+          window.OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.login(data.username);
+            await OneSignal.Slidedown.promptPush();
+          });
+
           await buildUsers();
           startRT();
           return true;
@@ -282,11 +467,17 @@
         setOnlineUsers([]);
         setUnreadCounts({});
         setPanel(false); 
+        
+        // Disconnect from OneSignal
+        window.OneSignalDeferred.push(function(OneSignal) {
+          OneSignal.logout();
+        });
       }, [stopRT]);
 
       const openChat = useCallback(async (username, avMap) => {
         if (loading) return;
         setLoading(true);
+        
         const av = avMap || avatars;
         setOther(username); 
         setOtherAv(av[username] || "");
@@ -295,45 +486,85 @@
         setMessages([]); 
         setUnreadCounts(prev => ({ ...prev, [username]: 0 }));
         setPage("chat"); 
+
         const myMe = meRef.current;
-        const { data } = await sb.from("messages").select("*").or(`and(sender.eq.${myMe},receiver.eq.${username}),and(sender.eq.${username},receiver.eq.${myMe})`).order("created_at", { ascending: false }).limit(PAGE_SIZE);
+        const { data } = await sb.from("messages").select("*")
+          .or(`and(sender.eq.${myMe},receiver.eq.${username}),and(sender.eq.${username},receiver.eq.${myMe})`)
+          .order("created_at", { ascending: false })
+          .limit(PAGE_SIZE);
+        
         if (data) {
             setHasMore(data.length === PAGE_SIZE);
             setMessages(data.reverse()); 
+            
             const hasUnread = data.some(m => m.receiver === myMe && m.sender === username && m.seen === false);
             if (hasUnread) {
-              await sb.from("messages").update({ seen: true }).eq("receiver", myMe).eq("sender", username).eq("seen", false);
+              await sb.from("messages")
+                .update({ seen: true })
+                .eq("receiver", myMe)
+                .eq("sender", username)
+                .eq("seen", false);
             }
         }
+        
         setLoading(false);
       }, [avatars, loading]);
 
       const closeChat = useCallback(() => {
         setPage("list");
-        setTimeout(() => { setOther(""); setOtherAv(""); setMessages([]); }, 250); 
+        setTimeout(() => {
+          setOther("");
+          setOtherAv("");
+          setMessages([]);
+        }, 250); 
       }, []);
 
       const loadMore = useCallback(async () => {
         const myMe = meRef.current;
         const myOth = othRef.current;
         if (!myMe || !myOth) return;
+
         const nextPage = pageCount + 1;
         const start = pageCount * PAGE_SIZE;
         const end = (nextPage * PAGE_SIZE) - 1;
-        const { data } = await sb.from("messages").select("*").or(`and(sender.eq.${myMe},receiver.eq.${myOth}),and(sender.eq.${myOth},receiver.eq.${myMe})`).order("created_at", { ascending: false }).range(start, end);
+
+        const { data } = await sb.from("messages").select("*")
+          .or(`and(sender.eq.${myMe},receiver.eq.${myOth}),and(sender.eq.${myOth},receiver.eq.${myMe})`)
+          .order("created_at", { ascending: false })
+          .range(start, end);
+
         if (data && data.length > 0) {
             setMessages(prev => [...data.reverse(), ...prev]);
             setPageCount(nextPage);
             setHasMore(data.length === PAGE_SIZE);
-        } else { setHasMore(false); }
+        } else {
+            setHasMore(false);
+        }
       }, [pageCount]);
 
       const sendMsg = useCallback(async (text, prefix = "") => {
         if (!text.trim() && !prefix) return;
         const msgContent = prefix + text;
-        const tempMsg = { id: 'temp_' + Date.now() + Math.random(), content: msgContent, sender: meRef.current, receiver: othRef.current, seen: false, created_at: new Date().toISOString(), isTemp: true };
+        
+        const tempMsg = {
+          id: 'temp_' + Date.now() + Math.random(),
+          content: msgContent,
+          sender: meRef.current,
+          receiver: othRef.current,
+          seen: false,
+          created_at: new Date().toISOString(),
+          isTemp: true
+        };
+        
         setMessages(prev => [...prev, tempMsg]);
-        await sb.from("messages").insert([{ content: msgContent, sender: meRef.current, receiver: othRef.current, seen: false, created_at: tempMsg.created_at }]);
+
+        await sb.from("messages").insert([{
+          content: msgContent, 
+          sender: meRef.current, 
+          receiver: othRef.current, 
+          seen: false,
+          created_at: tempMsg.created_at
+        }]);
       }, []);
 
       const deleteMsg = useCallback(async (id) => {
@@ -349,7 +580,11 @@
         if (error) return;
         const { data } = sb.storage.from("chat-media").getPublicUrl(name);
         const isImg = file.type.startsWith("image/");
-        await sb.from("messages").insert([{ sender: meRef.current, receiver: othRef.current, content: prefix, [isImg ? "image" : "audio"]: data.publicUrl, created_at: new Date().toISOString() }]);
+        await sb.from("messages").insert([{
+          sender: meRef.current, receiver: othRef.current, content: prefix,
+          [isImg ? "image" : "audio"]: data.publicUrl,
+          created_at: new Date().toISOString()
+        }]);
       }, []);
 
       const updateProfile = useCallback(async (name, password, avatarFile) => {
@@ -373,7 +608,12 @@
 
       return (
         <Ctx.Provider value={{
-          me, meAvatar, users, avatars, messages, other, otherAv, page, setPage, panel, setPanel, loading, isDark, setIsDark, onlineUsers, unreadCounts, hasMore, loadMore, appReady, login, logout, openChat, closeChat, sendMsg, deleteMsg, uploadMedia, updateProfile, buildUsers, startRT,
+          me, meAvatar, users, avatars, messages, other, otherAv,
+          page, setPage, panel, setPanel, loading,
+          isDark, setIsDark, onlineUsers, unreadCounts,
+          hasMore, loadMore, appReady, 
+          login, logout, openChat, closeChat, sendMsg, deleteMsg, uploadMedia,
+          updateProfile, buildUsers, startRT,
         }}>
           {children}
         </Ctx.Provider>
@@ -384,44 +624,61 @@
 
     const Logo = ({ w = 56 }) => {
       return (
-        <div style={{ width: w, height: w, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Pacifico', cursive", fontSize: w * 0.70, color: "#000", transform: "translateY(-5%)", userSelect: "none", zIndex: 5, }}>hw</div>
+        <div style={{
+          width: w, height: w, display: "flex", alignItems: "center", justifyContent: "center",
+          fontFamily: "'Pacifico', cursive", fontSize: w * 0.70, color: "var(--text)", 
+          transform: "translateY(-5%)",
+          userSelect: "none", zIndex: 5,
+        }}>hw</div>
       );
     }
 
     function Avatar({ src, name, size = 50 }) {
       const hue = (name.charCodeAt(0) * 47) % 360;
       return (
-        <div style={{ width: size, height: size, borderRadius: "50%", flexShrink: 0, background: src ? "url(" + src + ") center/cover no-repeat" : "hsl(" + hue + ",50%,55%)", border: "2px solid var(--border-tl)", display: "flex", alignItems: "center", justifyContent: "center", color: "#000", fontWeight: 800, fontSize: size * 0.28, boxShadow: "0 6px 15px rgba(0,0,0,0.15), inset 0 2px 5px rgba(255,255,255,0.4)", transform: "translateZ(0)" }}>{!src && name.slice(0, 2).toUpperCase()}</div>
+        <div style={{
+          width: size, height: size, borderRadius: "50%", flexShrink: 0,
+          background: src ? "url(" + src + ") center/cover no-repeat" : "hsl(" + hue + ",50%,55%)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          color: "#000", fontWeight: 800, fontSize: size * 0.28,
+          boxShadow: "0 6px 15px rgba(0,0,0,0.15), inset 0 2px 5px rgba(255,255,255,0.4)", transform: "translateZ(0)"
+        }}>
+          {!src && name.slice(0, 2).toUpperCase()}
+        </div>
       );
     }
 
-    const PV = { initial: { opacity: 0, x: "100%" }, animate: { opacity: 1, x: "0%", transition: { type: "spring", damping: 28, stiffness: 250 } }, exit: { opacity: 0, x: "100%", transition: { duration: 0.25, ease: "easeOut" } }, };
+    const PV = {
+      initial: { opacity: 0, x: 20, scale: 0.98 },
+      animate: { opacity: 1, x: 0, scale: 1, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+      exit: { opacity: 0, x: -20, scale: 0.98, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
+    };
 
     function SplashScreen({ visible }) {
-      const titleChars = "Harvinder's World".split("");
+      const ringDelays = [0, 1.2, 2.4]; 
+
       return (
         <AnimatePresence>
           {visible && (
-            <motion.div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: 'hidden', background: "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)" }} initial={{ opacity: 1, y: 0 }} exit={{ y: "-100%", opacity: 0, transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] } }}>
-              <div style={{ position: "absolute", top: "-20%", left: "-10%", width: "80vw", height: "80vw", borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.9) 0%, transparent 70%)", zIndex: 1, animation: "blob1 7s ease-in-out infinite" }}></div>
-              <div style={{ position: "absolute", bottom: "-10%", right: "-10%", width: "70vw", height: "70vw", borderRadius: "50%", background: "radial-gradient(circle, rgba(200,210,225,0.6) 0%, transparent 70%)", zIndex: 1, animation: "blob2 9s ease-in-out infinite" }}></div>
-              <motion.div initial={{ opacity: 0, scale: 0.6, y: -80 }} animate={{ opacity: 1, scale: 1, y: -50 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} style={{ position: "relative", width: 160, height: 160, display: "flex", justifyContent: "center", alignItems: "center", zIndex: 3 }}>
-                <div style={{ position: "absolute", width: "100%", height: "100%", borderRadius: "50%", background: "#a6abbd", zIndex: 1, animation: "pulseRing 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) infinite" }}></div>
-                <div className="liquid-orb" style={{ position: "relative", zIndex: 2, width: 120, height: 120, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.85)", borderTop: "1.5px solid rgba(255,255,255,0.9)", borderLeft: "1.5px solid rgba(255,255,255,0.9)", borderBottom: "1px solid rgba(255,255,255,0.3)", borderRight: "1px solid rgba(255,255,255,0.3)", boxShadow: "15px 15px 35px rgba(163,177,198,0.4), -15px -15px 35px rgba(255,255,255,0.8), inset 0 2px 10px rgba(255,255,255,0.8)" }}>
+            <motion.div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: 'hidden', background: "var(--bg)" }}
+              initial={{ opacity: 1 }} 
+              exit={{ opacity: 0, scale: 1.1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}>
+              
+              <div className="pulse-ring-wrapper">
+                {ringDelays.map((delay, index) => (
+                  <div key={index} className="pulse-ring" style={{ animationDelay: `-${delay}s` }} />
+                ))}
+              </div>
+
+              <motion.div initial={{ opacity: 0, scale: 0.4, y: -40 }} animate={{ opacity: 1, scale: 1, y: -50 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} style={{ position: "relative", width: 160, height: 160, display: "flex", justifyContent: "center", alignItems: "center", zIndex: 3 }}>
+                <div className="liquid-glass liquid-orb" style={{ position: "relative", zIndex: 2, width: 120, height: 120, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Logo w={70} />
                 </div>
               </motion.div>
-              <div style={{ textAlign: "center", padding: "0 20px", position: "relative", zIndex: 4, animation: "floatTitle 4s ease-in-out infinite" }}>
-                <h1 style={{ color: "#000", fontSize: 32, fontWeight: 900, margin: 0, letterSpacing: "-1px", display: "flex", justifyContent: "center" }}>
-                  {titleChars.map((char, index) => (
-                    <motion.span key={index} initial={{ opacity: 0, y: 15, filter: "blur(4px)", z: 0.01 }} animate={{ opacity: 1, y: 0.01, filter: "blur(0.01px)", z: 0.01 }} transition={{ delay: 0.1 + index * 0.03, duration: 0.4, ease: [0.32, 0.72, 0, 1] }} style={{ display: "inline-block", whiteSpace: char === " " ? "pre" : "normal" }}>{char}</motion.span>
-                  ))}
-                </h1>
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 0.8 }} transition={{ delay: 0.5, duration: 0.5 }} style={{ color: "#000", fontSize: 13, marginTop: 8, fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px" }}>Loading witty comebacks...</motion.p>
-              </div>
-              <div className="ns" style={{ position: "absolute", bottom: 60, width: 140, height: 4, borderRadius: 10, overflow: "hidden", background: "rgba(0,0,0,0.06)", border: "1px solid rgba(255,255,255,0.5)", boxShadow: "0 5px 15px rgba(0,0,0,0.05)", transform: "translateZ(0)" }}>
-                <motion.div style={{ height: "100%", background: "#000", borderRadius: 10 }} initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 0.8, ease: "easeInOut" }} />
-              </div>
+              
+              <motion.div exit={{ opacity: 0 }} className="ns" style={{ position: "absolute", bottom: 60, width: 140, height: 4, borderRadius: 10, overflow: "hidden", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 5px 15px rgba(0,0,0,0.05)", transform: "translateZ(0)" }}>
+                <motion.div style={{ height: "100%", background: "var(--text)", borderRadius: 10 }} initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 0.8, ease: "easeInOut" }} />
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -435,16 +692,22 @@
       const [err,  setErr]      = useState("");
       const [pressed, setPressed] = useState(false);
       const APP = "Harvinder's World";
-      const go = async () => { if (!user.trim() || !pass.trim()) { setErr("Please fill in both fields."); return; } await reqNotif(); const ok = await login(user.trim(), pass.trim()); if (!ok) setErr("Invalid username or password."); };
+
+      const go = async () => {
+        if (!user.trim() || !pass.trim()) { setErr("Please fill in both fields."); return; }
+        await reqNotif();
+        const ok = await login(user.trim(), pass.trim());
+        if (!ok) setErr("Invalid username or password.");
+      };
+
       const inp = { background: "var(--input-bg)", color: "var(--text)", boxShadow: "var(--input-shadow)", border: "none", borderRadius: 20, padding: "16px 20px", fontSize: 15, fontWeight: 600, width: "100%", transition: "all 0.3s ease" };
 
       return (
         <div className="ns" style={{ width: "100%", height: "100%", overflowY: "auto", display: "flex", justifyContent: "center", paddingTop: 80 }}>
           <div style={{ width: "100%", maxWidth: 360, padding: "0 24px 40px", textAlign: "center" }}>
             <div style={{ position: "relative", width: 176, height: 176, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ position: "absolute", width: 176, height: 176, borderRadius: "50%", border: "1.5px solid var(--border-tl)", boxShadow: "0 10px 20px rgba(0,0,0,0.15)" }} />
               {["od1", "od2", "od3"].map((cls, i) => <div key={i} className={cls} style={{ position: "absolute", width: 6, height: 6, borderRadius: "50%", background: "white", boxShadow: "0 0 10px rgba(255,255,255,0.8)", zIndex: 1 }} />)}
-              <div className="ns glass" style={{ width: 112, height: 112, borderRadius: "50%", position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center" }}><Logo w={64} /></div>
+              <div className="ns liquid-glass" style={{ width: 112, height: 112, position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center" }}><Logo w={64} /></div>
             </div>
             <div style={{ marginTop: 20, display: "flex", flexWrap: "wrap", justifyContent: "center", color: "var(--text)" }}>
               {APP.split("").map((ch, i) => <motion.span key={i} style={{ display: "inline-block", fontSize: 32, fontWeight: 900, lineHeight: 1 }} animate={{ y: [0.01, -8, 0.01], z: 0.01 }} transition={{ duration: 2.2, delay: i * 0.05, repeat: Infinity, repeatDelay: 5, ease: "easeInOut" }}>{ch === " " ? "\u00A0" : ch}</motion.span>)}
@@ -470,6 +733,7 @@
       const [saved,    setSaved]    = useState(false);
       const [search,   setSearch]   = useState("");
       const fileRef = useRef(null);
+      
       const others = users.filter(u => u.username !== me).filter(u => u.username.toLowerCase().includes(search.toLowerCase()));
       const onAv = e => { const f = e.target.files && e.target.files[0]; if (!f) return; setAvFile(f); setAvPrev(URL.createObjectURL(f)); };
       const save = async () => { setSaving(true); const ok = await updateProfile(editName, editPass, avFile || undefined); setSaving(false); if (ok) { setSaved(true); setTimeout(() => { setSaved(false); setPanel(false); }, 1200); } };
@@ -477,30 +741,34 @@
       return (
         <div className="ns" style={{ width: "100%", height: "100%", overflowY: "auto", position: "relative" }}>
           <div style={{ position: "relative", zIndex: 1, padding: "20px 16px 24px" }}>
-            <motion.div style={{ height: 75, borderRadius: 35, display: "flex", alignItems: "center", padding: "0 20px", justifyContent: "space-between", marginBottom: 16, background: "var(--input-bg)", boxShadow: "var(--input-shadow)", border: "none" }} initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}>
-              <motion.div onClick={() => setIsDark(!isDark)} whileTap={{ scale: 0.85, rotate: 180 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--glass-bg)", boxShadow: "var(--glass-shadow), var(--glass-inset)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)" }}><Logo w={24} /></motion.div>
+
+            <motion.div className="liquid-glass" style={{ height: 75, display: "flex", alignItems: "center", padding: "0 20px", justifyContent: "space-between", marginBottom: 16 }} initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}>
+              <motion.div onClick={() => setIsDark(!isDark)} whileTap={{ scale: 0.85, rotate: 180 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Logo w={24} /></motion.div>
               <span style={{ flex: 1, textAlign: "center", fontWeight: 800, color: "var(--text)", fontSize: 18 }}>Messages</span>
               <div style={{ display: 'flex', gap: 10 }}>
-                <motion.button onClick={() => setPanel(true)} whileTap={{ rotate: 90, scale: 0.9 }} style={{ width: 44, height: 44, borderRadius: "50%", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", background: "var(--glass-bg)", boxShadow: "var(--glass-shadow), var(--glass-inset)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="var(--svg-stroke)" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22, strokeWidth: 2.5 }}>
-                    <circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                <motion.button onClick={() => setPanel(true)} whileTap={{ rotate: 90, scale: 0.9 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22, strokeWidth: 2.5 }}>
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                   </svg>
                 </motion.button>
               </div>
             </motion.div>
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ marginBottom: 24, position: "relative" }}>
+
+            <motion.div className="liquid-glass" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ marginBottom: 24, position: "relative" }}>
               <div style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", zIndex: 2, display: "flex", alignItems: "center" }}>
-                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
               </div>
-              <input type="text" placeholder="Search users..." value={search} onChange={e => setSearch(e.target.value)} style={{ width: "100%", padding: "14px 20px 14px 44px", borderRadius: 24, fontSize: 16, fontWeight: 600, color: "var(--text)", outline: "none", position: "relative", zIndex: 1, background: "var(--input-bg)", boxShadow: "var(--input-shadow)", border: "none" }} />
+              <input type="text" placeholder="Search users..." value={search} onChange={e => setSearch(e.target.value)} style={{ width: "100%", padding: "14px 20px 14px 44px", fontSize: 16, fontWeight: 600, color: "var(--text)", outline: "none", position: "relative", zIndex: 1, background: "transparent", border: "none" }} />
             </motion.div>
+
             <motion.div style={{ display: "flex", flexDirection: "column", gap: 14 }} initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.08 } } }}>
               {others.length === 0 && <div style={{ textAlign: "center", padding: "48px 0", color: "var(--text-muted)", fontSize: 14, fontWeight: 700 }}>{search ? "No users found." : "No other users yet."}</div>}
               {others.map((u) => {
                 const unread = unreadCounts[u.username] || 0;
                 return (
-                  <motion.div key={u.username} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", borderRadius: 30, cursor: "pointer", position: "relative", opacity: loading ? 0.6 : 1, background: "var(--input-bg)", boxShadow: "var(--input-shadow)", border: "none" }} variants={{ hidden: { opacity: 0, y: 20, scale: 0.95 }, show: { opacity: 1, y: 0, scale: 1 } }} transition={{ type: "spring", damping: 20, stiffness: 300 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97, transition: { duration: 0.1 } }} onClick={() => { if (!loading) openChat(u.username, avatars); }}>
-                    <Avatar src={avatars[u.username]} name={u.username} size={54} />
+                  <motion.div key={u.username} className="liquid-glass" style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", cursor: "pointer", position: "relative", opacity: loading ? 0.6 : 1 }} variants={{ hidden: { opacity: 0, y: 20, scale: 0.95 }, show: { opacity: 1, y: 0, scale: 1 } }} transition={{ type: "spring", damping: 20, stiffness: 300 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97, transition: { duration: 0.1 } }} onClick={() => { if (!loading) openChat(u.username, avatars); }}>
+                    <div style={{ width: 54, height: 54, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}><Avatar src={avatars[u.username]} name={u.username} size={54} /></div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 15 }}>{u.username}</div>
                       <div style={{ fontSize: 12, color: unread ? "#ff3b30" : "var(--text-muted)", marginTop: 4, fontWeight: unread ? 800 : 600 }}>{unread ? "New messages waiting!" : "Tap to message"}</div>
@@ -511,13 +779,33 @@
               })}
             </motion.div>
           </div>
+          
           <AnimatePresence>
             {panel && (
               <>
-                <motion.div style={{ position: "fixed", inset: 0, zIndex: 2000, background: "var(--overlay)", backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)" }} initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} exit={{ opacity: 0, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} onClick={() => setPanel(false)} />
-                <motion.div style={{ position: "fixed", zIndex: 2001, width: "calc(100% - 40px)", maxWidth: 320, top: 85, right: 20, originX: 0.9, originY: -0.05, overflow: "hidden", background: "var(--glass-bg)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", borderRadius: 30, boxShadow: "var(--glass-shadow), var(--glass-inset)" }} initial={{ opacity: 0, scale: 0.05 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} exit={{ opacity: 0, scale: 0.05, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} >
+                <motion.div 
+                  style={{ position: "fixed", inset: 0, zIndex: 2000, background: "var(--overlay)", backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)" }} 
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} 
+                  exit={{ opacity: 0, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} 
+                  onClick={() => setPanel(false)} 
+                />
+                <motion.div 
+                  style={{ 
+                    position: "fixed", zIndex: 2001, width: "calc(100% - 40px)", maxWidth: 320, 
+                    top: 85, right: 20, 
+                    originX: 0.9, originY: -0.05, 
+                    overflow: "hidden", 
+                    background: "var(--glass-bg)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", 
+                    borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", 
+                    borderRadius: 30, boxShadow: "var(--glass-shadow), var(--glass-inset)" 
+                  }} 
+                  initial={{ opacity: 0, scale: 0.05 }} 
+                  animate={{ opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} 
+                  exit={{ opacity: 0, scale: 0.05, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } }} 
+                >
                   <div style={{ padding: 25, width: "100%", height: "100%" }}>
-                    <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 16, marginBottom: 20, textAlign: "center", textShadow: "0 1px 3px rgba(255,255,255,0.8)" }}>Profile Settings</div>
+                    <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 16, marginBottom: 20, textAlign: "center" }}>Profile Settings</div>
                     <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}><Avatar src={avPrev || meAvatar} name={me} size={60} /><div><div style={{ fontWeight: 800, color: "var(--text)", fontSize: 15 }}>{me}</div><button onClick={() => fileRef.current && fileRef.current.click()} style={{ fontSize: 12, color: "var(--text-muted)", border: "none", background: "none", cursor: "pointer", padding: 0, marginTop: 4, fontWeight: 700 }}>Change photo</button><input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*" onChange={onAv} /></div></div>
                     <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6, fontWeight: 700, marginLeft: 4 }}>Update Name</div>
                     <input value={editName} onChange={e => setEditName(e.target.value)} placeholder={me} style={{ width: "100%", padding: "14px 16px", borderRadius: 16, fontSize: 14, fontWeight: 600, border: "none", background: "var(--input-bg)", color: "var(--text)", marginBottom: 16, boxShadow: "var(--input-shadow)", outline: "none" }} />
@@ -536,7 +824,9 @@
 
     function StatusIcon({ seen }) {
       return (
-        <svg viewBox="0 0 24 24" fill="none" stroke={seen ? "#000" : "var(--text-muted)"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16, transform: "translateY(1px)" }}>{seen ? <><path d="M4 12l4 4L16 8" /><path d="M10 12l4 4L22 8" /></> : <><path d="M6 12l5 5L20 8" /></>}</svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke={seen ? "var(--text)" : "var(--text-muted)"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16, transform: "translateY(1px)" }}>
+          {seen ? <><path d="M4 12l4 4L16 8" /><path d="M10 12l4 4L22 8" /></> : <><path d="M6 12l5 5L20 8" /></>}
+        </svg>
       );
     }
 
@@ -544,20 +834,72 @@
       const dateObj = msg.created_at ? new Date(msg.created_at) : null;
       const t = dateObj ? dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
       const lastClick = useRef(0);
-      const handleTap = (e) => { const now = Date.now(); if (now - lastClick.current < 300) { if (isOwn && msg.id && !msg.isTemp) { if (window.confirm("Delete this message?")) onDelete(msg.id); } } lastClick.current = now; };
+
+      const handleTap = (e) => {
+        const now = Date.now();
+        if (now - lastClick.current < 300) {
+          if (isOwn && msg.id && !msg.isTemp) {
+            if (window.confirm("Delete this message?")) onDelete(msg.id);
+          }
+        }
+        lastClick.current = now;
+      };
+
       let displayContent = msg.content || "";
       let replyData = null;
-      if (displayContent.startsWith("[REPLY|")) { const endIdx = displayContent.indexOf("]"); if (endIdx !== -1) { const header = displayContent.substring(7, endIdx); const parts = header.split("|"); if (parts.length >= 2) { replyData = { sender: parts[0], content: parts.slice(1).join("|") }; displayContent = displayContent.substring(endIdx + 1); } } }
-      const renderContent = (text) => { if (!text) return null; const urlRegex = /(https?:\/\/[^\s]+)/g; return text.split(urlRegex).map((part, i) => { if (part.match(urlRegex)) { return <a key={i} href={part} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ color: isOwn ? "inherit" : "var(--primary)", textDecoration: "underline", fontWeight: 800 }}>{part}</a>; } return part; }); };
+
+      if (displayContent.startsWith("[REPLY|")) {
+         const endIdx = displayContent.indexOf("]");
+         if (endIdx !== -1) {
+             const header = displayContent.substring(7, endIdx);
+             const parts = header.split("|");
+             if (parts.length >= 2) {
+                 replyData = { sender: parts[0], content: parts.slice(1).join("|") };
+                 displayContent = displayContent.substring(endIdx + 1);
+             }
+         }
+      }
+
+      const renderContent = (text) => {
+        if (!text) return null;
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        return text.split(urlRegex).map((part, i) => {
+          if (part.match(urlRegex)) {
+            return <a key={i} href={part} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ color: isOwn ? "inherit" : "var(--primary)", textDecoration: "underline", fontWeight: 800 }}>{part}</a>;
+          }
+          return part;
+        });
+      };
 
       return (
         <div style={{ display: "flex", justifyContent: isOwn ? "flex-end" : "flex-start", width: "100%" }}>
-          <motion.div initial={{ opacity: 0, scale: 0.95, y: 30 }} animate={{ opacity: msg.isTemp ? 0.7 : 1, scale: 1, y: 0 }} transition={{ type: "spring", stiffness: 400, damping: 28 }} onClick={handleTap} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.15} whileDrag={{ scale: 0.98, zIndex: 10 }} onDragEnd={(e, info) => { if (Math.abs(info.offset.x) > 50) onReply(msg); }} style={{ maxWidth: "78%", padding: "14px 20px", borderRadius: 24, background: isOwn ? "var(--bubble-own)" : "var(--bubble-oth)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", WebkitTransform: "translateZ(0)", transform: "translateZ(0)", color: "var(--text)", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", boxShadow: "var(--glass-shadow), var(--glass-inset)", position: "relative", zIndex: 2, userSelect: "none", WebkitTouchCallout: "none" }}>
-            {replyData && ( <div style={{ background: isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.1)", padding: "8px 12px", borderRadius: 16, borderLeft: `3px solid ${isOwn ? "var(--text)" : "var(--text)"}`, marginBottom: displayContent || msg.image || msg.audio ? 10 : 0, fontSize: 12.5 }}> <div style={{ fontWeight: 900, color: "var(--text)", marginBottom: 2 }}>{replyData.sender}</div> <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: 0.9, fontWeight: 600 }}>{replyData.content}</div> </div> )}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 30 }} 
+            animate={{ opacity: msg.isTemp ? 0.7 : 1, scale: 1, y: 0 }} 
+            transition={{ type: "spring", stiffness: 400, damping: 28 }} 
+            onClick={handleTap} 
+            drag="x" 
+            dragConstraints={{ left: 0, right: 0 }} 
+            dragElastic={0.15} 
+            whileDrag={{ scale: 0.98, zIndex: 10 }} 
+            onDragEnd={(e, info) => { if (Math.abs(info.offset.x) > 50) onReply(msg); }} 
+            style={{ maxWidth: "78%", padding: "14px 20px", borderRadius: 24, background: isOwn ? "var(--bubble-own)" : "var(--bubble-oth)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", WebkitTransform: "translateZ(0)", transform: "translateZ(0)", color: "var(--text)", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", boxShadow: "var(--glass-shadow), var(--glass-inset)", position: "relative", zIndex: 2, userSelect: "none", WebkitTouchCallout: "none" }}
+          >
+            {replyData && (
+              <div style={{ background: isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.1)", padding: "8px 12px", borderRadius: 16, borderLeft: `3px solid ${isOwn ? "var(--text)" : "var(--text)"}`, marginBottom: displayContent || msg.image || msg.audio ? 10 : 0, fontSize: 12.5 }}>
+                <div style={{ fontWeight: 900, marginBottom: 2 }}>{replyData.sender}</div>
+                <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: 0.9, fontWeight: 600 }}>{replyData.content}</div>
+              </div>
+            )}
+            
             {displayContent && <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5, fontWeight: 600, wordBreak: "break-word" }}>{renderContent(displayContent)}</p>}
             {msg.image && <img src={msg.image} alt="media" onClick={(e) => { e.stopPropagation(); onImageClick(msg.image); }} style={{ maxWidth: "100%", maxHeight: 220, borderRadius: 14, marginTop: displayContent ? 6 : 0, cursor: "pointer", objectFit: "cover", display: "block", boxShadow: "0 4px 12px rgba(0,0,0,0.2)", pointerEvents: "auto" }} />}
             {msg.audio && <div onClick={e => e.stopPropagation()} style={{ pointerEvents: "auto" }}><audio controls style={{ width: "100%", height: 35, marginTop: 8, filter: "var(--svg-drop)" }}><source src={msg.audio} /></audio></div>}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, marginTop: 6 }}> {t && <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", opacity: 0.9 }}>{t}</span>} {isOwn && <StatusIcon seen={msg.seen && !msg.isTemp} />} </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, marginTop: 6 }}>
+              {t && <span style={{ fontSize: 10, fontWeight: 700, opacity: 0.8 }}>{t}</span>}
+              {isOwn && <StatusIcon seen={msg.seen && !msg.isTemp} />}
+            </div>
           </motion.div>
         </div>
       );
@@ -569,13 +911,47 @@
       const [fullScreenImage, setFullScreenImage] = useState(null);
       const [replyTo, setReplyTo] = useState(null);
       const [loadingMore, setLoadingMore] = useState(false);
+      
       const chatRef = useRef(null);
       const fileRef = useRef(null);
       const inpRef = useRef(null);
-      const scrollToBottom = () => { if (chatRef.current) { chatRef.current.scrollTop = chatRef.current.scrollHeight; } };
-      useLayoutEffect(() => { if (!loadingMore) scrollToBottom(); }, [messages]);
-      useEffect(() => { const handleVP = () => { if (window.scrollY > 0) window.scrollTo(0, 0); scrollToBottom(); }; window.visualViewport?.addEventListener("resize", handleVP); window.visualViewport?.addEventListener("scroll", handleVP); return () => { window.visualViewport?.removeEventListener("resize", handleVP); window.visualViewport?.removeEventListener("scroll", handleVP); }; }, []);
-      const handleScroll = (e) => { if (e.target.scrollTop === 0 && hasMore && !loadingMore) { setLoadingMore(true); const oldScrollHeight = e.target.scrollHeight; loadMore().then(() => { setTimeout(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight - oldScrollHeight; setLoadingMore(false); }, 50); }); } };
+
+      const scrollToBottom = () => {
+        if (chatRef.current) {
+           chatRef.current.scrollTop = chatRef.current.scrollHeight;
+        }
+      };
+
+      useLayoutEffect(() => {
+        if (!loadingMore) scrollToBottom();
+      }, [messages]);
+
+      useEffect(() => {
+        const handleVP = () => {
+          if (window.scrollY > 0) window.scrollTo(0, 0); 
+          scrollToBottom();
+        };
+        window.visualViewport?.addEventListener("resize", handleVP);
+        window.visualViewport?.addEventListener("scroll", handleVP);
+        return () => {
+          window.visualViewport?.removeEventListener("resize", handleVP);
+          window.visualViewport?.removeEventListener("scroll", handleVP);
+        };
+      }, []);
+
+      const handleScroll = (e) => {
+        if (e.target.scrollTop === 0 && hasMore && !loadingMore) {
+          setLoadingMore(true);
+          const oldScrollHeight = e.target.scrollHeight;
+          loadMore().then(() => {
+            setTimeout(() => {
+              if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight - oldScrollHeight;
+              setLoadingMore(false);
+            }, 50);
+          });
+        }
+      };
+
       const groupedMessages = [];
       let lastDate = "";
       messages.forEach(m => {
@@ -583,39 +959,86 @@
         if (m.created_at) {
           const dateObj = new Date(m.created_at);
           const d = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-          const today = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-          const yesterday = new Date(Date.now() - 86400000).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+          const todayObj = new Date();
+          const today = todayObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+          const yesterdayObj = new Date(Date.now() - 86400000);
+          const yesterday = yesterdayObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
           label = d === today ? "Today" : d === yesterday ? "Yesterday" : d;
         }
         if (label !== lastDate) { groupedMessages.push({ type: 'date', label }); lastDate = label; }
         groupedMessages.push({ type: 'msg', data: m });
       });
-      const getReplyPrefix = () => { if (!replyTo) return ""; const cleanContent = replyTo.content ? replyTo.content.replace(/\[REPLY\|.*?\]/, "") : ""; const contentSnippet = cleanContent ? cleanContent.replace(/\|/g, "").substring(0, 40) : (replyTo.image ? "📷 Photo" : "🎵 Audio"); return `[REPLY|${replyTo.sender}|${contentSnippet}]`; };
-      const send = async () => { const t = text.trim(); if (!t && !replyTo) return; const prefix = getReplyPrefix(); setText(""); setReplyTo(null); await sendMsg(t, prefix); };
-      const onFile = async e => { const f = e.target.files && e.target.files[0]; if (!f) return; const prefix = getReplyPrefix(); setReplyTo(null); await uploadMedia(f, prefix); e.target.value = ""; };
+
+      const getReplyPrefix = () => {
+        if (!replyTo) return "";
+        const cleanContent = replyTo.content ? replyTo.content.replace(/\[REPLY\|.*?\]/, "") : "";
+        const contentSnippet = cleanContent ? cleanContent.replace(/\|/g, "").substring(0, 40) : (replyTo.image ? "📷 Photo" : "🎵 Audio");
+        return `[REPLY|${replyTo.sender}|${contentSnippet}]`;
+      };
+
+      const send = async () => {
+        const t = text.trim(); 
+        if (!t && !replyTo) return;
+        const prefix = getReplyPrefix();
+        setText(""); 
+        setReplyTo(null);
+        await sendMsg(t, prefix);
+      };
+
+      const onFile = async e => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const prefix = getReplyPrefix();
+        setReplyTo(null);
+        await uploadMedia(f, prefix); 
+        e.target.value = "";
+      };
 
       return (
         <div className="ns" style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-          <div id="hw-hdr" style={{ flexShrink: 0, zIndex: 1000, height: "calc(75px + env(safe-area-inset-top))", paddingTop: "env(safe-area-inset-top)", display: "flex", alignItems: "center", gap: 14, padding: "0 20px", background: "var(--input-bg)", boxShadow: "var(--input-shadow)" }}>
-            <motion.button onClick={closeChat} whileTap={{ x: -5, scale: 0.9 }} style={{ fontSize: 26, color: "var(--text)", border: "none", background: "none", cursor: "pointer", paddingRight: 4, lineHeight: 1 }}>&#8592;</motion.button>
-            <Avatar src={otherAv} name={other} size={40} />
-            <div><div style={{ fontWeight: 800, color: "var(--text)", fontSize: 16 }}>{other}</div><div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700 }}>{onlineUsers.includes(other) ? "Active now" : "Offline"}</div></div>
-          </div>
-          <div ref={chatRef} className="ns" onScroll={handleScroll} style={{ flex: 1, overflowY: "auto", padding: "20px 16px 0px 16px", display: "flex", flexDirection: "column", gap: 12, WebkitOverflowScrolling: "touch" }}>
-            {loadingMore && <div style={{ textAlign: "center", padding: "10px 0" }}><div style={{ display: "inline-block", width: 22, height: 22, borderRadius: "50%", border: "2.5px solid var(--primary)", borderTopColor: "transparent", animation: "spinner 0.8s linear infinite" }} /></div>}
-            {groupedMessages.map((item, i) => ( item.type === 'date' ? <motion.div key={"date-"+item.label} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="date-divider">{item.label}</motion.div> : <MsgBubble key={item.data.id || i} msg={item.data} isOwn={item.data.sender === me} onImageClick={setFullScreenImage} onDelete={deleteMsg} onReply={setReplyTo} /> ))}
-            <div style={{ height: 16, flexShrink: 0 }}></div>
-          </div>
-          <div style={{ flexShrink: 0, padding: "0px 16px 20px 16px", paddingBottom: "calc(20px + env(safe-area-inset-bottom))", zIndex: 1001, position: "relative" }}>
-            <AnimatePresence>
-              {replyTo && ( <motion.div initial={{ opacity: 0, y: 15, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 15, scale: 0.95 }} style={{ position: "absolute", bottom: "100%", left: 20, right: 20, marginBottom: 12, padding: "12px 16px", background: "var(--glass-s)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", borderRadius: 20, borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 999, boxShadow: "var(--glass-shadow), var(--glass-inset)" }}> <div style={{ flex: 1, overflow: "hidden", borderLeft: "4px solid var(--text)", paddingLeft: 10 }}> <div style={{ fontSize: 13, fontWeight: 900, color: "var(--text)" }}>Replying to {replyTo.sender}</div> <div style={{ fontSize: 13, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: 0.9, fontWeight: 600 }}>{replyTo.content ? replyTo.content.replace(/\[REPLY\|.*?\]/, "") : (replyTo.image ? "📷 Photo" : "🎵 Audio")}</div> </div> <motion.button whileTap={{ scale: 0.8 }} onClick={() => setReplyTo(null)} style={{ background: "var(--input-bg)", border: "none", color: "var(--text)", width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", marginLeft: 10, boxShadow: "var(--input-shadow)" }}><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></motion.button> </motion.div> )}
-            </AnimatePresence>
-            <div id="hw-bar" style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 35, position: "relative", zIndex: 1000, background: "var(--glass-bg)", backdropFilter: "blur(25px) saturate(120%)", WebkitBackdropFilter: "blur(25px) saturate(120%)", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", boxShadow: "var(--glass-shadow), var(--glass-inset)" }}>
-              <motion.label whileTap={{ scale: 0.8 }} style={{ fontSize: 24, cursor: "pointer", userSelect: "none", display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, flexShrink: 0, color: "var(--text)" }}>+<input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*,audio/*" onChange={onFile} /></motion.label>
-              <input ref={inpRef} type="text" placeholder="Message..." value={text} onChange={e => setText(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} onFocus={() => { setTimeout(() => { window.scrollTo(0, 0); scrollToBottom(); }, 150); }} style={{ flex: 1, minWidth: 0, border: "none", fontSize: 15, fontWeight: 600, padding: "0 16px", height: "40px", lineHeight: "normal", borderRadius: 20, background: "var(--input-bg)", color: "var(--text)", boxShadow: "var(--input-shadow)", outline: "none", WebkitAppearance: "none" }} />
-              <motion.button onClick={(e) => { if (!text.trim() && !replyTo) { e.preventDefault(); return; } send(); }} whileTap={(text.trim() || replyTo) ? { scale: 0.85, y: -2 } : {}} style={{ WebkitAppearance: "none", outline: "none", WebkitTapHighlightColor: "transparent", overflow: "hidden", width: 40, height: 40, borderRadius: "50%", border: "none", cursor: (text.trim() || replyTo) ? "pointer" : "default", background: (text.trim() || replyTo) ? "var(--btn-grad)" : "transparent", color: "#fff", fontSize: 18, fontWeight: 900, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: (text.trim() || replyTo) ? "var(--btn-shadow)" : "none", transition: "all 0.3s ease", opacity: (text.trim() || replyTo) ? 1 : 0.5 }}>&#8593;</motion.button>
+          
+          <div id="hw-hdr" className="liquid-glass" style={{ flexShrink: 0, zIndex: 1000, height: 75, marginTop: "calc(16px + env(safe-area-inset-top))", marginBottom: 16, marginLeft: 16, marginRight: 16, display: "flex", alignItems: "center", gap: 14, padding: "0 20px" }}>
+            <motion.button onClick={closeChat} whileTap={{ x: -5, scale: 0.9 }} style={{ fontSize: 26, color: "var(--text)", border: "none", background: "none", cursor: "pointer", paddingRight: 4, lineHeight: 1, borderRadius: "50%", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center" }}>&#8592;</motion.button>
+            <div style={{ borderRadius: "50%", padding: 4 }}><Avatar src={otherAv} name={other} size={40} /></div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 16 }}>{other}</div>
+              <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700 }}>{onlineUsers.includes(other) ? "Active now" : "Offline"}</div>
             </div>
           </div>
+
+          <div ref={chatRef} className="ns" onScroll={handleScroll} style={{ flex: 1, overflowY: "auto", padding: "20px 16px 0px 16px", display: "flex", flexDirection: "column", gap: 12, WebkitOverflowScrolling: "touch" }}>
+            {loadingMore && <div style={{ textAlign: "center", padding: "10px 0" }}><div style={{ display: "inline-block", width: 22, height: 22, borderRadius: "50%", border: "2.5px solid var(--primary)", borderTopColor: "transparent", animation: "spinner 0.8s linear infinite" }} /></div>}
+            
+            {groupedMessages.map((item, i) => (
+              item.type === 'date' ? 
+                <motion.div key={"date-"+item.label} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="date-divider" style={{ color: "var(--text)" }}>{item.label}</motion.div> 
+                : <MsgBubble key={item.data.id || i} msg={item.data} isOwn={item.data.sender === me} onImageClick={setFullScreenImage} onDelete={deleteMsg} onReply={setReplyTo} />
+            ))}
+
+            <div style={{ height: 16, flexShrink: 0 }}></div>
+          </div>
+
+          <div style={{ flexShrink: 0, padding: "0px 16px 20px 16px", paddingBottom: "calc(20px + env(safe-area-inset-bottom))", zIndex: 1001, position: "relative" }}>
+            <AnimatePresence>
+              {replyTo && (
+                <motion.div className="glass-s" initial={{ opacity: 0, y: 15, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 15, scale: 0.95 }} style={{ position: "absolute", bottom: "100%", left: 20, right: 20, marginBottom: 12, padding: "12px 16px", borderRadius: 20, display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 999 }}>
+                  <div style={{ flex: 1, overflow: "hidden", borderLeft: "4px solid var(--text)", paddingLeft: 10 }}>
+                    <div style={{ fontSize: 13, fontWeight: 900, color: "var(--text)" }}>Replying to {replyTo.sender}</div>
+                    <div style={{ fontSize: 13, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: 0.9, fontWeight: 600 }}>{replyTo.content ? replyTo.content.replace(/\[REPLY\|.*?\]/, "") : (replyTo.image ? "📷 Photo" : "🎵 Audio")}</div>
+                  </div>
+                  <motion.button whileTap={{ scale: 0.8 }} onClick={() => setReplyTo(null)} style={{ background: "none", border: "none", color: "var(--text)", width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", marginLeft: 10 }}><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div id="hw-bar" className="liquid-glass" style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", position: "relative", zIndex: 1000 }}>
+              <motion.label whileTap={{ scale: 0.8 }} style={{ fontSize: 24, cursor: "pointer", userSelect: "none", display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, flexShrink: 0, color: "var(--text)", borderRadius: "50%" }}>+<input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*,audio/*" onChange={onFile} /></motion.label>
+              <input ref={inpRef} type="text" placeholder="Message..." value={text} onChange={e => setText(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} onFocus={() => { setTimeout(() => { window.scrollTo(0, 0); scrollToBottom(); }, 150); }} style={{ flex: 1, minWidth: 0, border: "none", fontSize: 15, fontWeight: 600, padding: "0 16px", height: "40px", lineHeight: "normal", borderRadius: 20, background: "none", color: "var(--text)", outline: "none", WebkitAppearance: "none" }} />
+              
+              <motion.button onClick={(e) => { if (!text.trim() && !replyTo) { e.preventDefault(); return; } send(); }} whileTap={(text.trim() || replyTo) ? { scale: 0.85, y: -2 } : {}} style={{ WebkitAppearance: "none", outline: "none", WebkitTapHighlightColor: "transparent", overflow: "hidden", width: 40, height: 40, borderRadius: "50%", border: "none", cursor: (text.trim() || replyTo) ? "default" : "pointer", background: (text.trim() || replyTo) ? "var(--btn-grad)" : "transparent", color: "#fff", fontSize: 18, fontWeight: 900, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: (text.trim() || replyTo) ? "var(--btn-shadow)" : "none", transition: "all 0.3s ease", opacity: (text.trim() || replyTo) ? 1 : 0.5 }}><span style={{ fontSize: 24, paddingBottom: 6 }}>&#8593;</span></motion.button>
+            </div>
+          </div>
+
           <AnimatePresence>
             {fullScreenImage && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3 }} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", WebkitTransform: "translateZ(0)", transform: "translateZ(0)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setFullScreenImage(null)}>
@@ -632,21 +1055,53 @@
       const { page, appReady } = useApp();
       const [splash, setSplash] = useState(true);
       const [minTimeElapsed, setMinTimeElapsed] = useState(false);
-      useEffect(() => { const pre = document.getElementById("pre-splash"); if (pre) { requestAnimationFrame(() => { pre.style.opacity = "0"; setTimeout(() => pre.remove(), 300); }); } const t = setTimeout(() => setMinTimeElapsed(true), 800); return () => clearTimeout(t); }, []);
-      useEffect(() => { if (appReady && minTimeElapsed && page !== null) { setSplash(false); } }, [appReady, minTimeElapsed, page]);
+
+      useEffect(() => {
+        const pre = document.getElementById("pre-splash");
+        if (pre) {
+          requestAnimationFrame(() => {
+            pre.style.opacity = "0";
+            setTimeout(() => pre.remove(), 300);
+          });
+        }
+        const t = setTimeout(() => setMinTimeElapsed(true), 800); 
+        return () => clearTimeout(t);
+      }, []);
+
+      useEffect(() => {
+        if (appReady && minTimeElapsed && page !== null) {
+          setSplash(false);
+        }
+      }, [appReady, minTimeElapsed, page]);
 
       return (
         <div style={{ width: "100%", height: "100%", position: "absolute", inset: 0, overflow: "hidden" }}>
           <SplashScreen visible={splash} />
+          
           <AnimatePresence mode="wait">
-            {!splash && page === "login" && ( <motion.div key="login" style={{ position: "absolute", inset: 0, zIndex: 1, WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }} variants={PV} initial="initial" animate="animate" exit="exit"> <LoginPage /> </motion.div> )}
-            {!splash && page === "list" && ( <motion.div key="list" style={{ position: "absolute", inset: 0, zIndex: 1, WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }} variants={PV} initial="initial" animate="animate" exit="exit"> <ChatListPage /> </motion.div> )}
-            {!splash && page === "chat" && ( <motion.div key="chat" style={{ position: "absolute", inset: 0, zIndex: 1, WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }} variants={PV} initial="initial" animate="animate" exit="exit"> <ChatBoxPage /> </motion.div> )}
+            {!splash && page === "login" && (
+              <motion.div key="login" style={{ position: "absolute", inset: 0, zIndex: 1, WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }} variants={PV} initial="initial" animate="animate" exit="exit">
+                <LoginPage />
+              </motion.div>
+            )}
+            {!splash && page === "list" && (
+              <motion.div key="list" style={{ position: "absolute", inset: 0, zIndex: 1, WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }} variants={PV} initial="initial" animate="animate" exit="exit">
+                <ChatListPage />
+              </motion.div>
+            )}
+            {!splash && page === "chat" && (
+              <motion.div key="chat" style={{ position: "absolute", inset: 0, zIndex: 1, WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }} variants={PV} initial="initial" animate="animate" exit="exit">
+                <ChatBoxPage />
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       );
     }
-    createRoot(document.getElementById("root")).render( <AppProvider><App /></AppProvider> );
+
+    createRoot(document.getElementById("root")).render(
+      <AppProvider><App /></AppProvider>
+    );
   </script>
 </body>
 </html>
