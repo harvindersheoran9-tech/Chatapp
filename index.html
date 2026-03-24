@@ -542,29 +542,33 @@
         }
       }, [pageCount]);
 
+      /* --- UPDATED LOGIC TO CALL EDGE FUNCTION --- */
       const sendMsg = useCallback(async (text, prefix = "") => {
         if (!text.trim() && !prefix) return;
         const msgContent = prefix + text;
         
+        const tempId = 'temp_' + Date.now() + Math.random();
         const tempMsg = {
-          id: 'temp_' + Date.now() + Math.random(),
-          content: msgContent,
-          sender: meRef.current,
-          receiver: othRef.current,
-          seen: false,
-          created_at: new Date().toISOString(),
-          isTemp: true
+          id: tempId, content: msgContent, sender: meRef.current, receiver: othRef.current,
+          seen: false, created_at: new Date().toISOString(), isTemp: true
         };
         
         setMessages(prev => [...prev, tempMsg]);
 
-        await sb.from("messages").insert([{
-          content: msgContent, 
-          sender: meRef.current, 
-          receiver: othRef.current, 
-          seen: false,
-          created_at: tempMsg.created_at
+        const { error } = await sb.from("messages").insert([{
+          content: msgContent, sender: meRef.current, receiver: othRef.current, 
+          seen: false, created_at: tempMsg.created_at
         }]);
+
+        if (!error) {
+          // Trigger the lightweight notification edge function
+          sb.functions.invoke('onesignal-notification', {
+            body: { sender: meRef.current, receiver: othRef.current, content: text }
+          });
+        } else {
+          setMessages(prev => prev.filter(m => m.id !== tempId));
+          console.error("DB Error:", error);
+        }
       }, []);
 
       const deleteMsg = useCallback(async (id) => {
@@ -573,18 +577,30 @@
         if(!error) setMessages(prev => prev.filter(m => m.id !== id));
       }, []);
 
+      /* --- UPDATED UPLOAD LOGIC TO CALL EDGE FUNCTION --- */
       const uploadMedia = useCallback(async (file, prefix = "") => {
         if (!file) return;
         const name = Date.now() + "_" + file.name;
-        const { error } = await sb.storage.from("chat-media").upload(name, file);
-        if (error) return;
-        const { data } = sb.storage.from("chat-media").getPublicUrl(name);
+        const { error: upErr } = await sb.storage.from("chat-media").upload(name, file);
+        if (upErr) return;
+        
+        const { data: pubData } = sb.storage.from("chat-media").getPublicUrl(name);
         const isImg = file.type.startsWith("image/");
-        await sb.from("messages").insert([{
+        
+        const { error: insErr } = await sb.from("messages").insert([{
           sender: meRef.current, receiver: othRef.current, content: prefix,
-          [isImg ? "image" : "audio"]: data.publicUrl,
-          created_at: new Date().toISOString()
+          [isImg ? "image" : "audio"]: pubData.publicUrl, created_at: new Date().toISOString()
         }]);
+
+        if (!insErr) {
+          sb.functions.invoke('onesignal-notification', {
+            body: { 
+              sender: meRef.current, 
+              receiver: othRef.current, 
+              content: isImg ? "Sent a photo" : "Sent an audio message" 
+            }
+          });
+        }
       }, []);
 
       const updateProfile = useCallback(async (name, password, avatarFile) => {
@@ -749,7 +765,7 @@
                 <motion.button onClick={() => setPanel(true)} whileTap={{ rotate: 90, scale: 0.9 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22, strokeWidth: 2.5 }}>
                     <circle cx="12" cy="12" r="3" />
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                   </svg>
                 </motion.button>
               </div>
