@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -266,6 +267,16 @@
     let _channel = null;
     const PAGE_SIZE = 30; 
 
+    function notify(sender, text) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        try { new Notification("Message from " + sender, { body: text }); } catch(_) {}
+      }
+    }
+    async function reqNotif() {
+      if ("Notification" in window && Notification.permission === "default")
+        await Notification.requestPermission();
+    }
+
     const Ctx = createContext(null);
 
     function AppProvider({ children }) {
@@ -303,10 +314,10 @@
         document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
       }, [isDark]);
 
-      // THE RAW FETCH TRIGGER
+      // CLEAN FETCH TRIGGER (NO ALERTS)
       const triggerPush = async (text) => {
         try {
-          const res = await fetch(`${SB_URL}/functions/v1/onesignal-notification`, {
+          fetch(`${SB_URL}/functions/v1/onesignal-notification-`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -318,15 +329,9 @@
               receiver: othRef.current, 
               content: text 
             })
-          });
-
-          if (!res.ok) {
-            const errText = await res.text();
-            alert(`Supabase Rejected It: ${res.status}\n\nMake sure "Enforce JWT Verification" is OFF in the Supabase Dashboard!`);
-          }
-          
+          }).catch(err => console.error("Push fetch error:", err));
         } catch (e) { 
-          alert(`Network Blocked: ${e.message}\n\nPlease check your JWT Verification toggle in Supabase!`); 
+          console.error("Push error:", e); 
         }
       };
 
@@ -842,10 +847,36 @@
               <motion.div onClick={() => setIsDark(!isDark)} whileTap={{ scale: 0.85, rotate: 180 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Logo w={24} /></motion.div>
               <span style={{ flex: 1, textAlign: "center", fontWeight: 800, color: "var(--text)", fontSize: 18 }}>Messages</span>
               <div style={{ display: 'flex', gap: 10 }}>
-                <motion.button onClick={() => setPanel(true)} whileTap={{ rotate: 90, scale: 0.9 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22, strokeWidth: 2.5 }}>
+                <motion.button
+                  onClick={() => setPanel(true)}
+                  whileTap={{ rotate: 90, scale: 0.9 }}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: "50%",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 0,
+                    color: "var(--text)",
+                    transition: "background 0.2s ease, box-shadow 0.2s ease",
+                  }}
+                  whileHover={{ scale: 1.05, background: "rgba(255,255,255,0.1)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{ width: 22, height: 22 }}
+                  >
                     <circle cx="12" cy="12" r="3" />
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                   </svg>
                 </motion.button>
               </div>
@@ -863,7 +894,7 @@
               {others.map((u) => {
                 const unread = unreadCounts[u.username] || 0;
                 return (
-                  <motion.div key={u.username} className="liquid-glass" style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", cursor: "pointer", position: "relative", opacity: loading ? 0.6 : 1 }} variants={{ hidden: { opacity: 0, y: 20, scale: 0.95 }, show: { opacity: 1, y: 0, scale: 1 } }} transition={{ type: "spring", damping: 20, stiffness: 300 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97, transition: { duration: 0.1 } }} onClick={() => { if (!loading) openChat(u.username, avatars); }}>
+                  <motion.div key={u.username} className="liquid-glass" style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", cursor: "pointer", position: "relative", opacity: loading ? 0.6 : 1 }} variants={{ hidden: { opacity: 0, y: 20, scale: 0.95 }, show: { opacity: 1, y: 0, scale: 1 } }} transition={{ type: "spring", damping: 20, stiffness: 300 }} whileHover={{ scale: 1.02, background: "rgba(255,255,255,0.1)" }} whileTap={{ scale: 0.97, transition: { duration: 0.1 } }} onClick={() => { if (!loading) openChat(u.username, avatars); }}>
                     <div style={{ width: 54, height: 54, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}><Avatar src={avatars[u.username]} name={u.username} size={54} /></div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 15 }}>{u.username}</div>
