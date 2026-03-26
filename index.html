@@ -4,7 +4,7 @@
 <head>
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Harvinder Chat">
   <link rel="apple-touch-icon" href="https://via.placeholder.com/180">
   <meta charset="UTF-8" />
@@ -33,23 +33,10 @@
 
   <style>
     :root {
-      --bg: #03070c;
-      --text: #ffffff;
-      --text-muted: #8e9bb0;
-      --glass-bg: rgba(255, 255, 255, 0.02);
-      --glass-s: rgba(255, 255, 255, 0.05);
-      --border-tl: rgba(255, 255, 255, 0.5);
-      --border-br: rgba(255, 255, 255, 0.1);
-      --glass-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
-      --glass-inset: inset 0 1px 3px rgba(255, 255, 255, 0.25);
-      --input-bg: rgba(0, 0, 0, 0.4);
-      --input-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255,255,255,0.05);
-      --btn-grad: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-      --btn-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
-      --bubble-own: rgba(255, 255, 255, 0.12);
-      --bubble-oth: rgba(255, 255, 255, 0.03);
-      --divider: rgba(255,255,255,0.15);
-      --accent: #60a5fa;
+      --bg: #000; 
+      --text: #ffffff; 
+      --text-muted: rgba(255, 255, 255, 0.7); 
+      --accent: #3b82f6;
     }
     
     * { 
@@ -70,192 +57,189 @@
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       color: var(--text); touch-action: manipulation;
-      background-color: var(--bg);
-      background-image: 
-        radial-gradient(ellipse 120% 120% at 50% 110%, #17334a 0%, transparent 60%),
-        radial-gradient(ellipse 100% 100% at -10% 20%, #0d1f30 0%, transparent 50%),
-        radial-gradient(ellipse 120% 100% at 110% 40%, #0a1420 0%, transparent 60%),
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
-      background-attachment: fixed;
-      background-size: 100% 100%, 100% 100%, 100% 100%, 150px 150px;
+      background: url('image.png') center center no-repeat;
+      background-size: cover;
     }
     
     #root { width: 100%; height: 100vh; height: var(--vh, 100dvh); position: absolute; top: 0; left: 0; overflow: hidden; }
-    input { outline: none; }
+    
+    input { outline: none; background: transparent; border: none; color: var(--text); font-family: inherit; }
     input::placeholder { color: var(--text-muted); }
     
-    .glass {
-      background: var(--glass-bg); backdrop-filter: blur(40px) saturate(150%);
-      border-top: 1.5px solid var(--border-tl); border-left: 1.5px solid var(--border-tl);
-      border-bottom: 1px solid var(--border-br); border-right: 1px solid var(--border-br);
-      box-shadow: var(--glass-shadow), var(--glass-inset);
+    .glassContainer {
+      position: relative;
+      border-radius: 30px;
+      z-index: 1;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      /* PERFORMANCE OPTIMIZATION: Hardware Acceleration */
+      transform: translate3d(0, 0, 0);
+      will-change: transform, opacity;
     }
-    
-    .glass-s {
-      background: var(--glass-s); backdrop-filter: blur(40px) saturate(150%);
-      border-top: 1.5px solid var(--border-tl); border-bottom: 1px solid var(--border-br);
-      box-shadow: var(--glass-shadow), var(--glass-inset);
+
+    .glassContainer::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+        border-radius: inherit;
+        -webkit-box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
+                box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
+    }
+
+    .glassContainer::after {
+        content: '';
+        position: absolute;
+        z-index: -2;
+        inset: 0;
+        border-radius: inherit;
+        -webkit-backdrop-filter: blur(0px);
+                backdrop-filter: blur(0px);
+        -webkit-filter: url(#container-glass);
+                filter: url(#container-glass);
+        overflow: hidden;
+        isolation: isolate;
+        pointer-events: none;
+        /* PERFORMANCE OPTIMIZATION */
+        transform: translate3d(0, 0, 0);
+    }
+
+    .glassBtn {
+      position: relative;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      cursor: pointer;
+      background: transparent !important;
+      border-radius: 9999px;
+      outline: none;
+      border: none !important;
+      z-index: 1;
+      color: var(--text);
+      /* PERFORMANCE OPTIMIZATION */
+      transform: translate3d(0, 0, 0);
+      will-change: transform, opacity;
+    }
+
+    .glassBtn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+        border-radius: inherit;
+        -webkit-box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
+                box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
+        background-color: rgb(255 255 255 / 10%);
+    }
+
+    .glassBtn::after {
+        content: '';
+        position: absolute;
+        z-index: -2;
+        inset: 0;
+        border-radius: inherit;
+        -webkit-backdrop-filter: blur(0px);
+                backdrop-filter: blur(0px);
+        -webkit-filter: url(#container-glass);
+                filter: url(#container-glass);
+        overflow: hidden;
+        isolation: isolate;
+        pointer-events: none;
+        /* PERFORMANCE OPTIMIZATION */
+        transform: translate3d(0, 0, 0);
+    }
+
+    .glassBtn svg { stroke: var(--text); }
+
+    @keyframes morphBlob {
+      0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+      100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    }
+    .liquid-orb {
+      animation: morphBlob 6s ease-in-out infinite;
+      /* PERFORMANCE OPTIMIZATION */
+      will-change: border-radius, transform;
+      transform: translate3d(0, 0, 0);
     }
     
     .ns::-webkit-scrollbar { display: none; }
     .ns { -ms-overflow-style: none; scrollbar-width: none; }
     
-    .date-divider { text-align: center; margin: 20px 0; font-size: 11px; font-weight: 800; color: var(--divider); text-transform: uppercase; letter-spacing: 1px; }
-    .typing-indicator { display: inline-flex; align-items: center; gap: 4px; padding: 8px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-br); border-radius: 20px; font-size: 12px; backdrop-filter: blur(10px); }
+    .date-divider { text-align: center; margin: 20px 0; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+    
+    .typing-indicator { display: inline-flex; align-items: center; gap: 4px; padding: 8px 16px; font-size: 12px; }
     .typing-dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; animation: typingBounce 1.4s infinite; }
     .typing-dot:nth-child(2) { animation-delay: 0.2s; }
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typingBounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
     
     .reaction-group {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(30, 30, 35, 0.65);
-      border: 1.5px solid rgba(255, 255, 255, 0.15);
-      border-radius: 50px;
-      padding: 2px 6px;
-      cursor: pointer;
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255,255,255,0.1);
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 6px; cursor: pointer;
       transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
     }
-    .reaction-group:hover {
-      background: rgba(40, 40, 45, 0.8);
-      transform: scale(1.1) translateY(-2px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255,255,255,0.2);
-    }
-    .reaction-emoji {
-      font-size: 12px;
-      line-height: 1;
-    }
-    .reaction-count {
-      font-weight: 800;
-      font-size: 9px;
-      color: #fff;
-      margin-left: 2px;
-      margin-right: 2px;
-    }
-    
+    .reaction-group:hover { transform: scale(1.1) translateY(-2px); }
+    .reaction-emoji { font-size: 12px; line-height: 1; }
+    .reaction-count { font-weight: 800; font-size: 9px; color: var(--text); margin-left: 2px; margin-right: 2px; }
     .retry-icon { cursor: pointer; margin-left: 8px; font-size: 12px; color: #ff3b30; }
     
     @keyframes pulseRecording { 0% { opacity: 0.6; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.2); } }
     .recording-pulse { animation: pulseRecording 1s infinite; }
-    .search-icon { background: none !important; backdrop-filter: none !important; border: none !important; padding: 8px !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.9); }
+    .search-icon { background: none !important; backdrop-filter: none !important; border: none !important; padding: 8px !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); }
     
-    .menu-overlay-container {
-      position: fixed;
-      inset: 0;
-      z-index: 100000;
-      pointer-events: auto;
-    }
-    
-    .menu-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
+    .menu-overlay-container { position: fixed; inset: 0; z-index: 100000; pointer-events: auto; }
+    .menu-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
-    .emoji-bar {
-      position: absolute;
-      background: var(--glass-bg);
-      backdrop-filter: blur(40px) saturate(180%);
-      -webkit-backdrop-filter: blur(40px) saturate(180%);
-      border-radius: 50px; 
-      padding: 6px 12px;
-      display: flex;
-      gap: 4px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.1);
-      border: 1.5px solid rgba(255,255,255,0.25);
-      border-top-color: rgba(255,255,255,0.6); 
-      border-left-color: rgba(255,255,255,0.4);
-    }
+    .emoji-bar { position: absolute; padding: 6px 12px; display: flex; gap: 4px; }
     .emoji-bar .menu-emoji {
-      background: none;
-      border: 1.5px solid transparent;
-      cursor: pointer;
-      padding: 8px 12px; 
-      border-radius: 24px; 
-      transition: all 0.2s;
-      font-size: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
+      background: none; border: 1.5px solid transparent; cursor: pointer;
+      padding: 8px 12px; border-radius: 24px; transition: all 0.2s;
+      font-size: 26px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);
     }
-    .emoji-bar .menu-emoji:hover { 
-      background: rgba(255,255,255,0.1); 
-      border-color: rgba(255,255,255,0.3);
-      box-shadow: inset 0 2px 4px rgba(255,255,255,0.15); 
-      transform: scale(1.05); 
-      color: #fff;
-    }
+    .emoji-bar .menu-emoji:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); color: var(--text); }
     
-    .action-menu {
-      position: absolute;
-      background: rgba(15, 20, 25, 0.75);
-      backdrop-filter: blur(30px) saturate(150%);
-      -webkit-backdrop-filter: blur(30px) saturate(150%);
-      border-radius: 18px;
-      padding: 4px 0;
-      min-width: 200px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-top-color: rgba(255,255,255,0.4);
-    }
+    .action-menu { position: absolute; padding: 4px 0; min-width: 200px; }
     .action-menu .menu-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      width: 100%;
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 16px;
-      font-weight: 500;
-      text-align: left;
-      cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; width: 100%; background: none; border: none;
+      color: var(--text); font-size: 16px; font-weight: 600; text-align: left; cursor: pointer;
     }
-    .action-menu .menu-item:not(:last-child) {
-      border-bottom: 0.5px solid rgba(255,255,255,0.1);
-    }
+    .action-menu .menu-item:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.1); }
     .action-menu .menu-item:hover { background: rgba(255,255,255,0.1); }
     .action-menu .menu-item.delete { color: #ff453a; }
 
-    .emoji-picker-overlay {
-      position: fixed; inset: 0; 
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      z-index: 1000000;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .emoji-picker {
-      background: rgba(15, 20, 25, 0.85); 
-      backdrop-filter: blur(30px) saturate(150%); -webkit-backdrop-filter: blur(30px) saturate(150%);
-      border-radius: 28px; padding: 20px; width: 310px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2); border-top-color: rgba(255,255,255,0.4);
-    }
-    .emoji-picker-header {
-      text-align: center; font-size: 15px; font-weight: 700; color: var(--text);
-      padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px;
-    }
-    .emoji-grid {
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
-    }
-    .emoji-grid-item {
-      background: none; border: none; font-size: 32px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-    }
+    .emoji-picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 1000000; display: flex; align-items: center; justify-content: center; }
+    .emoji-picker { padding: 20px; width: 310px; }
+    .emoji-picker-header { text-align: center; font-size: 15px; font-weight: 800; color: var(--text); padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px; }
+    .emoji-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .emoji-grid-item { background: none; border: none; font-size: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
     .emoji-grid-item:hover { transform: scale(1.25); }
+
+    .light-input { padding: 16px 20px; font-size: 15px; font-weight: 600; width: 100%; }
   </style>
 </head>
 <body>
+
+<svg style="display: none">
+  <filter id="container-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="2" seed="92" result="noise" />
+    <feGaussianBlur in="noise" stdDeviation="0.02" result="blur" />
+    <feDisplacementMap in="SourceGraphic" in2="blur" scale="77" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+
 <div id="pre-splash" style="position: fixed; inset: 0; z-index: 100000; background: var(--bg); transition: opacity 0.3s ease; pointer-events: none;"></div>
 <div id="root"></div>
 
@@ -331,7 +315,6 @@
     const [page, setPage] = useState(null);
     const [panel, setPanel] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [isDark, setIsDark] = useState(localStorage.getItem("hw_dark") !== "false");
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [unreadCounts, setUnreadCounts] = useState({});
     const [hasMore, setHasMore] = useState(false);
@@ -351,7 +334,6 @@
     useEffect(() => { document.documentElement.style.setProperty('--accent', accentColor); localStorage.setItem("hw_accent", accentColor); }, [accentColor]);
     useEffect(() => { meRef.current = me; }, [me]);
     useEffect(() => { othRef.current = other; }, [other]);
-    useEffect(() => { localStorage.setItem("hw_dark", isDark); document.body.setAttribute('data-theme', isDark ? 'dark' : 'light'); }, [isDark]);
 
     const startRT = useCallback(() => {
       if (_channel) { sb.removeChannel(_channel); _channel = null; }
@@ -361,15 +343,8 @@
             const newMsg = pl.new;
             if ((newMsg.sender === meRef.current && newMsg.receiver === othRef.current) ||
                 (newMsg.sender === othRef.current && newMsg.receiver === meRef.current)) {
-              
-              setMessages(prev => {
-                if (prev.some(m => m.id === newMsg.id)) return prev;
-                return [...prev, newMsg];
-              });
-              
-              if (newMsg.receiver === meRef.current && !newMsg.seen) {
-                sb.from("messages").update({ seen: true, seen_at: new Date() }).eq("id", newMsg.id).then();
-              }
+              setMessages(prev => { if (prev.some(m => m.id === newMsg.id)) return prev; return [...prev, newMsg]; });
+              if (newMsg.receiver === meRef.current && !newMsg.seen) { sb.from("messages").update({ seen: true, seen_at: new Date() }).eq("id", newMsg.id).then(); }
             } else if (newMsg.receiver === meRef.current) {
               setUnreadCounts(prev => ({ ...prev, [newMsg.sender]: (prev[newMsg.sender] || 0) + 1 }));
             }
@@ -403,13 +378,8 @@
         });
     }, []);
 
-    // FIX 2: Reconnect real-time when coming back to the app from the background
     useEffect(() => {
-      const handleVisibilityChange = () => {
-        if (document.visibilityState === 'visible' && othRef.current) {
-          startRT(); 
-        }
-      };
+      const handleVisibilityChange = () => { if (document.visibilityState === 'visible' && othRef.current) { startRT(); } };
       document.addEventListener("visibilitychange", handleVisibilityChange);
       return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
     }, [startRT]);
@@ -420,10 +390,7 @@
         const { data, error } = await sb.from('reactions').select('*').in('message_id', msgIds);
         if (data) {
           const grouped = {};
-          data.forEach(r => {
-            if (!grouped[r.message_id]) grouped[r.message_id] = {};
-            grouped[r.message_id][r.user_id] = r.reaction;
-          });
+          data.forEach(r => { if (!grouped[r.message_id]) grouped[r.message_id] = {}; grouped[r.message_id][r.user_id] = r.reaction; });
           setReactionsMap(prev => ({ ...prev, ...grouped }));
         }
       } catch(e) { console.error("Error fetching reactions block:", e); }
@@ -432,42 +399,22 @@
     const fetchReactions = useCallback(async (messageId) => {
       try {
         const { data, error } = await sb.from('reactions').select('*').eq('message_id', messageId);
-        if (error) console.error("Fetch Reaction Error:", error);
-        if (data) {
-          const grouped = {};
-          data.forEach(r => { grouped[r.user_id] = r.reaction; });
-          setReactionsMap(prev => ({ ...prev, [messageId]: grouped }));
-        }
+        if (data) { const grouped = {}; data.forEach(r => { grouped[r.user_id] = r.reaction; }); setReactionsMap(prev => ({ ...prev, [messageId]: grouped })); }
       } catch(e) { console.error("Catch fetchReactions:", e); }
     }, []);
 
     const triggerPush = useCallback(async (text) => {
       try {
-        fetch(`${SB_URL}/functions/v1/onesignal-notification-`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SB_KEY}`, 'apikey': SB_KEY },
-          body: JSON.stringify({ sender: meRef.current, receiver: othRef.current, content: text })
-        }).catch(err => console.error("Push fetch error:", err));
+        fetch(`${SB_URL}/functions/v1/onesignal-notification-`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SB_KEY}`, 'apikey': SB_KEY }, body: JSON.stringify({ sender: meRef.current, receiver: othRef.current, content: text }) }).catch(err => console.error("Push error:", err));
       } catch (e) {}
     }, []);
 
-    // FIX 3: Push Notification for Reactions
     const addReaction = useCallback(async (messageId, reaction) => {
       if (!reaction) {
-        const { error } = await sb.from('reactions').delete().eq('message_id', messageId).eq('user_id', meRef.current);
-        if (error) {
-          console.error("Supabase Error Deleting Reaction:", error);
-          alert("Failed to remove reaction: " + error.message);
-        }
+        await sb.from('reactions').delete().eq('message_id', messageId).eq('user_id', meRef.current);
       } else {
         const { error } = await sb.from('reactions').upsert({ message_id: messageId, user_id: meRef.current, reaction }, { onConflict: 'message_id,user_id' });
-        if (error) {
-          console.error("Supabase Error Adding Reaction:", error);
-          alert("Failed to add reaction: " + error.message);
-        } else {
-          fetchReactions(messageId);
-          triggerPush(`Reacted ${reaction} to your message`); 
-        }
+        if (!error) { fetchReactions(messageId); triggerPush(`Reacted ${reaction} to your message`); }
       }
       fetchReactions(messageId);
     }, [fetchReactions, triggerPush]);
@@ -479,21 +426,11 @@
 
     useEffect(() => {
       if (!other) return;
-      if (_typingChannel) {
-        sb.removeChannel(_typingChannel);
-        _typingChannel = null;
-      }
+      if (_typingChannel) { sb.removeChannel(_typingChannel); _typingChannel = null; }
       _typingChannel = sb.channel('typing-status')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'typing_status', filter: `user_id=eq.${other} AND recipient=eq.${me}` }, (payload) => {
-          setTypingStatus(payload.new?.is_typing || false);
-        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'typing_status', filter: `user_id=eq.${other} AND recipient=eq.${me}` }, (payload) => { setTypingStatus(payload.new?.is_typing || false); })
         .subscribe();
-      return () => {
-        if (_typingChannel) {
-          sb.removeChannel(_typingChannel);
-          _typingChannel = null;
-        }
-      };
+      return () => { if (_typingChannel) { sb.removeChannel(_typingChannel); _typingChannel = null; } };
     }, [other, me]);
 
     const triggerTyping = useCallback(() => {
@@ -527,16 +464,8 @@
       
       setMessages(prev => [...prev, tempMsg]);
 
-      const { data, error } = await sb.from("messages").insert([{ 
-        content: msgContent, sender: meRef.current, receiver: othRef.current, seen: false, created_at: tempMsg.created_at, failed: false 
-      }]).select().single();
-
-      if (error) {
-        setMessages(prev => prev.map(m => m.id === tempId ? { ...m, failed: true, isTemp: false } : m));
-      } else {
-        setMessages(prev => prev.map(m => m.id === tempId ? data : m));
-        triggerPush(text);
-      }
+      const { data, error } = await sb.from("messages").insert([{ content: msgContent, sender: meRef.current, receiver: othRef.current, seen: false, created_at: tempMsg.created_at, failed: false }]).select().single();
+      if (error) { setMessages(prev => prev.map(m => m.id === tempId ? { ...m, failed: true, isTemp: false } : m)); } else { setMessages(prev => prev.map(m => m.id === tempId ? data : m)); triggerPush(text); }
     }, [triggerPush]);
 
     const uploadMedia = useCallback(async (file, prefix = "") => {
@@ -551,15 +480,8 @@
       await sb.from("messages").insert([{ sender: meRef.current, receiver: othRef.current, content: prefix, [isImg ? "image" : "audio"]: data.publicUrl, created_at: new Date().toISOString() }]);
     }, []);
 
-    const startVoiceRecord = useCallback(async () => {
-      try { await startRecording(); setIsRecording(true); } catch(e) { console.error(e); }
-    }, []);
-    const stopVoiceRecord = useCallback(async () => {
-      if (!isRecording) return;
-      const audioFile = await stopRecording();
-      setIsRecording(false);
-      await uploadMedia(audioFile, "");
-    }, [uploadMedia, isRecording]);
+    const startVoiceRecord = useCallback(async () => { try { await startRecording(); setIsRecording(true); } catch(e) {} }, []);
+    const stopVoiceRecord = useCallback(async () => { if (!isRecording) return; const audioFile = await stopRecording(); setIsRecording(false); await uploadMedia(audioFile, ""); }, [uploadMedia, isRecording]);
 
     const filteredMessages = useMemo(() => {
       if (!searchQuery) return messages;
@@ -569,17 +491,11 @@
     const buildUsers = useCallback(async () => {
       const { data } = await sb.from("users").select("*");
       if (data) {
-        const av = {};
-        data.forEach(u => { av[u.username] = u.avatar_url || ""; });
-        setUsers(data); setAvatars(av);
+        const av = {}; data.forEach(u => { av[u.username] = u.avatar_url || ""; }); setUsers(data); setAvatars(av);
       }
       if (meRef.current) {
         const { data: unreads } = await sb.from("messages").select("sender").eq("receiver", meRef.current).eq("seen", false);
-        if (unreads) {
-          const counts = {};
-          unreads.forEach(m => { counts[m.sender] = (counts[m.sender] || 0) + 1; });
-          setUnreadCounts(counts);
-        }
+        if (unreads) { const counts = {}; unreads.forEach(m => { counts[m.sender] = (counts[m.sender] || 0) + 1; }); setUnreadCounts(counts); }
       }
     }, []);
 
@@ -592,8 +508,7 @@
         localStorage.setItem("hw_me", data.username); localStorage.setItem("hw_meAvatar", av);
         setMe(data.username); setMeAvatar(av); setPage("list"); meRef.current = data.username;
         window.OneSignalDeferred.push(async function(OneSignal) { await OneSignal.login(data.username); await OneSignal.Slidedown.promptPush(); });
-        await buildUsers(); startRT();
-        return true;
+        await buildUsers(); startRT(); return true;
       }
       return false;
     }, [buildUsers, startRT]);
@@ -610,69 +525,34 @@
       if (loading) return;
       setLoading(true);
       const av = avMap || avatars;
-      setOther(username); 
-      setOtherAv(av[username] || ""); 
-      setPageCount(1); 
-      setHasMore(false); 
-      setMessages([]); 
-      setUnreadCounts(prev => ({ ...prev, [username]: 0 })); 
-      setPage("chat");
+      setOther(username); setOtherAv(av[username] || ""); setPageCount(1); setHasMore(false); setMessages([]); setUnreadCounts(prev => ({ ...prev, [username]: 0 })); setPage("chat");
 
       const myMe = meRef.current;
       try {
-        const { data } = await sb.from("messages").select("*")
-          .or(`and(sender.eq.${myMe},receiver.eq.${username}),and(sender.eq.${username},receiver.eq.${myMe})`)
-          .order("created_at", { ascending: false })
-          .limit(PAGE_SIZE);
+        const { data } = await sb.from("messages").select("*").or(`and(sender.eq.${myMe},receiver.eq.${username}),and(sender.eq.${username},receiver.eq.${myMe})`).order("created_at", { ascending: false }).limit(PAGE_SIZE);
         if (data) {
-          setHasMore(data.length === PAGE_SIZE); 
-          setMessages(data.reverse()); 
-          const ids = data.map(m => m.id);
-          fetchReactionsForMessages(ids);
+          setHasMore(data.length === PAGE_SIZE); setMessages(data.reverse()); const ids = data.map(m => m.id); fetchReactionsForMessages(ids);
           const hasUnread = data.some(m => m.receiver === myMe && m.sender === username && m.seen === false);
-          if (hasUnread) {
-            await sb.from("messages").update({ seen: true, seen_at: new Date() }).eq("receiver", myMe).eq("sender", username).eq("seen", false);
-          }
+          if (hasUnread) { await sb.from("messages").update({ seen: true, seen_at: new Date() }).eq("receiver", myMe).eq("sender", username).eq("seen", false); }
         }
-      } catch (err) {
-        console.error("Error loading messages:", err);
-      }
+      } catch (err) {}
       setLoading(false);
     }, [avatars, loading, fetchReactionsForMessages]);
 
-    const closeChat = useCallback(() => {
-      setPage("list");
-      setTimeout(() => { setOther(""); setOtherAv(""); setMessages([]); }, 250);
-    }, []);
+    const closeChat = useCallback(() => { setPage("list"); setTimeout(() => { setOther(""); setOtherAv(""); setMessages([]); }, 250); }, []);
 
     const loadMore = useCallback(async () => {
-      const myMe = meRef.current; const myOth = othRef.current;
-      if (!myMe || !myOth) return;
-      const nextPage = pageCount + 1;
-      const start = pageCount * PAGE_SIZE;
-      const end = (nextPage * PAGE_SIZE) - 1;
-      const { data } = await sb.from("messages").select("*")
-        .or(`and(sender.eq.${myMe},receiver.eq.${myOth}),and(sender.eq.${myOth},receiver.eq.${myMe})`)
-        .order("created_at", { ascending: false }).range(start, end);
-      if (data && data.length > 0) {
-        setMessages(prev => [...data.reverse(), ...prev]);
-        setPageCount(nextPage);
-        setHasMore(data.length === PAGE_SIZE);
-        const ids = data.map(m => m.id);
-        fetchReactionsForMessages(ids);
-      } else setHasMore(false);
+      const myMe = meRef.current; const myOth = othRef.current; if (!myMe || !myOth) return;
+      const nextPage = pageCount + 1; const start = pageCount * PAGE_SIZE; const end = (nextPage * PAGE_SIZE) - 1;
+      const { data } = await sb.from("messages").select("*").or(`and(sender.eq.${myMe},receiver.eq.${myOth}),and(sender.eq.${myOth},receiver.eq.${myMe})`).order("created_at", { ascending: false }).range(start, end);
+      if (data && data.length > 0) { setMessages(prev => [...data.reverse(), ...prev]); setPageCount(nextPage); setHasMore(data.length === PAGE_SIZE); fetchReactionsForMessages(data.map(m => m.id)); } else setHasMore(false);
     }, [pageCount, fetchReactionsForMessages]);
 
     const deleteMsg = useCallback(async (id) => {
       if (!id) return;
-      const previousMessages = messages;
-      setMessages(prev => prev.filter(m => m.id !== id));
+      const previousMessages = messages; setMessages(prev => prev.filter(m => m.id !== id));
       const { error } = await sb.from("messages").delete().eq("id", id);
-      if (error) {
-        console.error("Database delete failed:", error);
-        setMessages(previousMessages);
-        alert("Failed to delete message: " + error.message);
-      }
+      if (error) { setMessages(previousMessages); alert("Failed to delete message: " + error.message); }
     }, [messages]);
 
     const updateProfile = useCallback(async (name, password, avatarFile) => {
@@ -680,16 +560,13 @@
       if (name && name !== meRef.current) upd.username = name;
       if (password) upd.password = password;
       if (avatarFile) {
-        const fp = "avatars/" + meRef.current + "_" + Date.now() + ".png";
-        await sb.storage.from("chat-media").upload(fp, avatarFile);
-        const { data } = sb.storage.from("chat-media").getPublicUrl(fp);
-        upd.avatar_url = data.publicUrl;
+        const fp = "avatars/" + meRef.current + "_" + Date.now() + ".png"; await sb.storage.from("chat-media").upload(fp, avatarFile);
+        const { data } = sb.storage.from("chat-media").getPublicUrl(fp); upd.avatar_url = data.publicUrl;
       }
       const { error } = await sb.from("users").update(upd).eq("username", meRef.current);
       if (!error) {
         if (upd.username) { localStorage.setItem("hw_me", upd.username); setMe(upd.username); }
-        if (upd.avatar_url) { localStorage.setItem("hw_meAvatar", upd.avatar_url); setMeAvatar(upd.avatar_url); }
-        return true;
+        if (upd.avatar_url) { localStorage.setItem("hw_meAvatar", upd.avatar_url); setMeAvatar(upd.avatar_url); } return true;
       }
       return false;
     }, []);
@@ -709,7 +586,7 @@
 
     const contextValue = {
       me, meAvatar, users, avatars, messages: filteredMessages, other, otherAv,
-      page, setPage, panel, setPanel, loading, isDark, setIsDark, onlineUsers, unreadCounts,
+      page, setPage, panel, setPanel, loading, onlineUsers, unreadCounts,
       hasMore, loadMore, appReady, accentColor, setAccentColor,
       typingStatus, triggerTyping, addReaction, editMessage, retryMessage,
       showReadReceipt, selectedSeenMsg,
@@ -732,9 +609,9 @@
     return (
       <div style={{ width: size, height: size, borderRadius: "50%", flexShrink: 0,
         background: src ? `url(${src}) center/cover no-repeat` : `hsl(${hue},50%,55%)`,
-        display: "flex", alignItems: "center", justifyContent: "center", color: "#000",
+        display: "flex", alignItems: "center", justifyContent: "center", color: "#fff",
         fontWeight: 800, fontSize: size * 0.28,
-        boxShadow: "0 6px 15px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.4)", transform: "translateZ(0)" }}>
+        boxShadow: "0 4px 10px rgba(0,0,0,0.1), inset 0 2px 4px rgba(255,255,255,0.8)", transform: "translateZ(0)", border: "1px solid rgba(255,255,255,0.8)" }}>
         {!src && name.slice(0, 2).toUpperCase()}
       </div>
     );
@@ -747,22 +624,17 @@
   };
 
   function SplashScreen({ visible }) {
-    const ringDelays = [0, 1.2, 2.4];
     return (
       <AnimatePresence>
         {visible && (
           <motion.div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: 'hidden', background: "var(--bg)" }}
             initial={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.1, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }}>
-            <div className="pulse-ring-wrapper">
-              {ringDelays.map((delay, idx) => <div key={idx} className="pulse-ring" style={{ animationDelay: `-${delay}s` }} />)}
-            </div>
-            <motion.div initial={{ opacity: 0, scale: 0.4, y: -40 }} animate={{ opacity: 1, scale: 1, y: -50 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} style={{ position: "relative", width: 160, height: 160, display: "flex", justifyContent: "center", alignItems: "center", zIndex: 3 }}>
-              <div className="liquid-glass liquid-orb" style={{ position: "relative", zIndex: 2, width: 120, height: 120, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <motion.div initial={{ opacity: 0, scale: 0.4, y: -40 }} animate={{ opacity: 1, scale: 1, y: -50 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 3 }}>
+              
+              <div className="glassContainer liquid-orb" style={{ position: "relative", zIndex: 2, width: 140, height: 140, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Logo w={70} />
               </div>
-            </motion.div>
-            <motion.div exit={{ opacity: 0 }} className="ns" style={{ position: "absolute", bottom: 60, width: 140, height: 4, borderRadius: 10, overflow: "hidden", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 5px 15px rgba(0,0,0,0.05)", transform: "translateZ(0)" }}>
-              <motion.div style={{ height: "100%", background: "var(--text)", borderRadius: 10 }} initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 0.8, ease: "easeInOut" }} />
+
             </motion.div>
           </motion.div>
         )}
@@ -784,23 +656,28 @@
       if (!ok) setErr("Invalid username or password.");
     };
 
-    const inp = { background: "var(--input-bg)", color: "var(--text)", boxShadow: "var(--input-shadow)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "16px 20px", fontSize: 15, fontWeight: 600, width: "100%", transition: "all 0.3s ease" };
-
     return (
       <div className="ns" style={{ width: "100%", height: "100%", overflowY: "auto", display: "flex", justifyContent: "center", paddingTop: 80 }}>
         <div style={{ width: "100%", maxWidth: 360, padding: "0 24px 40px", textAlign: "center" }}>
           <div style={{ position: "relative", width: 176, height: 176, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            {["od1", "od2", "od3"].map((cls, i) => <div key={i} className={cls} style={{ position: "absolute", width: 6, height: 6, borderRadius: "50%", background: "white", boxShadow: "0 0 10px rgba(255,255,255,0.8)", zIndex: 1 }} />)}
-            <div className="ns liquid-glass" style={{ width: 112, height: 112, position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(255,255,255,0.3) !important", backdropFilter: "blur(20px) !important" }}><Logo w={64} /></div>
+            
+            <div className="ns glassContainer liquid-orb" style={{ width: 120, height: 120, position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>
+              <Logo w={64} />
+            </div>
+
           </div>
           <div style={{ marginTop: 20, display: "flex", flexWrap: "wrap", justifyContent: "center", color: "var(--text)" }}>
             {APP.split("").map((ch, i) => <motion.span key={i} style={{ display: "inline-block", fontSize: 32, fontWeight: 900, lineHeight: 1 }} animate={{ y: [0.01, -8, 0.01], z: 0.01 }} transition={{ duration: 2.2, delay: i * 0.05, repeat: Infinity, repeatDelay: 5, ease: "easeInOut" }}>{ch === " " ? "\u00A0" : ch}</motion.span>)}
           </div>
           <motion.div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 20 }} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}>
-            <input style={inp} type="text" placeholder="Username" value={user} onChange={e => { setUser(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} />
-            <input style={inp} type="password" placeholder="Password" value={pass} onChange={e => { setPass(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} />
+            
+            <div className="glassContainer light-input"><input type="text" placeholder="Username" value={user} onChange={e => { setUser(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} style={{ width: "100%" }}/></div>
+            <div className="glassContainer light-input"><input type="password" placeholder="Password" value={pass} onChange={e => { setPass(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && go()} style={{ width: "100%" }}/></div>
+            
             {err && <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ color: "#ff3b30", fontSize: 12, fontWeight: 600, margin: "-8px 0 0" }}>{err}</motion.p>}
-            <motion.button disabled={loading} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }} style={{ width: "80%", margin: "0 auto", padding: "16px 0", borderRadius: 20, cursor: "pointer", fontSize: 15, fontWeight: 800, background: "var(--btn-grad)", color: "#fff", border: "1px solid rgba(255,255,255,0.2)", borderTopColor: "rgba(255,255,255,0.4)", boxShadow: pressed ? "var(--input-shadow)" : "var(--btn-shadow)", transition: "all 0.2s cubic-bezier(0.23, 1, 0.32, 1)", opacity: loading ? 0.7 : 1 }} onPointerDown={() => setPressed(true)} onPointerUp={() => { setPressed(false); go(); }} onPointerLeave={() => setPressed(false)}>{loading ? "Signing in..." : "Sign In"}</motion.button>
+            
+            <motion.button className="glassContainer" disabled={loading} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }} style={{ width: "80%", margin: "0 auto", padding: "16px 0", cursor: "pointer", fontSize: 16, fontWeight: 800, opacity: loading ? 0.7 : 1, color: "var(--text)", border: "none" }} onPointerDown={() => setPressed(true)} onPointerUp={() => { setPressed(false); go(); }} onPointerLeave={() => setPressed(false)}>{loading ? "Signing in..." : "Sign In"}</motion.button>
+          
           </motion.div>
         </div>
       </div>
@@ -808,7 +685,7 @@
   }
 
   function ChatListPage() {
-    const { me, meAvatar, users, avatars, openChat, logout, panel, setPanel, updateProfile, isDark, setIsDark, unreadCounts, loading, accentColor, setAccentColor } = useApp();
+    const { me, meAvatar, users, avatars, openChat, logout, panel, setPanel, updateProfile, unreadCounts, loading, accentColor, setAccentColor } = useApp();
     const [editName, setEditName] = useState("");
     const [editPass, setEditPass] = useState("");
     const [avFile,   setAvFile]   = useState(null);
@@ -824,53 +701,34 @@
 
     return (
       <div className="ns" style={{ width: "100%", height: "100%", overflowY: "auto", position: "relative" }}>
-        <div style={{ position: "relative", zIndex: 1, padding: "20px 16px 24px" }}>
-          <motion.div className="glass" style={{ height: 75, display: "flex", alignItems: "center", padding: "0 20px", justifyContent: "space-between", marginBottom: 16, borderRadius: 50 }} initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}>
-            <motion.div onClick={() => setIsDark(!isDark)} whileTap={{ scale: 0.85, rotate: 180 }} style={{ width: 44, height: 44, borderRadius: "50%", background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Logo w={24} /></motion.div>
-            <span style={{ flex: 1, textAlign: "center", fontWeight: 800, color: "var(--text)", fontSize: 18 }}>Messages</span>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <motion.button
-                onClick={() => setPanel(true)}
-                whileTap={{ rotate: 90, scale: 0.9 }}
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: "50%",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: 0,
-                  color: "var(--text)",
-                  transition: "background 0.2s ease, box-shadow 0.2s ease",
-                }}
-                whileHover={{ scale: 1.05, background: "rgba(255,255,255,0.1)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
-                aria-label="Settings"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22 }}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
-              </motion.button>
-            </div>
+        <div style={{ position: "relative", zIndex: 1, padding: "16px 16px 24px" }}>
+          
+          <motion.div className="glassContainer" style={{ height: 72, display: "flex", alignItems: "center", padding: "0 24px", justifyContent: "space-between", marginBottom: 16, borderRadius: 50 }} initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}>
+            <motion.div whileTap={{ scale: 0.85, rotate: 180 }} style={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Logo w={22} /></motion.div>
+            <span style={{ flex: 1, textAlign: "center", fontWeight: 800, color: "var(--text)", fontSize: 17, letterSpacing: "0.2px" }}>Messages</span>
+            <motion.button onClick={() => setPanel(true)} whileTap={{ rotate: 90, scale: 0.9 }} style={{ background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, color: "var(--text)", width: 22, height: 22 }} aria-label="Settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "100%", height: "100%" }}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+            </motion.button>
           </motion.div>
 
-          <motion.div className="glass-s" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ marginBottom: 24, position: "relative", borderRadius: 50 }}>
-            <div style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", zIndex: 2, display: "flex", alignItems: "center" }}>
-               <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <motion.div className="glassContainer" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ marginBottom: 20, position: "relative", height: 56, borderRadius: 50 }}>
+            <div style={{ position: "absolute", left: 20, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", zIndex: 2, display: "flex", alignItems: "center" }}>
+               <svg viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </div>
-            <input type="text" placeholder="Search users..." value={search} onChange={e => setSearch(e.target.value)} style={{ width: "100%", padding: "14px 20px 14px 44px", fontSize: 16, fontWeight: 600, color: "var(--text)", outline: "none", position: "relative", zIndex: 1, background: "transparent", border: "none" }} aria-label="Search users" />
+            <input type="text" placeholder="Search users..." value={search} onChange={e => setSearch(e.target.value)} style={{ width: "100%", height: "100%", padding: "0 20px 0 50px", fontSize: 15, fontWeight: 600, color: "var(--text)", outline: "none", position: "relative", zIndex: 1, background: "transparent", border: "none" }} aria-label="Search users" />
           </motion.div>
 
-          <motion.div style={{ display: "flex", flexDirection: "column", gap: 14 }} initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.04 } } }}>
-            {others.length === 0 && <div style={{ textAlign: "center", padding: "48px 0", color: "var(--text-muted)", fontSize: 14, fontWeight: 700 }}>{search ? "No users found." : "No other users yet."}</div>}
+          <motion.div style={{ display: "flex", flexDirection: "column", gap: 12 }} initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.04 } } }}>
+            {others.length === 0 && <div style={{ textAlign: "center", padding: "48px 0", color: "var(--text)", fontSize: 14, fontWeight: 700 }}>{search ? "No users found." : "No other users yet."}</div>}
+            
             {others.map((u) => {
               const unread = unreadCounts[u.username] || 0;
               return (
-                <motion.div key={u.username} className="glass" style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", borderRadius: 50, cursor: "pointer", position: "relative", opacity: loading ? 0.6 : 1 }} variants={{ hidden: { opacity: 0, y: 20, scale: 0.95 }, show: { opacity: 1, y: 0, scale: 1 } }} transition={{ type: "spring", damping: 24, stiffness: 400 }} whileHover={{ scale: 1.02, background: "rgba(255,255,255,0.08)" }} whileTap={{ scale: 0.98, transition: { duration: 0.1 } }} onClick={() => { if (!loading) openChat(u.username, avatars); }}>
-                  <div style={{ width: 54, height: 54, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}><Avatar src={avatars[u.username]} name={u.username} size={54} /></div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 15 }}>{u.username}</div>
-                    <div style={{ fontSize: 12, color: unread ? "#ff3b30" : "var(--text-muted)", marginTop: 4, fontWeight: unread ? 800 : 600 }}>{unread ? "New messages waiting!" : "Tap to message"}</div>
+                <motion.div key={u.username} className="glassContainer" style={{ height: 86, display: "flex", alignItems: "center", gap: 16, padding: "0 20px", cursor: "pointer", position: "relative", opacity: loading ? 0.6 : 1, borderRadius: 50 }} variants={{ hidden: { opacity: 0, y: 20, scale: 0.95 }, show: { opacity: 1, y: 0, scale: 1 } }} transition={{ type: "spring", damping: 24, stiffness: 400 }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98, transition: { duration: 0.1 } }} onClick={() => { if (!loading) openChat(u.username, avatars); }}>
+                  <Avatar src={avatars[u.username]} name={u.username} size={50} />
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                    <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 16, letterSpacing: "0.2px" }}>{u.username}</div>
+                    <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 2, fontWeight: 600 }}>{unread ? "New messages waiting!" : "Tap to message"}</div>
                   </div>
                   {unread > 0 && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ background: "#ff3b30", color: "#fff", fontSize: 12, fontWeight: 900, minWidth: 24, height: 24, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 8px", boxShadow: "0 4px 10px rgba(255,59,48,0.4)" }}>{unread}</motion.div>}
                 </motion.div>
@@ -882,8 +740,8 @@
         <AnimatePresence>
           {panel && (
             <>
-              <motion.div style={{ position: "fixed", inset: 0, zIndex: 2000, background: "var(--overlay)", backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)" }} initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] } }} exit={{ opacity: 0, transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] } }} onClick={() => setPanel(false)} />
-              <motion.div style={{ position: "fixed", zIndex: 2001, width: "calc(100% - 40px)", maxWidth: 320, top: 85, right: 20, originX: 0.9, originY: -0.05, overflow: "hidden", background: "var(--glass-bg)", backdropFilter: "blur(40px) saturate(150%)", WebkitBackdropFilter: "blur(40px) saturate(150%)", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", borderRadius: 30, boxShadow: "var(--glass-shadow), var(--glass-inset)" }} initial={{ opacity: 0, scale: 0.05 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] } }} exit={{ opacity: 0, scale: 0.05, transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] } }}>
+              <motion.div style={{ position: "fixed", inset: 0, zIndex: 2000, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }} initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 0.2 } }} exit={{ opacity: 0, transition: { duration: 0.2 } }} onClick={() => setPanel(false)} />
+              <motion.div className="glassContainer" style={{ position: "fixed", zIndex: 2001, width: "calc(100% - 40px)", maxWidth: 320, top: 85, right: 20, originX: 0.9, originY: -0.05, overflow: "hidden" }} initial={{ opacity: 0, scale: 0.05 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] } }} exit={{ opacity: 0, scale: 0.05, transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] } }}>
                 <div style={{ padding: 25, width: "100%", height: "100%" }}>
                   <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 16, marginBottom: 20, textAlign: "center" }}>Profile Settings</div>
                   <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
@@ -895,12 +753,11 @@
                     </div>
                   </div>
                   <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6, fontWeight: 700, marginLeft: 4 }}>Update Name</div>
-                  <input value={editName} onChange={e => setEditName(e.target.value)} placeholder={me} style={{ width: "100%", padding: "14px 16px", borderRadius: 16, fontSize: 14, fontWeight: 600, border: "1px solid rgba(255,255,255,0.1)", background: "var(--input-bg)", color: "var(--text)", marginBottom: 16, boxShadow: "var(--input-shadow)", outline: "none" }} />
+                  <div className="glassContainer light-input" style={{ marginBottom: 16 }}><input value={editName} onChange={e => setEditName(e.target.value)} placeholder={me} style={{ width: "100%" }} /></div>
                   <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6, fontWeight: 700, marginLeft: 4 }}>Change Password</div>
-                  <input type="password" value={editPass} onChange={e => setEditPass(e.target.value)} placeholder="New password..." style={{ width: "100%", padding: "14px 16px", borderRadius: 16, fontSize: 14, fontWeight: 600, border: "1px solid rgba(255,255,255,0.1)", background: "var(--input-bg)", color: "var(--text)", marginBottom: 24, boxShadow: "var(--input-shadow)", outline: "none" }} />
-                  <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6, fontWeight: 700, marginLeft: 4 }}>Accent Color</div>
-                  <input type="color" value={accentColor} onChange={e => setAccentColor(e.target.value)} style={{ width: "100%", marginBottom: 16, borderRadius: 8, border: "none", background: "transparent", cursor: "pointer" }} />
-                  <motion.button onClick={save} disabled={saving} whileTap={{ scale: 0.96 }} style={{ width: "100%", padding: 14, borderRadius: 16, border: "1px solid rgba(255,255,255,0.2)", borderTopColor: "rgba(255,255,255,0.4)", cursor: "pointer", fontSize: 15, fontWeight: 800, color: "#fff", background: saving ? "#ccc" : "var(--btn-grad)", boxShadow: "var(--btn-shadow)", transition: "all 0.2s" }}>{saved ? "Saved!" : saving ? "Saving..." : "Save Profile"}</motion.button>
+                  <div className="glassContainer light-input" style={{ marginBottom: 24 }}><input type="password" value={editPass} onChange={e => setEditPass(e.target.value)} placeholder="New password..." style={{ width: "100%" }} /></div>
+                  
+                  <motion.button className="glassContainer light-input" onClick={save} disabled={saving} whileTap={{ scale: 0.96 }} style={{ width: "100%", cursor: "pointer", fontSize: 15, fontWeight: 800 }}>{saved ? "Saved!" : saving ? "Saving..." : "Save Profile"}</motion.button>
                   <button onClick={logout} style={{ width: "100%", marginTop: 16, fontSize: 14, fontWeight: 800, color: "#ff3b30", border: "none", background: "none", cursor: "pointer" }}>Logout</button>
                 </div>
               </motion.div>
@@ -921,46 +778,39 @@
     );
   }
 
-  const MsgContent = ({ msg, isOwn, displayContent, replyData, renderContent, t, onTap, onImageClick, onRetry, reactionsMap, currentUser }) => {
-    const reactionsForMsg = reactionsMap?.[msg.id] || {};
+  /* PERFORMANCE OPTIMIZATION: Memoized MsgContent */
+  const MsgContent = memo(({ msg, isOwn, displayContent, replyData, renderContent, t, onTap, onImageClick, onRetry, reactions, currentUser }) => {
+    const reactionsForMsg = reactions || {};
     const groupedReactions = {};
     for (const [userId, emoji] of Object.entries(reactionsForMsg)) {
       groupedReactions[emoji] = (groupedReactions[emoji] || 0) + 1;
     }
-
     const reactionEntries = Object.entries(groupedReactions).sort((a, b) => b[1] - a[1]);
 
     return (
       <>
         {replyData && (
-          <div style={{ background: isOwn ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.2)", padding: "8px 12px", borderRadius: 16, borderLeft: `3px solid ${isOwn ? "var(--text)" : "var(--accent)"}`, marginBottom: displayContent || msg.image || msg.audio ? 10 : 0, fontSize: 12.5, border: "1px solid rgba(255,255,255,0.05)" }}>
+          <div style={{ background: "rgba(0,0,0,0.2)", padding: "8px 12px", borderRadius: 16, borderLeft: `3px solid var(--accent)`, marginBottom: displayContent || msg.image || msg.audio ? 10 : 0, fontSize: 12.5 }}>
             <div style={{ fontWeight: 900, marginBottom: 2 }}>{replyData.sender}</div>
             <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: 0.9, fontWeight: 600 }}>{replyData.content}</div>
           </div>
         )}
         {displayContent && <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5, fontWeight: 600, wordBreak: "break-word" }}>{renderContent(displayContent)}</p>}
-        {msg.image && <img src={msg.image} alt="media" onClick={(e) => { e.stopPropagation(); onImageClick && onImageClick(msg.image); }} style={{ maxWidth: "100%", maxHeight: 220, borderRadius: 14, marginTop: displayContent ? 6 : 0, cursor: "pointer", objectFit: "cover", display: "block", boxShadow: "0 4px 12px rgba(0,0,0,0.4)", pointerEvents: "auto", border: "1px solid rgba(255,255,255,0.1)" }} />}
-        {msg.audio && <div onClick={e => e.stopPropagation()} style={{ pointerEvents: "auto" }}><audio controls style={{ width: "100%", height: 35, marginTop: 8, filter: "var(--svg-drop)" }}><source src={msg.audio} /></audio></div>}
+        {msg.image && <img src={msg.image} alt="media" onClick={(e) => { e.stopPropagation(); onImageClick && onImageClick(msg.image); }} style={{ maxWidth: "100%", maxHeight: 220, borderRadius: 14, marginTop: displayContent ? 6 : 0, cursor: "pointer", objectFit: "cover", display: "block", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", pointerEvents: "auto", border: "1px solid rgba(0,0,0,0.05)" }} />}
+        {msg.audio && <div onClick={e => e.stopPropagation()} style={{ pointerEvents: "auto" }}><audio controls style={{ width: "100%", height: 35, marginTop: 8 }}><source src={msg.audio} /></audio></div>}
         
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, marginTop: 6 }}>
-          {t && <span style={{ fontSize: 10, fontWeight: 700, opacity: 0.8 }}>{t}</span>}
-          {msg.edited && <span style={{ fontSize: 10, opacity: 0.6 }}>(edited)</span>}
+          {t && <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)" }}>{t}</span>}
+          {msg.edited && <span style={{ fontSize: 10, color: "var(--text-muted)" }}>(edited)</span>}
           {isOwn && <StatusIcon seen={msg.seen && !msg.isTemp} onTap={() => onTap && onTap(msg)} />}
           {msg.failed && <span className="retry-icon" onClick={(e) => { e.stopPropagation(); onRetry && onRetry(msg); }}>⟳</span>}
         </div>
 
         {reactionEntries.length > 0 && (
-          <div style={{ 
-            position: "absolute",
-            bottom: -14,
-            right: isOwn ? 40 : "auto",
-            left: isOwn ? "auto" : 40,
-            display: "flex", 
-            gap: 6,
-            zIndex: 5
-          }}>
+          <div style={{ position: "absolute", bottom: -13, right: isOwn ? 10 : 
+            "auto", left: isOwn ?   "auto" : 10, display: "flex", gap: 6, zIndex: 5 }}>
             {reactionEntries.map(([emoji, count]) => (
-              <div key={emoji} className="reaction-group" onClick={(e) => { e.stopPropagation(); }}>
+              <div key={emoji} className="glassContainer reaction-group" onClick={(e) => { e.stopPropagation(); }} style={{ borderRadius: 50 }}>
                 <span className="reaction-emoji">{emoji}</span>
                 {count > 1 && <span className="reaction-count">{count}</span>}
               </div>
@@ -969,9 +819,10 @@
         )}
       </>
     );
-  };
+  });
 
-  function MsgBubble({ msg, isOwn, currentUser, onImageClick, onReply, onRetry, onTap, reactionsMap, onContextMenuOpen }) {
+  /* PERFORMANCE OPTIMIZATION: Memoized MsgBubble */
+  const MsgBubble = memo(({ msg, isOwn, currentUser, onImageClick, onReply, onRetry, onTap, reactions, onContextMenuOpen }) => {
     const bubbleRef = useRef(null);
     const longPressTimer = useRef(null);
 
@@ -1009,22 +860,18 @@
       if (!text) return null;
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.split(urlRegex).map((part, i) => {
-        if (part.match(urlRegex)) return <a key={i} href={part} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ color: isOwn ? "inherit" : "var(--accent)", textDecoration: "underline", fontWeight: 800 }}>{part}</a>;
+        if (part.match(urlRegex)) return <a key={i} href={part} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ color: "var(--accent)", textDecoration: "underline", fontWeight: 800 }}>{part}</a>;
         return part;
       });
     };
 
-    const reactionsForMsg = reactionsMap?.[msg.id] || {};
+    const reactionsForMsg = reactions || {};
     const hasReactions = Object.keys(reactionsForMsg).length > 0;
 
     return (
-      <div style={{ 
-        display: "flex", 
-        justifyContent: isOwn ? "flex-end" : "flex-start", 
-        width: "100%",
-        marginBottom: hasReactions ? 14 : 0
-      }}>
+      <div style={{ display: "flex", justifyContent: isOwn ? "flex-end" : "flex-start", width: "100%", marginBottom: hasReactions ? 14 : 0 }}>
         <motion.div
+          className="glassContainer"
           ref={bubbleRef}
           initial={{ opacity: 0, scale: 0.95, y: 30 }}
           animate={{ opacity: msg.isTemp ? 0.7 : 1, scale: 1, y: 0 }}
@@ -1032,35 +879,20 @@
           drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.15}
           whileDrag={{ scale: 0.98, zIndex: 10 }}
           onDragEnd={(e, info) => { if (Math.abs(info.offset.x) > 50) onReply(msg); }}
-          
-          onTouchStart={handleTouchStart}
-          onTouchEnd={cancelTouch}
-          onTouchMove={cancelTouch}
-          onMouseDown={handleTouchStart}
-          onMouseUp={cancelTouch}
-          onMouseLeave={cancelTouch}
-          onContextMenu={(e) => { e.preventDefault(); return false; }}
-
+          onTouchStart={handleTouchStart} onTouchEnd={cancelTouch} onTouchMove={cancelTouch} onMouseDown={handleTouchStart} onMouseUp={cancelTouch} onMouseLeave={cancelTouch} onContextMenu={(e) => { e.preventDefault(); return false; }}
           style={{ 
             maxWidth: "78%", padding: "14px 20px", borderRadius: 24, 
-            background: isOwn ? "var(--bubble-own)" : "var(--bubble-oth)", 
-            backdropFilter: "blur(40px) saturate(150%)", 
-            WebkitBackdropFilter: "blur(40px) saturate(150%)", 
-            color: "var(--text)", 
-            borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", 
-            borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", 
-            boxShadow: "var(--glass-shadow), var(--glass-inset)", 
-            position: "relative", cursor: "pointer",
+            cursor: "pointer",
             WebkitTouchCallout: "none", WebkitUserSelect: "none", userSelect: "none"
           }}
         >
-          <MsgContent msg={msg} isOwn={isOwn} displayContent={displayContent} replyData={replyData} renderContent={renderContent} t={t} onTap={onTap} onImageClick={onImageClick} onRetry={onRetry} reactionsMap={reactionsMap} currentUser={currentUser} />
+          <MsgContent msg={msg} isOwn={isOwn} displayContent={displayContent} replyData={replyData} renderContent={renderContent} t={t} onTap={onTap} onImageClick={onImageClick} onRetry={onRetry} reactions={reactions} currentUser={currentUser} />
         </motion.div>
       </div>
     );
-  }
+  });
 
-  function ContextMenuOverlay({ menuData, onClose, onReact, onReply, onDelete, onCopy, currentUser, reactionsMap }) {
+  const ContextMenuOverlay = memo(({ menuData, onClose, onReact, onReply, onDelete, onCopy, currentUser, reactions }) => {
     const { msg, isOwn, rect } = menuData;
     const [showPicker, setShowPicker] = useState(false);
     
@@ -1074,17 +906,12 @@
     const rawActionBottom = rect.bottom + GAP + ACTION_HEIGHT_ESTIMATE;
 
     let deltaY = 0;
-    if (rawEmojiTop < SAFE_MARGIN_TOP) {
-      deltaY = SAFE_MARGIN_TOP - rawEmojiTop; 
-    } else if (rawActionBottom > window.innerHeight - SAFE_MARGIN_BOTTOM) {
-      deltaY = (window.innerHeight - SAFE_MARGIN_BOTTOM) - rawActionBottom; 
-    }
+    if (rawEmojiTop < SAFE_MARGIN_TOP) { deltaY = SAFE_MARGIN_TOP - rawEmojiTop; } 
+    else if (rawActionBottom > window.innerHeight - SAFE_MARGIN_BOTTOM) { deltaY = (window.innerHeight - SAFE_MARGIN_BOTTOM) - rawActionBottom; }
 
     const menuWidth = 240; 
-    let alignLeft = rect.left;
-    if (alignLeft + menuWidth > window.innerWidth - 16) alignLeft = window.innerWidth - menuWidth - 16;
-    let alignRight = window.innerWidth - rect.right;
-    if (alignRight + menuWidth > window.innerWidth - 16) alignRight = window.innerWidth - menuWidth - 16;
+    let alignLeft = rect.left; if (alignLeft + menuWidth > window.innerWidth - 16) alignLeft = window.innerWidth - menuWidth - 16;
+    let alignRight = window.innerWidth - rect.right; if (alignRight + menuWidth > window.innerWidth - 16) alignRight = window.innerWidth - menuWidth - 16;
 
     const quickEmojis = ["👍", "😍", "😂"];
     const allEmojis = ["❤️", "😮", "😢", "🎉", "🥳", "🤣", "😭", "😱", "😡", "🥰", "😎", "💯", "⭐", "👏", "🔥"];
@@ -1105,7 +932,7 @@
       if (!text) return null;
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.split(urlRegex).map((part, i) => {
-        if (part.match(urlRegex)) return <span key={i} style={{ color: isOwn ? "inherit" : "var(--accent)", textDecoration: "underline", fontWeight: 800 }}>{part}</span>;
+        if (part.match(urlRegex)) return <span key={i} style={{ color: "var(--accent)", textDecoration: "underline", fontWeight: 800 }}>{part}</span>;
         return part;
       });
     };
@@ -1115,94 +942,45 @@
         <motion.div className="menu-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} onClick={onClose} />
         
         <motion.div 
-          initial={{ y: 0, scale: 1 }}
-          animate={{ y: deltaY, scale: 1.02 }}
-          exit={{ y: 0, scale: 1, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="glassContainer"
+          initial={{ y: 0, scale: 1 }} animate={{ y: deltaY, scale: 1.02 }} exit={{ y: 0, scale: 1, opacity: 0 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}
           style={{ 
-            position: 'absolute', top: rect.top, left: rect.left, width: rect.width,
-            margin: 0, padding: "14px 20px", borderRadius: 24, 
-            background: isOwn ? "var(--bubble-own)" : "var(--bubble-oth)", 
-            backdropFilter: "blur(40px) saturate(150%)", WebkitBackdropFilter: "blur(40px) saturate(150%)", 
-            color: "var(--text)", borderTop: "1.5px solid var(--border-tl)", borderLeft: "1.5px solid var(--border-tl)", 
-            borderBottom: "1px solid var(--border-br)", borderRight: "1px solid var(--border-br)", 
-            boxShadow: "0 30px 60px rgba(0,0,0,0.8), var(--glass-inset)", zIndex: 10001, transformOrigin: isOwn ? "bottom right" : "bottom left"
+            position: 'absolute', top: rect.top, left: rect.left, width: rect.width, margin: 0, padding: "14px 20px", borderRadius: 24, 
+            zIndex: 10001, transformOrigin: isOwn ? "bottom right" : "bottom left"
           }}
         >
-          <MsgContent msg={msg} isOwn={isOwn} displayContent={displayContent} replyData={replyData} renderContent={renderContent} t={t} reactionsMap={reactionsMap} currentUser={currentUser} />
+          <MsgContent msg={msg} isOwn={isOwn} displayContent={displayContent} replyData={replyData} renderContent={renderContent} t={t} reactions={reactions} currentUser={currentUser} />
         </motion.div>
 
         {!showPicker && (
-          <motion.div
-            className="emoji-bar"
-            initial={{ opacity: 0, scale: 0.8, y: deltaY + 10 }} 
-            animate={{ opacity: 1, scale: 1, y: deltaY }} 
-            exit={{ opacity: 0, scale: 0.8, y: deltaY + 10 }} 
-            transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.05 }}
-            style={{ 
-              top: rect.top - EMOJI_HEIGHT_ESTIMATE - GAP, 
-              left: isOwn ? 'auto' : alignLeft, 
-              right: isOwn ? alignRight : 'auto',
-              transformOrigin: isOwn ? "bottom right" : "bottom left" 
-            }}
+          <motion.div className="glassContainer emoji-bar" initial={{ opacity: 0, scale: 0.8, y: deltaY + 10 }} animate={{ opacity: 1, scale: 1, y: deltaY }} exit={{ opacity: 0, scale: 0.8, y: deltaY + 10 }} transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.05 }}
+            style={{ top: rect.top - EMOJI_HEIGHT_ESTIMATE - GAP, left: isOwn ? 'auto' : alignLeft, right: isOwn ? alignRight : 'auto', transformOrigin: isOwn ? "bottom right" : "bottom left", borderRadius: 30 }}
           >
             {quickEmojis.map(emoji => (
               <button key={emoji} className="menu-emoji" onClick={(e) => { e.stopPropagation(); onReact(msg.id, emoji); onClose(); }}>{emoji}</button>
             ))}
-            
             <button className="menu-emoji" onClick={(e) => { e.stopPropagation(); setShowPicker(true); }}>
-              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
           </motion.div>
         )}
 
-        <motion.div
-          className="action-menu"
-          initial={{ opacity: 0, scale: 0.8, y: deltaY - 10 }} 
-          animate={{ opacity: 1, scale: 1, y: deltaY }} 
-          exit={{ opacity: 0, scale: 0.8, y: deltaY - 10 }} 
-          transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.05 }}
-          style={{ 
-            top: rect.bottom + GAP, 
-            left: isOwn ? 'auto' : alignLeft, 
-            right: isOwn ? alignRight : 'auto',
-            transformOrigin: isOwn ? "top right" : "top left"
-          }}
+        <motion.div className="glassContainer action-menu" initial={{ opacity: 0, scale: 0.8, y: deltaY - 10 }} animate={{ opacity: 1, scale: 1, y: deltaY }} exit={{ opacity: 0, scale: 0.8, y: deltaY - 10 }} transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.05 }}
+          style={{ top: rect.bottom + GAP, left: isOwn ? 'auto' : alignLeft, right: isOwn ? alignRight : 'auto', transformOrigin: isOwn ? "top right" : "top left", borderRadius: 20 }}
         >
-          <button className="menu-item" onClick={(e) => { e.stopPropagation(); onClose(); onReply(msg); }}>
-            <span>Reply</span>
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
-          </button>
-          <button className="menu-item" onClick={(e) => { e.stopPropagation(); onCopy(msg); onClose(); }}>
-            <span>Copy</span>
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-          </button>
-          
-          <button className="menu-item delete" onClick={(e) => { 
-            e.stopPropagation(); 
-            onClose();
-            if (window.confirm("Delete this message permanently?")) {
-              onDelete(msg.id);
-            }
-          }}>
-            <span>Delete</span>
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-          </button>
+          <button className="menu-item" onClick={(e) => { e.stopPropagation(); onClose(); onReply(msg); }}><span>Reply</span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg></button>
+          <button className="menu-item" onClick={(e) => { e.stopPropagation(); onCopy(msg); onClose(); }}><span>Copy</span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+          <button className="menu-item delete" onClick={(e) => { e.stopPropagation(); onClose(); if (window.confirm("Delete this message permanently?")) { onDelete(msg.id); } }}><span>Delete</span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
         </motion.div>
 
         <AnimatePresence>
           {showPicker && (
             <motion.div className="emoji-picker-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={(e) => { e.stopPropagation(); onClose(); }}>
-              <motion.div className="emoji-picker" initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} transition={{ type: "spring", stiffness: 400, damping: 25 }} onClick={(e) => e.stopPropagation()}>
+              <motion.div className="glassContainer emoji-picker" initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} transition={{ type: "spring", stiffness: 400, damping: 25 }} onClick={(e) => e.stopPropagation()}>
                 <div className="emoji-picker-header">React</div>
                 <div className="emoji-grid">
                   {allEmojis.map(emoji => (
-                    <button key={emoji} className="emoji-grid-item" onClick={(e) => { e.stopPropagation(); onReact(msg.id, emoji); onClose(); }}>
-                      {emoji}
-                    </button>
+                    <button key={emoji} className="emoji-grid-item" onClick={(e) => { e.stopPropagation(); onReact(msg.id, emoji); onClose(); }}>{emoji}</button>
                   ))}
                 </div>
               </motion.div>
@@ -1212,7 +990,7 @@
 
       </div>
     );
-  }
+  });
 
   function ChatBoxPage() {
     const { me, messages, other, otherAv, closeChat, sendMsg, deleteMsg, uploadMedia, onlineUsers, hasMore, loadMore, typingStatus, triggerTyping, addReaction, editMessage, retryMessage, showReadReceipt, selectedSeenMsg, isRecording, startVoiceRecord, stopVoiceRecord, searchQuery, setSearchQuery, reactionsMap } = useApp();
@@ -1227,7 +1005,6 @@
     const fileRef = useRef(null);
     const inpRef = useRef(null);
 
-    // FIX 1: Delay scrolling to allow mobile keyboards to render
     const scrollToBottom = () => { 
       setTimeout(() => { 
         if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight; 
@@ -1293,47 +1070,38 @@
       await uploadMedia(f, prefix); e.target.value = "";
     };
 
-    const handleCopyMsg = (msg) => {
-      const textToCopy = msg.content || (msg.image ? "📷 Photo" : msg.audio ? "🎵 Audio" : "");
-      navigator.clipboard.writeText(textToCopy);
-    };
+    const handleCopyMsg = useCallback((msg) => {
+      navigator.clipboard.writeText(msg.content || (msg.image ? "📷 Photo" : msg.audio ? "🎵 Audio" : ""));
+    }, []);
 
     return (
       <div className="ns" style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
         
         <AnimatePresence>
           {contextMenuData && (
-            <ContextMenuOverlay 
-              menuData={contextMenuData} 
-              onClose={() => setContextMenuData(null)} 
-              onReact={addReaction} 
-              onReply={setReplyTo} 
-              onDelete={deleteMsg} 
-              onCopy={handleCopyMsg} 
-              currentUser={me} 
-              reactionsMap={reactionsMap} 
-            />
+            /* PERFORMANCE OPTIMIZATION: Pass single reaction lookup instead of full map */
+            <ContextMenuOverlay menuData={contextMenuData} onClose={() => setContextMenuData(null)} onReact={addReaction} onReply={setReplyTo} onDelete={deleteMsg} onCopy={handleCopyMsg} currentUser={me} reactions={reactionsMap[contextMenuData.msg.id] || {}} />
           )}
         </AnimatePresence>
 
-        <div id="hw-hdr" className="glass" style={{ flexShrink: 0, zIndex: 1000, height: 75, marginTop: "calc(16px + env(safe-area-inset-top))", marginBottom: 16, marginLeft: 16, marginRight: 16, borderRadius: 50, display: "flex", alignItems: "center", gap: 14, padding: "0 20px" }}>
+        <div id="hw-hdr" className="glassContainer" style={{ flexShrink: 0, zIndex: 1000, height: 72, marginTop: "calc(16px + env(safe-area-inset-top))", marginBottom: 16, marginLeft: 16, marginRight: 16, display: "flex", alignItems: "center", gap: 14, padding: "0 20px", borderRadius: 50 }}>
           <motion.button onClick={closeChat} whileTap={{ x: -5, scale: 0.9 }} style={{ fontSize: 26, color: "var(--text)", border: "none", background: "none", cursor: "pointer", paddingRight: 4, lineHeight: 1, borderRadius: "50%", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center" }}>&#8592;</motion.button>
-          <div style={{ borderRadius: "50%", padding: 4 }}><Avatar src={otherAv} name={other} size={40} /></div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: 16 }}>{other}</div>
-            <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700 }}>{onlineUsers.includes(other) ? "Active now" : "Offline"}</div>
+          <Avatar src={otherAv} name={other} size={40} />
+          <div style={{ flex: 1, paddingLeft: 4 }}>
+            <div style={{ fontWeight: 800, fontSize: 16, letterSpacing: "0.2px" }}>{other}</div>
+            <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600 }}>{onlineUsers.includes(other) ? "Active now" : "Offline"}</div>
           </div>
-          <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowSearch(!showSearch)} className="search-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 20, height: 20 }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowSearch(!showSearch)} className="search-icon" style={{ padding: "0 8px" }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22 }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
           </motion.button>
         </div>
 
         <AnimatePresence>
           {showSearch && (
-            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="search-bar">
+            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="glassContainer" style={{ margin: "0 16px 16px 16px", display: "flex", alignItems: "center", gap: 10, padding: "14px 20px", position: "relative", zIndex: 999, borderRadius: 50 }}>
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2.5" style={{ width: 18, height: 18 }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-              <input type="text" placeholder="Search messages..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-              {searchQuery && <button onClick={() => setSearchQuery("")} style={{ background: "none", border: "none", color: "var(--text)", cursor: "pointer" }}>✕</button>}
+              <input type="text" placeholder="Search messages..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ flex: 1, background: "transparent", border: "none", color: "var(--text)", fontSize: 15, fontWeight: 600, outline: "none" }} />
+              {searchQuery && <button onClick={() => setSearchQuery("")} style={{ background: "none", border: "none", color: "var(--text)", cursor: "pointer", fontWeight: 800 }}>✕</button>}
             </motion.div>
           )}
         </AnimatePresence>
@@ -1342,12 +1110,12 @@
           {loadingMore && <div style={{ textAlign: "center", padding: "10px 0" }}><div style={{ display: "inline-block", width: 22, height: 22, borderRadius: "50%", border: "2.5px solid var(--accent)", borderTopColor: "transparent", animation: "spinner 0.8s linear infinite" }} /></div>}
           {groupedMessages.map((item, i) => (
             item.type === 'date' ? 
-              <motion.div key={"date-"+item.label} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="date-divider" style={{ color: "var(--text)" }}>{item.label}</motion.div> 
-              : <MsgBubble key={item.data.id || i} msg={item.data} isOwn={item.data.sender === me} currentUser={me} onImageClick={setFullScreenImage} onReply={setReplyTo} onRetry={retryMessage} onTap={showReadReceipt} reactionsMap={reactionsMap} onContextMenuOpen={setContextMenuData} />
+              <motion.div key={"date-"+item.label} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="date-divider">{item.label}</motion.div> 
+              : <MsgBubble key={item.data.id || i} msg={item.data} isOwn={item.data.sender === me} currentUser={me} onImageClick={setFullScreenImage} onReply={setReplyTo} onRetry={retryMessage} onTap={showReadReceipt} reactions={reactionsMap[item.data.id]} onContextMenuOpen={setContextMenuData} />
           ))}
           {typingStatus && (
             <div style={{ display: "flex", justifyContent: "flex-start", marginTop: 8 }}>
-              <div className="typing-indicator"><span>{other} is typing</span><span className="typing-dot"></span><span className="typing-dot"></span><span className="typing-dot"></span></div>
+              <div className="glassContainer typing-indicator" style={{ borderRadius: 50 }}><span>{other} is typing</span><span className="typing-dot"></span><span className="typing-dot"></span><span className="typing-dot"></span></div>
             </div>
           )}
           <div style={{ height: 16, flexShrink: 0 }}></div>
@@ -1356,39 +1124,43 @@
         <div style={{ flexShrink: 0, padding: "0px 16px 20px 16px", paddingBottom: "calc(20px + env(safe-area-inset-bottom))", zIndex: 1001, position: "relative" }}>
           <AnimatePresence>
             {replyTo && (
-              <motion.div className="glass-s" initial={{ opacity: 0, y: 15, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 15, scale: 0.95 }} transition={{ duration: 0.2 }} style={{ position: "absolute", bottom: "100%", left: 20, right: 20, marginBottom: 12, padding: "12px 16px", borderRadius: 20, display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 999 }}>
+              <motion.div className="glassContainer" initial={{ opacity: 0, y: 15, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 15, scale: 0.95 }} transition={{ duration: 0.2 }} style={{ position: "absolute", bottom: "100%", left: 20, right: 20, marginBottom: 12, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 999 }}>
                 <div style={{ flex: 1, overflow: "hidden", borderLeft: `4px solid var(--accent)`, paddingLeft: 10 }}>
                   <div style={{ fontSize: 13, fontWeight: 900, color: "var(--text)" }}>Replying to {replyTo.sender}</div>
-                  <div style={{ fontSize: 13, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: 0.9, fontWeight: 600 }}>{replyTo.content ? replyTo.content.replace(/\[REPLY\|.*?\]/, "") : (replyTo.image ? "📷 Photo" : "🎵 Audio")}</div>
+                  <div style={{ fontSize: 13, color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: 0.9, fontWeight: 600 }}>{replyTo.content ? replyTo.content.replace(/\[REPLY\|.*?\]/, "") : (replyTo.image ? "📷 Photo" : "🎵 Audio")}</div>
                 </div>
                 <motion.button whileTap={{ scale: 0.8 }} onClick={() => setReplyTo(null)} style={{ background: "none", border: "none", color: "var(--text)", width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", marginLeft: 10 }}><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></motion.button>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <div id="hw-bar" className="glass" style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 50, position: "relative", zIndex: 1000 }}>
-            <motion.label whileTap={{ scale: 0.8 }} style={{ fontSize: 24, cursor: "pointer", userSelect: "none", display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, flexShrink: 0, color: "var(--text)", borderRadius: "50%" }}>+<input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*,audio/*" onChange={onFile} /></motion.label>
-            <motion.button whileTap={{ scale: 0.9 }} onMouseDown={startVoiceRecord} onMouseUp={stopVoiceRecord} onTouchStart={startVoiceRecord} onTouchEnd={stopVoiceRecord} style={{ background: "transparent", border: "none", color: "var(--text)", cursor: "pointer", width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 20, height: 20 }}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="22" /></svg>
+          <div id="hw-bar" className="glassContainer" style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", position: "relative", zIndex: 1000, borderRadius: 50 }}>
+            
+            <motion.label className="glassBtn" whileTap={{ scale: 0.8 }} style={{ fontSize: 24, width: 40, height: 40, flexShrink: 0 }}>+<input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*,audio/*" onChange={onFile} /></motion.label>
+            <motion.button className="glassBtn" whileTap={{ scale: 0.9 }} onMouseDown={startVoiceRecord} onMouseUp={stopVoiceRecord} onTouchStart={startVoiceRecord} onTouchEnd={stopVoiceRecord} style={{ width: 40, height: 40 }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 20, height: 20 }}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="22" /></svg>
               {isRecording && <span style={{ position: "absolute", top: -2, right: -2, width: 10, height: 10, background: "#ff3b30", borderRadius: "50%", boxShadow: "0 0 0 2px var(--bg)" }} className="recording-pulse" />}
             </motion.button>
-            <input ref={inpRef} type="text" placeholder="Message..." value={text} onChange={e => { setText(e.target.value); triggerTyping(); }} onKeyDown={e => e.key === "Enter" && send()} onFocus={() => { setTimeout(() => { window.scrollTo(0, 0); scrollToBottom(); }, 300); }} style={{ flex: 1, minWidth: 0, border: "none", fontSize: 15, fontWeight: 600, padding: "0 16px", height: "40px", lineHeight: "normal", borderRadius: 20, background: "none", color: "var(--text)", outline: "none", WebkitAppearance: "none" }} />
-            <motion.button onClick={(e) => { if (!text.trim() && !replyTo) { e.preventDefault(); return; } send(); }} whileTap={(text.trim() || replyTo) ? { scale: 0.85, y: -2 } : {}} style={{ WebkitAppearance: "none", outline: "none", WebkitTapHighlightColor: "transparent", overflow: "hidden", width: 40, height: 40, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.2)", cursor: (text.trim() || replyTo) ? "default" : "pointer", background: (text.trim() || replyTo) ? "var(--btn-grad)" : "transparent", color: "#fff", fontSize: 18, fontWeight: 900, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: (text.trim() || replyTo) ? "var(--btn-shadow)" : "none", transition: "all 0.2s ease", opacity: (text.trim() || replyTo) ? 1 : 0.5 }}><span style={{ fontSize: 24, paddingBottom: 6 }}>&#8593;</span></motion.button>
+            
+            <input ref={inpRef} type="text" placeholder="Message..." value={text} onChange={e => { setText(e.target.value); triggerTyping(); }} onKeyDown={e => e.key === "Enter" && send()} onFocus={() => { setTimeout(() => { window.scrollTo(0, 0); scrollToBottom(); }, 300); }} style={{ flex: 1, minWidth: 0, fontSize: 15, fontWeight: 600, padding: "0 10px", height: "40px", lineHeight: "normal", WebkitAppearance: "none" }} />
+            
+            <motion.button className="glassBtn" onClick={(e) => { if (!text.trim() && !replyTo) { e.preventDefault(); return; } send(); }} whileTap={(text.trim() || replyTo) ? { scale: 0.85, y: -2 } : {}} style={{ width: 40, height: 40, fontSize: 18, fontWeight: 900, flexShrink: 0, opacity: (text.trim() || replyTo) ? 1 : 0.5 }}><span style={{ fontSize: 24, paddingBottom: 6 }}>&#8593;</span></motion.button>
+          
           </div>
         </div>
 
         <AnimatePresence>
           {fullScreenImage && (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.2 }} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setFullScreenImage(null)}>
-              <button style={{ position: "absolute", top: "env(safe-area-inset-top, 20px)", right: 20, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", backdropFilter: "blur(10px)", borderRadius: "50%", width: 44, height: 44, color: "#fff", fontSize: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", marginTop: 20, boxShadow: "0 4px 12px rgba(0,0,0,0.5)" }} onClick={() => setFullScreenImage(null)}>&times;</button>
-              <motion.img initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} transition={{ type: "spring", damping: 25, stiffness: 400 }} src={fullScreenImage} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 16, boxShadow: "0 20px 50px rgba(0,0,0,0.8)", border: "1px solid rgba(255,255,255,0.1)" }} onClick={(e) => e.stopPropagation()} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.2 }} style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setFullScreenImage(null)}>
+              <button className="glassContainer" style={{ position: "absolute", top: "env(safe-area-inset-top, 20px)", right: 20, borderRadius: "50%", width: 44, height: 44, color: "#fff", fontSize: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", marginTop: 20 }} onClick={() => setFullScreenImage(null)}>&times;</button>
+              <motion.img initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} transition={{ type: "spring", damping: 25, stiffness: 400 }} src={fullScreenImage} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 16, boxShadow: "0 20px 50px rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.2)" }} onClick={(e) => e.stopPropagation()} />
             </motion.div>
           )}
         </AnimatePresence>
 
         <AnimatePresence>
           {selectedSeenMsg && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} style={{ position: "fixed", bottom: 80, left: "50%", transform: "translateX(-50%)", background: "rgba(0,0,0,0.8)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "8px 16px", fontSize: 12, color: "white", zIndex: 10000 }}>
+            <motion.div className="glassContainer" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} style={{ position: "fixed", bottom: 80, left: "50%", transform: "translateX(-50%)", borderRadius: 20, padding: "8px 16px", fontSize: 12, zIndex: 10000 }}>
               Seen at {new Date(selectedSeenMsg.seen_at).toLocaleTimeString()}
             </motion.div>
           )}
