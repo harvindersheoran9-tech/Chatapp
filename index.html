@@ -7,7 +7,8 @@
   <meta name="apple-mobile-web-app-title" content="Harvinder Chat">
   <link rel="apple-touch-icon" href="https://via.placeholder.com/180">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover, interactive-widget=resizes-content" />
+  <!-- Removed interactive-widget=resizes-content to fix the massive keyboard gap -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" />
   <title>Harvinder's World</title>
 
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -31,27 +32,19 @@
   <script src="https://cdn.jsdelivr.net/npm/recordrtc@5.6.2/RecordRTC.js"></script>
 
   <style>
-/* This creates a layer that sits behind everything else */
+/* Fixed background layer */
 .fixed-bg {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* Use your specific image here */
+  height: 100dvh;
   background-image: url('IMG_4060.jpeg'); 
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  z-index: -1; /* Pushes it behind your chat UI */
-}
-
-/* Update your body to be transparent so the image shows through */
-html, body {
-  background: transparent !important;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+  z-index: -1; 
 }
 
     :root {
@@ -74,72 +67,35 @@ html, body {
       user-select: auto !important;
     }
     
+    /* Fixed white flash and bottom margin bugs here */
     html, body {
+      background-color: var(--bg) !important;
       margin: 0; padding: 0; width: 100%; 
-      /* Force it to stretch to the absolute bottom of the screen */
-      min-height: 100vh;
-      min-height: 100dvh;
-      min-height: -webkit-fill-available;
+      height: 100%;
+      min-height: 100%;
       overflow: hidden;
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       color: var(--text); touch-action: manipulation;
-      
-      /* The fix: attached and covering the whole viewport */
-      background-color: var(--bg) !important;
-      background-image: url('/IMG_4052.jpeg') !important;
-      background-position: center center !important; 
-      background-size: cover !important;
-      background-attachment: fixed !important;
-      background-repeat: no-repeat !important;
     }
 
-    
     #root { width: 100%; height: 100vh; height: var(--vh, 100dvh); position: absolute; top: 0; left: 0; overflow: hidden; }
     
     input { outline: none; background: transparent; border: none; color: var(--text); font-family: inherit; }
     input::placeholder { color: var(--text-muted); }
     
+    /* Cleaned up glass effect for clarity */
     .glassContainer {
       position: relative;
       border-radius: 30px;
       z-index: 1;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      /* PERFORMANCE OPTIMIZATION: Hardware Acceleration */
+      background: rgba(11, 20, 38, 0.45) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
       transform: translate3d(0, 0, 0);
       will-change: transform, opacity;
-    }
-
-    .glassContainer::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        overflow: hidden;
-        border-radius: inherit;
-        -webkit-box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
-                box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
-    }
-
-    .glassContainer::after {
-        content: '';
-        position: absolute;
-        z-index: -2;
-        inset: 0;
-        border-radius: inherit;
-        -webkit-backdrop-filter: blur(0px);
-                backdrop-filter: blur(0px);
-        -webkit-filter: url(#container-glass);
-                filter: url(#container-glass);
-        overflow: hidden;
-        isolation: isolate;
-        pointer-events: none;
-        /* PERFORMANCE OPTIMIZATION */
-        transform: translate3d(0, 0, 0);
     }
 
     .glassBtn {
@@ -154,44 +110,14 @@ html, body {
           -ms-flex-pack: center;
               justify-content: center;
       cursor: pointer;
-      background: transparent !important;
+      background: rgba(11, 20, 38, 0.45) !important;
       border-radius: 9999px;
       outline: none;
-      border: none !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
       z-index: 1;
       color: var(--text);
-      /* PERFORMANCE OPTIMIZATION */
       transform: translate3d(0, 0, 0);
       will-change: transform, opacity;
-    }
-
-    .glassBtn::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        overflow: hidden;
-        border-radius: inherit;
-        -webkit-box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
-                box-shadow: inset 2px 2px 0px -2px rgba(255, 255, 255, 0.7), inset 0 0 3px 1px rgba(255, 255, 255, 0.7);
-        background-color: rgb(255 255 255 / 10%);
-    }
-
-    .glassBtn::after {
-        content: '';
-        position: absolute;
-        z-index: -2;
-        inset: 0;
-        border-radius: inherit;
-        -webkit-backdrop-filter: blur(0px);
-                backdrop-filter: blur(0px);
-        -webkit-filter: url(#container-glass);
-                filter: url(#container-glass);
-        overflow: hidden;
-        isolation: isolate;
-        pointer-events: none;
-        /* PERFORMANCE OPTIMIZATION */
-        transform: translate3d(0, 0, 0);
     }
 
     .glassBtn svg { stroke: var(--text); }
@@ -203,7 +129,6 @@ html, body {
     }
     .liquid-orb {
       animation: morphBlob 6s ease-in-out infinite;
-      /* PERFORMANCE OPTIMIZATION */
       will-change: border-radius, transform;
       transform: translate3d(0, 0, 0);
     }
@@ -265,24 +190,8 @@ html, body {
   </style>
 </head>
 <body>
-  <!-- This is the new layer -->
   <div class="fixed-bg"></div> 
-  
-  <svg style="display: none">...</svg>
   <div id="root"></div>
-  
-
-
-<svg style="display: none">
-  <filter id="container-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
-    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="2" seed="92" result="noise" />
-    <feGaussianBlur in="noise" stdDeviation="0.02" result="blur" />
-    <feDisplacementMap in="SourceGraphic" in2="blur" scale="77" xChannelSelector="R" yChannelSelector="G" />
-  </filter>
-</svg>
-
-<div id="pre-splash" style="position: fixed; inset: 0; z-index: 100000; background: rgba(11, 20, 38, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: opacity 0.3s ease; pointer-events: none;"></div>
-<div id="root"></div>
 
 <script>
   function updateVH() {
@@ -384,7 +293,14 @@ html, body {
             const newMsg = pl.new;
             if ((newMsg.sender === meRef.current && newMsg.receiver === othRef.current) ||
                 (newMsg.sender === othRef.current && newMsg.receiver === meRef.current)) {
-              setMessages(prev => { if (prev.some(m => m.id === newMsg.id)) return prev; return [...prev, newMsg]; });
+              
+              setMessages(prev => { 
+                if (prev.some(m => m.id === newMsg.id)) return prev; 
+                // Fix for duplicate temp appends 
+                if (newMsg.sender === meRef.current && prev.some(m => m.isTemp && m.content === newMsg.content)) return prev;
+                return [...prev, newMsg]; 
+              });
+              
               if (newMsg.receiver === meRef.current && !newMsg.seen) { sb.from("messages").update({ seen: true, seen_at: new Date() }).eq("id", newMsg.id).then(); }
             } else if (newMsg.receiver === meRef.current) {
               setUnreadCounts(prev => ({ ...prev, [newMsg.sender]: (prev[newMsg.sender] || 0) + 1 }));
@@ -530,53 +446,48 @@ html, body {
     }, [messages, searchQuery]);
 
     const buildUsers = useCallback(async () => {
-  if (!meRef.current) return;
+      if (!meRef.current) return;
 
-  // 1. Get the list of allowed contacts for the logged-in user
-  const { data: contactsData, error: contactsError } = await sb
-    .from("contacts")
-    .select("contact_username")
-    .eq("owner_username", meRef.current);
+      const { data: contactsData, error: contactsError } = await sb
+        .from("contacts")
+        .select("contact_username")
+        .eq("owner_username", meRef.current);
 
-  if (contactsError) {
-    console.error("Error fetching contacts:", contactsError);
-    return;
-  }
+      if (contactsError) {
+        console.error("Error fetching contacts:", contactsError);
+        return;
+      }
 
-  // Extract the usernames into a simple array
-  const contactList = contactsData.map(c => c.contact_username);
+      const contactList = contactsData.map(c => c.contact_username);
 
-  if (contactList.length > 0) {
-    // 2. Fetch full profiles only for the users in that contact list
-    const { data: userData, error: userError } = await sb
-      .from("users")
-      .select("*")
-      .in("username", contactList);
+      if (contactList.length > 0) {
+        const { data: userData, error: userError } = await sb
+          .from("users")
+          .select("*")
+          .in("username", contactList);
 
-    if (userData) {
-      const av = {};
-      userData.forEach(u => { av[u.username] = u.avatar_url || ""; });
-      setUsers(userData);
-      setAvatars(av);
-    }
-  } else {
-    // If no contacts found, clear the list
-    setUsers([]);
-  }
+        if (userData) {
+          const av = {};
+          userData.forEach(u => { av[u.username] = u.avatar_url || ""; });
+          setUsers(userData);
+          setAvatars(av);
+        }
+      } else {
+        setUsers([]);
+      }
 
-  // 3. Keep your existing unread counts logic
-  const { data: unreads } = await sb
-    .from("messages")
-    .select("sender")
-    .eq("receiver", meRef.current)
-    .eq("seen", false);
-    
-  if (unreads) {
-    const counts = {};
-    unreads.forEach(m => { counts[m.sender] = (counts[m.sender] || 0) + 1; });
-    setUnreadCounts(counts);
-  }
-}, []);
+      const { data: unreads } = await sb
+        .from("messages")
+        .select("sender")
+        .eq("receiver", meRef.current)
+        .eq("seen", false);
+        
+      if (unreads) {
+        const counts = {};
+        unreads.forEach(m => { counts[m.sender] = (counts[m.sender] || 0) + 1; });
+        setUnreadCounts(counts);
+      }
+    }, []);
 
 
     const login = useCallback(async (username, password) => {
@@ -691,7 +602,7 @@ html, body {
         background: src ? `url(${src}) center/cover no-repeat` : `hsl(${hue},50%,55%)`,
         display: "flex", alignItems: "center", justifyContent: "center", color: "#fff",
         fontWeight: 800, fontSize: size * 0.28,
-        boxShadow: "0 4px 10px rgba(0,0,0,0.1), inset 0 2px 4px rgba(255,255,255,0.8)", transform: "translateZ(0)", border: "1px solid rgba(255,255,255,0.8)" }}>
+        boxShadow: "0 4px 10px rgba(0,0,0,0.1)", transform: "translateZ(0)", border: "1px solid rgba(255,255,255,0.2)" }}>
         {!src && name.slice(0, 2).toUpperCase()}
       </div>
     );
@@ -707,14 +618,12 @@ html, body {
     return (
       <AnimatePresence>
         {visible && (
-          <motion.div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: 'hidden', background: "rgba(11, 20, 38, 0.3)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}
+          <motion.div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", overflow: 'hidden', background: "rgba(11, 20, 38, 0.8)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}
             initial={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.1, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }}>
             <motion.div initial={{ opacity: 0, scale: 0.4, y: -40 }} animate={{ opacity: 1, scale: 1, y: -50 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 3 }}>
-              
               <div className="glassContainer liquid-orb" style={{ position: "relative", zIndex: 2, width: 140, height: 140, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Logo w={70} />
               </div>
-
             </motion.div>
           </motion.div>
         )}
@@ -728,7 +637,6 @@ html, body {
     const [pass, setPass]     = useState("");
     const [err,  setErr]      = useState("");
     const [pressed, setPressed] = useState(false);
-    const APP = "Harvinder's World";
 
     const go = async () => {
       if (!user.trim() || !pass.trim()) { setErr("Please fill in both fields."); return; }
@@ -740,14 +648,9 @@ html, body {
       <div className="ns" style={{ width: "100%", height: "100%", overflowY: "auto", display: "flex", justifyContent: "center", paddingTop: 80 }}>
         <div style={{ width: "100%", maxWidth: 360, padding: "0 24px 40px", textAlign: "center" }}>
           <div style={{ position: "relative", width: 176, height: 176, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            
             <div className="ns glassContainer liquid-orb" style={{ width: 120, height: 120, position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>
               <Logo w={64} />
             </div>
-
-          </div>
-          <div style={{ marginTop: 20, display: "flex", flexWrap: "wrap", justifyContent: "center", color: "var(--text)" }}>
-            {APP.split("").map((ch, i) => <motion.span key={i} style={{ display: "inline-block", fontSize: 32, fontWeight: 900, lineHeight: 1 }} animate={{ y: [0.01, -8, 0.01], z: 0.01 }} transition={{ duration: 2.2, delay: i * 0.05, repeat: Infinity, repeatDelay: 5, ease: "easeInOut" }}>{ch === " " ? "\u00A0" : ch}</motion.span>)}
           </div>
           <motion.div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 20 }} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}>
             
@@ -781,7 +684,8 @@ html, body {
 
     return (
       <div className="ns" style={{ width: "100%", height: "100%", overflowY: "auto", position: "relative" }}>
-        <div style={{ position: "relative", zIndex: 1, padding: "16px 16px 24px" }}>
+        {/* Adjusted padding to fix status bar overlap */}
+        <div style={{ position: "relative", zIndex: 1, padding: "calc(max(env(safe-area-inset-top), 40px) + 16px) 16px 24px" }}>
           
           <motion.div className="glassContainer" style={{ height: 72, display: "flex", alignItems: "center", padding: "0 24px", justifyContent: "space-between", marginBottom: 16, borderRadius: 50 }} initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}>
             <motion.div whileTap={{ scale: 0.85, rotate: 180 }} style={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Logo w={22} /></motion.div>
@@ -858,7 +762,6 @@ html, body {
     );
   }
 
-  /* PERFORMANCE OPTIMIZATION: Memoized MsgContent */
   const MsgContent = memo(({ msg, isOwn, displayContent, replyData, renderContent, t, onTap, onImageClick, onRetry, reactions, currentUser }) => {
     const reactionsForMsg = reactions || {};
     const groupedReactions = {};
@@ -887,8 +790,7 @@ html, body {
         </div>
 
         {reactionEntries.length > 0 && (
-          <div style={{ position: "absolute", bottom: -13, right: isOwn ? 10 : 
-            "auto", left: isOwn ?   "auto" : 10, display: "flex", gap: 6, zIndex: 5 }}>
+          <div style={{ position: "absolute", bottom: -13, right: 0, display: "flex", gap: 6, zIndex: 5 }}>
             {reactionEntries.map(([emoji, count]) => (
               <div key={emoji} className="glassContainer reaction-group" onClick={(e) => { e.stopPropagation(); }} style={{ borderRadius: 50 }}>
                 <span className="reaction-emoji">{emoji}</span>
@@ -901,7 +803,6 @@ html, body {
     );
   });
 
-  /* PERFORMANCE OPTIMIZATION: Memoized MsgBubble */
   const MsgBubble = memo(({ msg, isOwn, currentUser, onImageClick, onReply, onRetry, onTap, reactions, onContextMenuOpen }) => {
     const bubbleRef = useRef(null);
     const longPressTimer = useRef(null);
@@ -1159,12 +1060,12 @@ html, body {
         
         <AnimatePresence>
           {contextMenuData && (
-            /* PERFORMANCE OPTIMIZATION: Pass single reaction lookup instead of full map */
             <ContextMenuOverlay menuData={contextMenuData} onClose={() => setContextMenuData(null)} onReact={addReaction} onReply={setReplyTo} onDelete={deleteMsg} onCopy={handleCopyMsg} currentUser={me} reactions={reactionsMap[contextMenuData.msg.id] || {}} />
           )}
         </AnimatePresence>
 
-        <div id="hw-hdr" className="glassContainer" style={{ flexShrink: 0, zIndex: 1000, height: 72, marginTop: "calc(16px + env(safe-area-inset-top))", marginBottom: 16, marginLeft: 16, marginRight: 16, display: "flex", alignItems: "center", gap: 14, padding: "0 20px", borderRadius: 50 }}>
+        {/* Adjusted marginTop for iOS safe-area top to prevent overlapping battery/time */}
+        <div id="hw-hdr" className="glassContainer" style={{ flexShrink: 0, zIndex: 1000, height: 72, marginTop: "calc(max(env(safe-area-inset-top), 40px) + 16px)", marginBottom: 16, marginLeft: 16, marginRight: 16, display: "flex", alignItems: "center", gap: 14, padding: "0 20px", borderRadius: 50 }}>
           <motion.button onClick={closeChat} whileTap={{ x: -5, scale: 0.9 }} style={{ fontSize: 26, color: "var(--text)", border: "none", background: "none", cursor: "pointer", paddingRight: 4, lineHeight: 1, borderRadius: "50%", padding: "0 10px", display: "flex", alignItems: "center", justifyContent: "center" }}>&#8592;</motion.button>
           <Avatar src={otherAv} name={other} size={40} />
           <div style={{ flex: 1, paddingLeft: 4 }}>
@@ -1201,7 +1102,8 @@ html, body {
           <div style={{ height: 16, flexShrink: 0 }}></div>
         </div>
 
-        <div style={{ flexShrink: 0, padding: "0px 16px 20px 16px", paddingBottom: "calc(20px + env(safe-area-inset-bottom))", zIndex: 1001, position: "relative" }}>
+        {/* Adjusted paddingBottom to fix the giant gap over the keyboard */}
+        <div style={{ flexShrink: 0, padding: "0px 16px 20px 16px", paddingBottom: "max(20px, env(safe-area-inset-bottom))", zIndex: 1001, position: "relative" }}>
           <AnimatePresence>
             {replyTo && (
               <motion.div className="glassContainer" initial={{ opacity: 0, y: 15, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 15, scale: 0.95 }} transition={{ duration: 0.2 }} style={{ position: "absolute", bottom: "100%", left: 20, right: 20, marginBottom: 12, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 999 }}>
@@ -1215,7 +1117,6 @@ html, body {
           </AnimatePresence>
 
           <div id="hw-bar" className="glassContainer" style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", position: "relative", zIndex: 1000, borderRadius: 50 }}>
-            
             <motion.label className="glassBtn" whileTap={{ scale: 0.8 }} style={{ fontSize: 24, width: 40, height: 40, flexShrink: 0 }}>+<input ref={fileRef} type="file" style={{ display: "none" }} accept="image/*,audio/*" onChange={onFile} /></motion.label>
             <motion.button className="glassBtn" whileTap={{ scale: 0.9 }} onMouseDown={startVoiceRecord} onMouseUp={stopVoiceRecord} onTouchStart={startVoiceRecord} onTouchEnd={stopVoiceRecord} style={{ width: 40, height: 40 }}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 20, height: 20 }}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="22" /></svg>
@@ -1225,7 +1126,6 @@ html, body {
             <input ref={inpRef} type="text" placeholder="Message..." value={text} onChange={e => { setText(e.target.value); triggerTyping(); }} onKeyDown={e => e.key === "Enter" && send()} onFocus={() => { setTimeout(() => { window.scrollTo(0, 0); scrollToBottom(); }, 300); }} style={{ flex: 1, minWidth: 0, fontSize: 15, fontWeight: 600, padding: "0 10px", height: "40px", lineHeight: "normal", WebkitAppearance: "none" }} />
             
             <motion.button className="glassBtn" onClick={(e) => { if (!text.trim() && !replyTo) { e.preventDefault(); return; } send(); }} whileTap={(text.trim() || replyTo) ? { scale: 0.85, y: -2 } : {}} style={{ width: 40, height: 40, fontSize: 18, fontWeight: 900, flexShrink: 0, opacity: (text.trim() || replyTo) ? 1 : 0.5 }}><span style={{ fontSize: 24, paddingBottom: 6 }}>&#8593;</span></motion.button>
-          
           </div>
         </div>
 
@@ -1255,13 +1155,6 @@ html, body {
     const [minTimeElapsed, setMinTimeElapsed] = useState(false);
 
     useEffect(() => {
-      const pre = document.getElementById("pre-splash");
-      if (pre) {
-        requestAnimationFrame(() => {
-          pre.style.opacity = "0";
-          setTimeout(() => pre.remove(), 300);
-        });
-      }
       const t = setTimeout(() => setMinTimeElapsed(true), 600); 
       return () => clearTimeout(t);
     }, []);
