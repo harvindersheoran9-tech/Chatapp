@@ -64,7 +64,7 @@
       
       /* The fix: attached and covering the whole viewport */
       background-color: var(--bg) !important;
-      background-image: url('IMG_4052.jpeg') !important;
+      background-image: url('/IMG_4052.jpeg') !important;
       background-position: center center !important; 
       background-size: cover !important;
       background-attachment: fixed !important;
@@ -500,15 +500,54 @@
     }, [messages, searchQuery]);
 
     const buildUsers = useCallback(async () => {
-      const { data } = await sb.from("users").select("*");
-      if (data) {
-        const av = {}; data.forEach(u => { av[u.username] = u.avatar_url || ""; }); setUsers(data); setAvatars(av);
-      }
-      if (meRef.current) {
-        const { data: unreads } = await sb.from("messages").select("sender").eq("receiver", meRef.current).eq("seen", false);
-        if (unreads) { const counts = {}; unreads.forEach(m => { counts[m.sender] = (counts[m.sender] || 0) + 1; }); setUnreadCounts(counts); }
-      }
-    }, []);
+  if (!meRef.current) return;
+
+  // 1. Get the list of allowed contacts for the logged-in user
+  const { data: contactsData, error: contactsError } = await sb
+    .from("contacts")
+    .select("contact_username")
+    .eq("owner_username", meRef.current);
+
+  if (contactsError) {
+    console.error("Error fetching contacts:", contactsError);
+    return;
+  }
+
+  // Extract the usernames into a simple array
+  const contactList = contactsData.map(c => c.contact_username);
+
+  if (contactList.length > 0) {
+    // 2. Fetch full profiles only for the users in that contact list
+    const { data: userData, error: userError } = await sb
+      .from("users")
+      .select("*")
+      .in("username", contactList);
+
+    if (userData) {
+      const av = {};
+      userData.forEach(u => { av[u.username] = u.avatar_url || ""; });
+      setUsers(userData);
+      setAvatars(av);
+    }
+  } else {
+    // If no contacts found, clear the list
+    setUsers([]);
+  }
+
+  // 3. Keep your existing unread counts logic
+  const { data: unreads } = await sb
+    .from("messages")
+    .select("sender")
+    .eq("receiver", meRef.current)
+    .eq("seen", false);
+    
+  if (unreads) {
+    const counts = {};
+    unreads.forEach(m => { counts[m.sender] = (counts[m.sender] || 0) + 1; });
+    setUnreadCounts(counts);
+  }
+}, []);
+
 
     const login = useCallback(async (username, password) => {
       setLoading(true);
@@ -1232,3 +1271,4 @@
   );
 </script>
 </body>
+</html>
