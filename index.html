@@ -87,7 +87,7 @@ html, body {
       
       /* The fix: attached and covering the whole viewport */
       background-color: var(--bg) !important;
-      background-image: url('/IMG_4052.jpeg') !important;
+      background-image: url('IMG_4052.jpeg') !important;
       background-position: center center !important; 
       background-size: cover !important;
       background-attachment: fixed !important;
@@ -421,7 +421,7 @@ html, body {
         });
     }, []);
 
-    // FIX: Re-run Realtime when app regains focus or me changes
+    // Re-run Realtime when app regains focus or me changes
     useEffect(() => {
       const handleVisibilityChange = () => { if (document.visibilityState === 'visible' && meRef.current) { startRT(); } };
       document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -612,7 +612,12 @@ html, body {
       if (loading) return;
       setLoading(true);
       const av = avMap || avatars;
-      setOther(username); setOtherAv(av[username] || ""); setPageCount(1); setHasMore(false); setMessages([]); setUnreadCounts(prev => ({ ...prev, [username]: 0 })); setPage("chat");
+      setOther(username); 
+      // Immediately update the ref so the realtime callback sees the correct other user
+      othRef.current = username;
+      // Re-subscribe the channel to be safe – ensures no missed messages after chat switch
+      startRT();
+      setOtherAv(av[username] || ""); setPageCount(1); setHasMore(false); setMessages([]); setUnreadCounts(prev => ({ ...prev, [username]: 0 })); setPage("chat");
 
       const myMe = meRef.current;
       try {
@@ -624,7 +629,7 @@ html, body {
         }
       } catch (err) {}
       setLoading(false);
-    }, [avatars, loading, fetchReactionsForMessages]);
+    }, [avatars, loading, fetchReactionsForMessages, startRT]);
 
     const closeChat = useCallback(() => { setPage("list"); setTimeout(() => { setOther(""); setOtherAv(""); setMessages([]); }, 250); }, []);
 
