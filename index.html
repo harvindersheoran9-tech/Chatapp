@@ -39,7 +39,7 @@
   width: 100vw;
   height: 100vh;
   /* Use your specific image here */
-  background-image: url('IMG_4052.jpeg'); 
+  background-image: url('IMG_4060.jpeg'); 
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -55,9 +55,8 @@ html, body {
 }
 
     :root {
-      --bg: #151B28;
-; 
-      --#151B28: #ffffff; 
+      --bg: #151B28; 
+      --text: #ffffff; 
       --text-muted: rgba(255, 255, 255, 0.7); 
       --accent: #3b82f6;
     }
@@ -88,7 +87,7 @@ html, body {
       
       /* The fix: attached and covering the whole viewport */
       background-color: var(--bg) !important;
-      background-image: url('IMG_4052.jpeg') !important;
+      background-image: url('/IMG_4052.jpeg') !important;
       background-position: center center !important; 
       background-size: cover !important;
       background-attachment: fixed !important;
@@ -319,8 +318,10 @@ html, body {
 
   let _channel = null;
   let _typingChannel = null;
+  let _presenceChannel = null; // Global presence channel
   const PAGE_SIZE = 30;
   const TYPING_DEBOUNCE = 1000;
+  const PRESENCE_CHANNEL_NAME = "global_presence";
 
   async function compressImage(file) {
     if (!file.type.startsWith('image/')) return file;
@@ -377,11 +378,34 @@ html, body {
     useEffect(() => { meRef.current = me; }, [me]);
     useEffect(() => { othRef.current = other; }, [other]);
 
+    // Global presence channel management
+    const startPresence = useCallback(() => {
+      if (!meRef.current) return;
+      // Remove existing presence channel if any
+      if (_presenceChannel) {
+        sb.removeChannel(_presenceChannel);
+        _presenceChannel = null;
+      }
+      _presenceChannel = sb.channel(PRESENCE_CHANNEL_NAME, {
+        config: { presence: { key: meRef.current } }
+      });
+      _presenceChannel
+        .on("presence", { event: "sync" }, () => {
+          const state = _presenceChannel.presenceState();
+          setOnlineUsers(Object.keys(state));
+        })
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED' && meRef.current) {
+            await _presenceChannel.track({ online: true });
+          }
+        });
+    }, []);
+
     const startRT = useCallback(() => {
       if (_channel) { sb.removeChannel(_channel); _channel = null; }
       if (!meRef.current) return;
 
-      _channel = sb.channel(`chat_${meRef.current}`, { config: { presence: { key: meRef.current } } })
+      _channel = sb.channel(`chat_${meRef.current}`)
         .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, pl => {
           if (pl.eventType === "INSERT") {
             const newMsg = pl.new;
@@ -413,13 +437,7 @@ html, body {
             });
           }
         })
-        .on("presence", { event: "sync" }, () => {
-          const state = _channel.presenceState();
-          setOnlineUsers(Object.keys(state));
-        })
-        .subscribe(async (status) => {
-          if (status === 'SUBSCRIBED' && meRef.current) await _channel.track({ online: true });
-        });
+        .subscribe();
     }, []);
 
     // Re-run Realtime when app regains focus or me changes
@@ -430,8 +448,11 @@ html, body {
     }, [startRT]);
 
     useEffect(() => {
-      if (me) startRT();
-    }, [me, startRT]);
+      if (me) {
+        startRT();
+        startPresence();
+      }
+    }, [me, startRT, startPresence]);
 
     const fetchReactionsForMessages = useCallback(async (msgIds) => {
       if (!msgIds || msgIds.length === 0) return;
@@ -475,6 +496,8 @@ html, body {
 
     useEffect(() => {
       if (!other) return;
+      // Reset typing status when switching chat
+      setTypingStatus(false);
       if (_typingChannel) { sb.removeChannel(_typingChannel); _typingChannel = null; }
       _typingChannel = sb.channel('typing-status')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'typing_status', filter: `user_id=eq.${other} AND recipient=eq.${me}` }, (payload) => { setTypingStatus(payload.new?.is_typing || false); })
@@ -596,14 +619,15 @@ html, body {
         localStorage.setItem("hw_me", data.username); localStorage.setItem("hw_meAvatar", av);
         setMe(data.username); setMeAvatar(av); setPage("list"); meRef.current = data.username;
         window.OneSignalDeferred.push(async function(OneSignal) { await OneSignal.login(data.username); await OneSignal.Slidedown.promptPush(); });
-        await buildUsers(); startRT(); return true;
+        await buildUsers(); startRT(); startPresence(); return true;
       }
       return false;
-    }, [buildUsers, startRT]);
+    }, [buildUsers, startRT, startPresence]);
 
     const logout = useCallback(() => {
       if (_channel) sb.removeChannel(_channel);
       if (_typingChannel) sb.removeChannel(_typingChannel);
+      if (_presenceChannel) { sb.removeChannel(_presenceChannel); _presenceChannel = null; }
       localStorage.removeItem("hw_me"); localStorage.removeItem("hw_meAvatar");
       setMe(""); setMeAvatar(""); setPage("login"); setUsers([]); setMessages([]); setOther(""); setOnlineUsers([]); setUnreadCounts({}); setPanel(false);
       window.OneSignalDeferred.push(function(OneSignal) { OneSignal.logout(); });
@@ -670,12 +694,12 @@ html, body {
         if (savedMe) {
           setMe(savedMe); setMeAvatar(localStorage.getItem("hw_meAvatar") || ""); meRef.current = savedMe;
           window.OneSignalDeferred.push(function(OneSignal) { OneSignal.login(savedMe); });
-          await buildUsers(); startRT(); setPage("list");
+          await buildUsers(); startRT(); startPresence(); setPage("list");
         } else setPage("login");
         setAppReady(true);
       };
       init();
-    }, [buildUsers, startRT]);
+    }, [buildUsers, startRT, startPresence]);
 
     const contextValue = {
       me, meAvatar, users, avatars, messages: filteredMessages, other, otherAv,
